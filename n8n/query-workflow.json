@@ -12,8 +12,11 @@
       "id": "b1000000-0000-4000-8000-000000000001",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [-220, 0],
+      "typeVersion": 2.1,
+      "position": [
+        -220,
+        0
+      ],
       "webhookId": "b1000000-0000-4000-8000-0000000000ff",
       "notes": "Header Auth credential: name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
     },
@@ -25,7 +28,10 @@
       "name": "Validate",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
@@ -36,8 +42,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "X-Pinecone-API-Version", "value": "2025-04" }
+            {
+              "name": "X-Pinecone-API-Version",
+              "value": "2025-04"
+            }
           ]
         },
         "sendBody": true,
@@ -49,7 +57,10 @@
       "name": "Pinecone Search",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [220, 0],
+      "position": [
+        220,
+        0
+      ],
       "notes": "Header Auth credential: name 'Api-Key', value '<your pcsk_... key>'"
     },
     {
@@ -60,7 +71,10 @@
       "name": "Ids And Scores Only",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [460, 0]
+      "position": [
+        460,
+        0
+      ]
     },
     {
       "parameters": {
@@ -72,15 +86,64 @@
       "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [700, 0]
+      "position": [
+        700,
+        0
+      ]
     }
   ],
   "connections": {
-    "Webhook": { "main": [[{ "node": "Validate", "type": "main", "index": 0 }]] },
-    "Validate": { "main": [[{ "node": "Pinecone Search", "type": "main", "index": 0 }]] },
-    "Pinecone Search": { "main": [[{ "node": "Ids And Scores Only", "type": "main", "index": 0 }]] },
-    "Ids And Scores Only": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Search": {
+      "main": [
+        [
+          {
+            "node": "Ids And Scores Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ids And Scores Only": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" },
-  "pinData": {}
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "liveWorkflowId": "WhNQrPs0apx0EzPn",
+    "instanceNote": "created via n8n MCP on 2026-08-15"
+  }
 }

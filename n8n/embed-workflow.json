@@ -12,8 +12,11 @@
       "id": "a1000000-0000-4000-8000-000000000001",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [-220, 0],
+      "typeVersion": 2.1,
+      "position": [
+        -220,
+        0
+      ],
       "webhookId": "a1000000-0000-4000-8000-0000000000ff",
       "notes": "Header Auth credential: name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
     },
@@ -25,18 +28,27 @@
       "name": "Build Records",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "version": 2 },
+          "options": {
+            "caseSensitive": true,
+            "version": 2
+          },
           "conditions": [
             {
               "id": "skip-check",
               "leftValue": "={{ $json.skip }}",
               "rightValue": false,
-              "operator": { "type": "boolean", "operation": "false" }
+              "operator": {
+                "type": "boolean",
+                "operation": "false"
+              }
             }
           ],
           "combinator": "and"
@@ -46,8 +58,11 @@
       "id": "a1000000-0000-4000-8000-000000000003",
       "name": "Anything To Upsert?",
       "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [220, 0]
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ]
     },
     {
       "parameters": {
@@ -58,21 +73,32 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/x-ndjson" },
-            { "name": "X-Pinecone-API-Version", "value": "2025-04" }
+            {
+              "name": "X-Pinecone-API-Version",
+              "value": "2025-04"
+            }
           ]
         },
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/x-ndjson",
         "body": "={{ $json.ndjson }}",
-        "options": { "response": { "response": { "neverError": false } } }
+        "options": {
+          "response": {
+            "response": {
+              "neverError": false
+            }
+          }
+        }
       },
       "id": "a1000000-0000-4000-8000-000000000004",
       "name": "Pinecone Upsert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [460, -100],
+      "position": [
+        460,
+        -100
+      ],
       "notes": "Header Auth credential: name 'Api-Key', value '<your pcsk_... key>'"
     },
     {
@@ -85,7 +111,10 @@
       "name": "Respond OK",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [700, -100]
+      "position": [
+        700,
+        -100
+      ]
     },
     {
       "parameters": {
@@ -97,20 +126,71 @@
       "name": "Respond Nothing To Do",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [460, 120]
+      "position": [
+        460,
+        120
+      ]
     }
   ],
   "connections": {
-    "Webhook": { "main": [[{ "node": "Build Records", "type": "main", "index": 0 }]] },
-    "Build Records": { "main": [[{ "node": "Anything To Upsert?", "type": "main", "index": 0 }]] },
-    "Anything To Upsert?": {
+    "Webhook": {
       "main": [
-        [{ "node": "Pinecone Upsert", "type": "main", "index": 0 }],
-        [{ "node": "Respond Nothing To Do", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Build Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Pinecone Upsert": { "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]] }
+    "Build Records": {
+      "main": [
+        [
+          {
+            "node": "Anything To Upsert?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anything To Upsert?": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Upsert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Nothing To Do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Upsert": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" },
-  "pinData": {}
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "liveWorkflowId": "PPEqgvwktq6DtkW1",
+    "instanceNote": "created via n8n MCP on 2026-08-15"
+  }
 }
