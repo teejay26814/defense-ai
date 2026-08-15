@@ -1,0 +1,86 @@
+{
+  "name": "Academia Scribes — Query",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "academia-query",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b1000000-0000-4000-8000-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-220, 0],
+      "webhookId": "b1000000-0000-4000-8000-0000000000ff",
+      "notes": "Header Auth credential: name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate the incoming query and clamp topK.\n//\n// The namespace comes from the app, which derives it from the signed-in student's own\n// id — this workflow never chooses it.\n\nconst body = $input.first().json.body ?? $input.first().json;\nconst { namespace, question } = body;\n\nif (!namespace || typeof question !== 'string' || !question.trim()) {\n  throw new Error('payload must include namespace and a non-empty question');\n}\n\nconst topK = Math.min(Math.max(Number(body.topK) || 8, 1), 30);\n\nreturn [{ json: { namespace, question: question.trim().slice(0, 4000), topK } }];"
+      },
+      "id": "b1000000-0000-4000-8000-000000000002",
+      "name": "Validate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://academia-scribes-qs7v7wv.svc.aped-4627-b74a.pinecone.io/records/namespaces/{{ $json.namespace }}/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Pinecone-API-Version", "value": "2025-04" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ query: { inputs: { text: $json.question }, top_k: $json.topK } }) }}",
+        "options": {}
+      },
+      "id": "b1000000-0000-4000-8000-000000000003",
+      "name": "Pinecone Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0],
+      "notes": "Header Auth credential: name 'Api-Key', value '<your pcsk_... key>'"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Return ids and scores only — deliberately not the text.\n//\n// The app hydrates chunk text from Postgres under the student's own session, so RLS\n// decides what can reach the prompt. Passing text back from here would route around\n// that. Do not add chunk_text to this response.\n\nconst hits = $input.first().json?.result?.hits ?? [];\n\nreturn [{\n  json: {\n    matches: hits.map((h) => ({\n      chunkId: h._id,\n      score: h._score,\n    })),\n  },\n}];"
+      },
+      "id": "b1000000-0000-4000-8000-000000000004",
+      "name": "Ids And Scores Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ matches: $json.matches }) }}",
+        "options": {}
+      },
+      "id": "b1000000-0000-4000-8000-000000000005",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [700, 0]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Validate", "type": "main", "index": 0 }]] },
+    "Validate": { "main": [[{ "node": "Pinecone Search", "type": "main", "index": 0 }]] },
+    "Pinecone Search": { "main": [[{ "node": "Ids And Scores Only", "type": "main", "index": 0 }]] },
+    "Ids And Scores Only": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

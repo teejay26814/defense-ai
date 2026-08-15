@@ -1,0 +1,116 @@
+{
+  "name": "Academia Scribes — Embed",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "academia-embed",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-220, 0],
+      "webhookId": "a1000000-0000-4000-8000-0000000000ff",
+      "notes": "Header Auth credential: name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turn the app's payload into Pinecone's NDJSON upsert format.\n//\n// Integrated inference means we send text, not vectors — Pinecone embeds on arrival.\n// The text field name must match the index's field_map (chunk_text by default).\n//\n// llama-text-embed-v2 caps input at 2048 tokens. The app chunks to ~800, so this is\n// headroom rather than a real limit, but a record over the cap is dropped here with a\n// reason rather than failing the whole batch.\n\nconst body = $input.first().json.body ?? $input.first().json;\nconst { documentId, projectId, userId, namespace, chunks } = body;\n\nif (!namespace || !Array.isArray(chunks)) {\n  throw new Error('payload must include namespace and chunks[]');\n}\n\nconst MAX_CHARS = 2048 * 4; // ~4 chars per token\n\nconst accepted = [];\nconst rejected = [];\n\nfor (const c of chunks) {\n  if (!c.id || typeof c.content !== 'string' || !c.content.trim()) {\n    rejected.push({ chunkId: c.id ?? 'unknown', error: 'empty content' });\n    continue;\n  }\n  if (c.content.length > MAX_CHARS) {\n    rejected.push({ chunkId: c.id, error: 'exceeds model input limit' });\n    continue;\n  }\n  accepted.push({\n    _id: c.id,\n    chunk_text: c.content,\n    document_id: documentId,\n    project_id: projectId,\n    user_id: userId,\n    chunk_index: c.index,\n  });\n}\n\nif (accepted.length === 0) {\n  return [{ json: { namespace, ndjson: '', accepted: [], rejected, skip: true } }];\n}\n\nreturn [{\n  json: {\n    namespace,\n    ndjson: accepted.map((r) => JSON.stringify(r)).join('\\n'),\n    accepted: accepted.map((r) => r._id),\n    rejected,\n    skip: false,\n  },\n}];"
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Build Records",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "version": 2 },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": false,
+              "operator": { "type": "boolean", "operation": "false" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Anything To Upsert?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://academia-scribes-qs7v7wv.svc.aped-4627-b74a.pinecone.io/records/namespaces/{{ $json.namespace }}/upsert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/x-ndjson" },
+            { "name": "X-Pinecone-API-Version", "value": "2025-04" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/x-ndjson",
+        "body": "={{ $json.ndjson }}",
+        "options": { "response": { "response": { "neverError": false } } }
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Pinecone Upsert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, -100],
+      "notes": "Header Auth credential: name 'Api-Key', value '<your pcsk_... key>'"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ embedded: $('Build Records').first().json.accepted, failed: $('Build Records').first().json.rejected }) }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [700, -100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ embedded: [], failed: $json.rejected }) }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "Respond Nothing To Do",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [460, 120]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Build Records", "type": "main", "index": 0 }]] },
+    "Build Records": { "main": [[{ "node": "Anything To Upsert?", "type": "main", "index": 0 }]] },
+    "Anything To Upsert?": {
+      "main": [
+        [{ "node": "Pinecone Upsert", "type": "main", "index": 0 }],
+        [{ "node": "Respond Nothing To Do", "type": "main", "index": 0 }]
+      ]
+    },
+    "Pinecone Upsert": { "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

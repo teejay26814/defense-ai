@@ -79,6 +79,12 @@ async function post<T>(url: string, payload: unknown, timeoutMs: number): Promis
       method: "POST",
       headers: {
         "content-type": "application/json",
+        // Bearer token so the n8n Webhook node can authenticate natively with its
+        // built-in Header Auth. The HMAC headers below are stronger — they also cover
+        // replay and body tampering — but verifying them needs `crypto` inside a Code
+        // node, which self-hosted n8n only exposes when NODE_FUNCTION_ALLOW_BUILTIN is
+        // set. Both are sent, so the workflow can start on Header Auth and tighten later.
+        authorization: `Bearer ${secret()}`,
         [SIGNATURE_HEADER]: sign(timestamp, body),
         [TIMESTAMP_HEADER]: timestamp,
       },
