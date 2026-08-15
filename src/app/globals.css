@@ -1,1 +1,127 @@
 @import "tailwindcss";
+
+/*
+ * Academia Scribes design tokens.
+ *
+ * Tailwind 4 is configured CSS-first — there is no tailwind.config.js and one must not be
+ * created. Everything declared in @theme below becomes a utility automatically, so
+ * --color-navy-700 gives you bg-navy-700, text-navy-700, border-navy-700, and so on.
+ *
+ * navy-700 and white are measured from Brand_Assest/Academia Scribes Logo.pdf. The rest
+ * of the scale is derived from that navy; see Brand_Assest/palette.md for what is brand
+ * fact and what is a working proposal. Never use the default Tailwind palette
+ * (indigo-500, blue-600, …) for brand surfaces.
+ */
+@theme {
+  /* --- Navy. 700 is the exact logo colour; do not adjust it. --- */
+  --color-navy-050: #f2f6fb;
+  --color-navy-100: #dce7f4;
+  --color-navy-300: #8fb4dc;
+  --color-navy-500: #1155a8;
+  --color-navy-600: #0a3a7d;
+  --color-navy-700: #052659;
+  --color-navy-800: #02193c;
+  --color-navy-900: #010f26;
+
+  /* --- Neutrals. Warm off-white: paper, not screen-white. --- */
+  --color-parchment: #fdfbf7;
+  --color-ink: #141821;
+  --color-ink-muted: #5a6377;
+
+  /* --- Accent. Not from the logo — see palette.md before relying on it. --- */
+  --color-gold: #c9a227;
+
+  /* --- Semantic --- */
+  --color-success: #1e7a5a;
+  --color-warning: #b5761e;
+  --color-danger: #a62b2b;
+
+  /*
+   * Depth: base → elevated → floating, as three real layers rather than one flat plane.
+   * Shadows are tinted with the brand navy at low opacity — never a neutral grey blur,
+   * and never a flat shadow-md.
+   */
+  --shadow-base: 0 1px 2px 0 rgb(5 38 89 / 0.04), 0 1px 3px 0 rgb(5 38 89 / 0.06);
+  --shadow-elevated: 0 2px 4px -1px rgb(5 38 89 / 0.05), 0 8px 16px -4px rgb(5 38 89 / 0.09);
+  --shadow-floating: 0 4px 8px -2px rgb(5 38 89 / 0.07), 0 20px 32px -8px rgb(5 38 89 / 0.14);
+
+  /*
+   * Spacing steps used for page rhythm. Intentional tokens, so vertical spacing is picked
+   * from a small set rather than reaching for an arbitrary Tailwind step each time.
+   */
+  --spacing-gutter: 1.5rem;
+  --spacing-section: 5rem;
+  --spacing-section-lg: 7.5rem;
+}
+
+/*
+ * Grain. A single SVG noise filter as a data URI, kept very faint. Applied via the
+ * .surface-grain utility over gradient areas so large colour fields do not band.
+ */
+@utility surface-grain {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Layered radial gradients, per the design guardrails — never a single flat wash. */
+@utility field-navy {
+  background-color: var(--color-navy-800);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 15% 0%, rgb(17 85 168 / 0.35), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 15%, rgb(201 162 39 / 0.12), transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 110%, rgb(1 15 38 / 0.85), transparent 70%);
+}
+
+@utility field-parchment {
+  background-color: var(--color-parchment);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 0% 0%, rgb(220 231 244 / 0.7), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 10%, rgb(201 162 39 / 0.07), transparent 55%);
+}
+
+@layer base {
+  html {
+    /* Anchor links and focus jumps should not slam against the viewport edge. */
+    scroll-padding-block-start: var(--spacing-section);
+  }
+
+  body {
+    background-color: var(--color-parchment);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /*
+   * Every interactive element gets a visible focus ring, and it is the same ring
+   * everywhere. focus-visible rather than focus, so a mouse click does not leave one
+   * behind.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Animate transform and opacity only. transition-all is banned by CLAUDE.md. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
