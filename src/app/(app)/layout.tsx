@@ -39,6 +39,23 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <Logo markClassName="h-7 w-auto" />
           </Link>
 
+          <nav className="flex items-center gap-1 text-sm">
+            <Link
+              href="/dashboard"
+              className="rounded-lg px-3 py-1.5 font-medium text-ink
+                transition-colors duration-150 hover:bg-navy-050 active:bg-navy-100"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/projects"
+              className="rounded-lg px-3 py-1.5 font-medium text-ink
+                transition-colors duration-150 hover:bg-navy-050 active:bg-navy-100"
+            >
+              Projects
+            </Link>
+          </nav>
+
           <div className="flex items-center gap-4">
             <span className="hidden text-sm text-ink-muted sm:inline">
               {profile?.full_name ?? user.email}

@@ -40,8 +40,8 @@ If not, it does not belong in the MVP.
 
 Build incrementally. Do not attempt the whole product at once.
 
-1. **Phase 1** — setup, Supabase, auth, basic UI ← *current*
-2. **Phase 2** — project creation, upload, storage, document processing
+1. **Phase 1** — setup, Supabase, auth, basic UI ✔ *done*
+2. **Phase 2** — project creation, upload, storage, document processing ← *current*
 3. **Phase 3** — RAG, knowledge base, Ask My Project *(AI provider chosen here)*
 4. **Phase 4** — defense questions, flashcards, quizzes
 5. **Phase 5** — mock defense, answer evaluation, readiness score
