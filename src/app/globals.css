@@ -31,6 +31,18 @@
   /* --- Accent. Not from the logo — see palette.md before relying on it. --- */
   --color-gold: #c9a227;
 
+  /*
+   * Typography. CLAUDE.md requires headings and body to use different faces, so these are
+   * a display serif paired with a clean sans.
+   *
+   * Both are system stacks on purpose — INTERIM. The logo is set in Biennale, but only in
+   * FONTSPRINGDEMO cuts, which are evaluation-only and cannot ship. Nothing is downloaded
+   * here, so there is no licence exposure and no web-font payload. Swap these two values
+   * once the font question is settled; nothing else needs to change.
+   */
+  --font-display: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
   /* --- Semantic --- */
   --color-success: #1e7a5a;
   --color-warning: #b5761e;
@@ -98,8 +110,17 @@
   body {
     background-color: var(--color-parchment);
     color: var(--color-ink);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
   }
 
   /*
