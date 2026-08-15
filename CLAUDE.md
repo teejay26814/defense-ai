@@ -108,7 +108,13 @@ working assumption and may need revising.
 - Supabase clients are split by environment and must not be mixed:
   - `src/lib/supabase/client.ts` — browser
   - `src/lib/supabase/server.ts` — server components and actions
-  - `src/middleware.ts` — session refresh and route guarding
+  - `src/proxy.ts` — session refresh and route guarding. Next.js 16 deprecated the
+    `middleware` file convention in favour of `proxy`; the exported function must be
+    named `proxy`, not `middleware`.
+- Public environment values are validated once in `src/lib/env.ts`. Only `NEXT_PUBLIC_*`
+  may be read there — that module reaches the browser.
+- Routes are denied by default. `src/proxy.ts` holds an explicit `PUBLIC_ROUTES` list, so
+  a newly created page is protected until it is deliberately opened up.
 - Mutations go through **server actions**, not client-side database writes.
 - Migrations live in `supabase/migrations/`, numbered and ordered.
 - Keep modules small and focused. Avoid unnecessary dependencies.
