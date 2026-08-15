@@ -18,7 +18,7 @@
         0
       ],
       "webhookId": "b1000000-0000-4000-8000-0000000000ff",
-      "notes": "Header Auth credential: name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
+      "notes": "Header Auth credential must be: header name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
     },
     {
       "parameters": {
@@ -61,7 +61,7 @@
         220,
         0
       ],
-      "notes": "Header Auth credential: name 'Api-Key', value '<your pcsk_... key>'"
+      "notes": "NEEDS ITS OWN Header Auth credential: header name 'Api-Key', value '<your pcsk_... key>'. Never send the webhook secret here — Pinecone is a third party."
     },
     {
       "parameters": {
@@ -89,6 +89,21 @@
       "position": [
         700,
         0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Query\n\nApp sends a question, gets back matching chunk **ids and scores**.\n\n### Credential name is NOT header name\n\nWhat you call a credential in n8n is just a label. The **header name** it sends is set inside the credential:\n\n- **Webhook** → header `Authorization`, value `Bearer <N8N_WEBHOOK_SECRET>`\n- **Pinecone Search** → header `Api-Key`, value your `pcsk_...`\n\nTwo different credentials. Never send the webhook secret to Pinecone.\n\n### Do not return chunk_text\n\nThe app hydrates text from Postgres under the student own session, so RLS decides what reaches the prompt.",
+        "height": 460,
+        "width": 420
+      },
+      "id": "note-WhNQrPs0apx0EzPn",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        200
       ]
     }
   ],
@@ -144,6 +159,6 @@
   "pinData": {},
   "meta": {
     "liveWorkflowId": "WhNQrPs0apx0EzPn",
-    "instanceNote": "created via n8n MCP on 2026-08-15"
+    "instanceNote": "live on the RepoCloud n8n instance; credentials attached in the UI, not stored here"
   }
 }

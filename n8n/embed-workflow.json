@@ -18,7 +18,7 @@
         0
       ],
       "webhookId": "a1000000-0000-4000-8000-0000000000ff",
-      "notes": "Header Auth credential: name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
+      "notes": "Header Auth credential must be: header name 'Authorization', value 'Bearer <N8N_WEBHOOK_SECRET>'"
     },
     {
       "parameters": {
@@ -99,7 +99,7 @@
         460,
         -100
       ],
-      "notes": "Header Auth credential: name 'Api-Key', value '<your pcsk_... key>'"
+      "notes": "NEEDS ITS OWN Header Auth credential: header name 'Api-Key', value '<your pcsk_... key>'. Do NOT reuse the webhook's credential."
     },
     {
       "parameters": {
@@ -129,6 +129,21 @@
       "position": [
         460,
         120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Embed\n\nApp sends chunk ids + text. Pinecone embeds on arrival (integrated inference), so no embeddings key is needed.\n\n### Two SEPARATE credentials\n\nA credential name is only a label. The header it sends is set INSIDE the credential.\n\n- **Webhook** → header `Authorization`, value `Bearer <N8N_WEBHOOK_SECRET>`\n- **Pinecone Upsert** → header `Api-Key`, value your `pcsk_...`\n\nOne credential cannot serve both nodes. Never paste a key into a header parameter — that stores it in plaintext in the workflow.\n\nReturns `{ embedded: [ids], failed: [...] }` — the app flips exactly those rows.",
+        "height": 460,
+        "width": 420
+      },
+      "id": "note-PPEqgvwktq6DtkW1",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        200
       ]
     }
   ],
@@ -191,6 +206,6 @@
   "pinData": {},
   "meta": {
     "liveWorkflowId": "PPEqgvwktq6DtkW1",
-    "instanceNote": "created via n8n MCP on 2026-08-15"
+    "instanceNote": "live on the RepoCloud n8n instance; credentials attached in the UI, not stored here"
   }
 }

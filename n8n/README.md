@@ -11,22 +11,45 @@ database, and it never holds a Supabase credential.
 Index host baked into both: `academia-scribes-qs7v7wv.svc.aped-4627-b74a.pinecone.io`.
 If you recreate the index, update the URL in the two HTTP Request nodes.
 
-## Import
+## Live on the instance
 
-**Workflows → Import from File** for each. Then create two credentials, both of type
-**Header Auth**, and attach them:
+Both already exist and are active — created through the n8n MCP connector, not imported:
 
-| Credential | Header name | Header value | Attach to |
+| Workflow | Id |
+| --- | --- |
+| Academia Scribes — Embed | `PPEqgvwktq6DtkW1` |
+| Academia Scribes — Query | `WhNQrPs0apx0EzPn` |
+
+The files here are the source of truth for their shape. They deliberately carry **no**
+`credentials` blocks — credential ids are instance-specific and secrets never belong in a
+repo.
+
+## Credentials — the part that is easy to get wrong
+
+**A credential's name is only a label. The header it sends is configured *inside* it.**
+Getting these confused is what broke the first setup: credential names were typed into the
+nodes' header-parameter fields, so Pinecone received a header called `Pinecone API` in one
+workflow and the n8n webhook secret in the other.
+
+Create **two** Header Auth credentials:
+
+| Call it | Header **name** inside it | Header **value** | Attach to |
 | --- | --- | --- | --- |
-| Academia Webhook Auth | `Authorization` | `Bearer <N8N_WEBHOOK_SECRET>` | the **Webhook** node in both workflows |
-| Pinecone API | `Api-Key` | your `pcsk_...` key | the **HTTP Request** node in both workflows |
+| Academia Webhook Auth | `Authorization` | `Bearer <N8N_WEBHOOK_SECRET>` | the **Webhook** node, both workflows |
+| Pinecone API | `Api-Key` | your `pcsk_...` | the **Pinecone** node, both workflows |
 
-`N8N_WEBHOOK_SECRET` is in the app's `.env.local`. The two must match exactly, `Bearer `
+`N8N_WEBHOOK_SECRET` is in the app's `.env.local`; the values must match exactly, `Bearer `
 prefix included.
 
-Activate both workflows, then copy each **Production URL** into the app's `.env.local` as
-`N8N_EMBED_WEBHOOK_URL` and `N8N_QUERY_WEBHOOK_URL`. The Test URL only accepts one call
-per "Listen for test event" click — don't wire that one up.
+Two rules worth stating plainly:
+
+- **One credential cannot serve both nodes.** They send different headers.
+- **Never put a key in a header parameter.** Those are stored in plaintext in the workflow
+  definition. Only credentials are encrypted.
+
+Then copy each **Production URL** into the app's `.env.local` as `N8N_EMBED_WEBHOOK_URL`
+and `N8N_QUERY_WEBHOOK_URL`. The Test URL accepts one call per "Listen for test event"
+click — don't wire that one up.
 
 ## What crosses the wire
 
