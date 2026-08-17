@@ -47,6 +47,27 @@ export type QueryResponse = {
   matches: { chunkId: string; score: number }[];
 };
 
+/**
+ * Answer generation.
+ *
+ * Unlike the two calls above, this one deliberately sends chunk *text* to n8n — it has to,
+ * because the model needs the excerpts. That is safe only because of when it happens: the
+ * caller has already hydrated these chunks out of Postgres under the student's own
+ * session, so RLS has decided what is in here before it leaves the app. n8n is handed a
+ * finished, already-authorised excerpt list and must not look anything else up.
+ *
+ * Excerpt order is part of the contract. n8n numbers the excerpts as it receives them and
+ * the model cites them by number, so the caller maps `[n]` back to a chunk id by position.
+ */
+export type AnswerRequest = {
+  projectId: string;
+  userId: string;
+  question: string;
+  chunks: { id: string; chapter: number | null; label: string | null; content: string }[];
+};
+
+export type AnswerResponse = { answer: string };
+
 const SIGNATURE_HEADER = "x-academia-signature";
 const TIMESTAMP_HEADER = "x-academia-timestamp";
 
@@ -95,7 +116,24 @@ async function post<T>(url: string, payload: unknown, timeoutMs: number): Promis
     if (!res.ok) {
       throw new Error(`n8n responded ${res.status}: ${(await res.text()).slice(0, 300)}`);
     }
-    return (await res.json()) as T;
+
+    // A workflow that throws before reaching its "Respond to Webhook" node answers 200
+    // with an empty body rather than an error status. Parsing that would surface as
+    // "Unexpected end of JSON input", which says nothing useful — so name it here, and
+    // point at the execution log, which is where the actual reason lives.
+    const text = await res.text();
+    if (!text.trim()) {
+      throw new Error(
+        "n8n returned an empty response, which means the workflow failed before it could " +
+          "reply. Check the workflow's execution log for the failing node.",
+      );
+    }
+
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      throw new Error(`n8n returned a non-JSON response: ${text.slice(0, 300)}`);
+    }
   } finally {
     clearTimeout(timer);
   }
@@ -122,4 +160,14 @@ export async function requestRetrieval(payload: QueryRequest): Promise<QueryResp
   const url = process.env.N8N_QUERY_WEBHOOK_URL;
   if (!url) throw new Error("N8N_QUERY_WEBHOOK_URL is not set.");
   return post<QueryResponse>(url, payload, 60_000);
+}
+
+/**
+ * Generous timeout: a long answer on a cold workflow can take a while, and the student is
+ * watching a spinner until it lands — a premature abort costs them the whole question.
+ */
+export async function requestAnswer(payload: AnswerRequest): Promise<AnswerResponse> {
+  const url = process.env.N8N_ANSWER_WEBHOOK_URL;
+  if (!url) throw new Error("N8N_ANSWER_WEBHOOK_URL is not set.");
+  return post<AnswerResponse>(url, payload, 120_000);
 }

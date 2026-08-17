@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { answerFromChunks, LlmError, type SourceChunk } from "@/lib/llm";
-import { namespaceFor, requestRetrieval } from "@/lib/n8n";
+import { citedChunkIds, type SourceChunk } from "@/lib/llm";
+import { namespaceFor, requestAnswer, requestRetrieval } from "@/lib/n8n";
 import { toFieldErrors } from "@/lib/validation/auth";
 
 export type AskState = {
@@ -81,7 +81,7 @@ export async function askProject(
 
   if (!project) return { error: "That project could not be found.", question };
 
-  if (!process.env.N8N_QUERY_WEBHOOK_URL) {
+  if (!process.env.N8N_QUERY_WEBHOOK_URL || !process.env.N8N_ANSWER_WEBHOOK_URL) {
     return {
       error:
         "Search is not connected yet. Once the retrieval workflow is wired up, your " +
@@ -134,12 +134,29 @@ export async function askProject(
   }
 
   try {
-    const result = await answerFromChunks(chunks, question);
-    const cited = new Set(result.usedChunkIds);
+    // Chunk order is the citation contract: n8n numbers these as it receives them, and
+    // citedChunkIds() maps `[n]` back by position. Send them exactly as hydrated.
+    const { answer } = await requestAnswer({
+      projectId,
+      userId: user.id,
+      question,
+      chunks: chunks.map((c) => ({
+        id: c.id,
+        chapter: c.chapter,
+        label: c.label,
+        content: c.content,
+      })),
+    });
+
+    if (!answer?.trim()) {
+      return { error: "The answer came back empty. Please try again.", question };
+    }
+
+    const cited = new Set(citedChunkIds(answer, chunks));
 
     return {
       question,
-      answer: result.answer,
+      answer: answer.trim(),
       sources: chunks.map((c) => ({
         id: c.id,
         chapter: c.chapter,
@@ -149,7 +166,8 @@ export async function askProject(
       })),
     };
   } catch (err) {
-    if (err instanceof LlmError) return { error: err.message, question };
+    // Provider and workflow errors are logged in full but never surfaced — they can carry
+    // key fragments, model routing details, and account information.
     console.error("[askProject] generation failed", err);
     return { error: "The answer could not be generated. Please try again.", question };
   }
