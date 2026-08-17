@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { extractText, ExtractionError } from "@/lib/extract";
+import { indexDocument } from "@/lib/indexing";
 import { STORAGE_BUCKET } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 import {
@@ -228,7 +229,8 @@ export async function uploadDocument(
 
   // Extraction runs inline. It is fast for the file sizes allowed here, and doing it now
   // means the student sees a real result rather than a row stuck on "processing" with no
-  // worker behind it. Moving this to a queue is a Phase 3 concern.
+  // worker behind it.
+  let indexNote = "";
   try {
     const result = await extractText(buffer, file.type, cleanName);
     await supabase
@@ -242,6 +244,25 @@ export async function uploadDocument(
       })
       .eq("id", doc.id)
       .eq("user_id", user.id);
+
+    // Indexing is deliberately in its own try. Extraction is what makes the document
+    // usable at all; search is an enhancement on top. A retrieval outage should not make
+    // a successful upload look like a failure, so a failure here is reported as a caveat
+    // and the chunks can be rebuilt later with "Try again".
+    try {
+      const indexed = await indexDocument(supabase, {
+        documentId: doc.id,
+        projectId,
+        userId: user.id,
+        text: result.text,
+      });
+      indexNote = indexed.skipped
+        ? ` ${indexed.chunkCount} sections saved — ${indexed.skipped}.`
+        : ` ${indexed.embeddedCount} of ${indexed.chunkCount} sections are searchable.`;
+    } catch (err) {
+      console.error("[uploadDocument] indexing failed", err);
+      indexNote = " It could not be made searchable yet — use “Try again” on the document.";
+    }
   } catch (err) {
     const message =
       err instanceof ExtractionError
@@ -263,7 +284,7 @@ export async function uploadDocument(
 
   revalidatePath(`/projects/${projectId}`);
   revalidatePath("/dashboard");
-  return { notice: `“${meta.data.label}” uploaded and read.` };
+  return { notice: `“${meta.data.label}” uploaded and read.${indexNote}` };
 }
 
 export async function deleteDocument(formData: FormData) {
@@ -300,7 +321,7 @@ export async function retryExtraction(formData: FormData) {
 
   const { data: doc } = await supabase
     .from("documents")
-    .select("id, storage_path, mime_type, file_name")
+    .select("id, project_id, storage_path, mime_type, file_name")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -340,6 +361,20 @@ export async function retryExtraction(formData: FormData) {
       })
       .eq("id", id)
       .eq("user_id", user.id);
+
+    // Rebuild the search index too — this is the path a student uses after a failure, so
+    // it has to fix retrieval as well as extraction. Failing here leaves the document
+    // readable but not searchable, which is recoverable by pressing it again.
+    try {
+      await indexDocument(supabase, {
+        documentId: id,
+        projectId: doc.project_id,
+        userId: user.id,
+        text: result.text,
+      });
+    } catch (indexErr) {
+      console.error("[retryExtraction] indexing failed", indexErr);
+    }
   } catch (err) {
     await supabase
       .from("documents")
