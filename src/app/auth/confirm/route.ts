@@ -28,10 +28,21 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type") as EmailOtpType | null;
   const next = safeRedirect(searchParams.get("next"));
 
+  // Redirects are built from nextUrl, never from request.url. On Netlify the latter
+  // resolves to the branch host (main--site.netlify.app) even when the request arrived on
+  // the canonical domain, and the auth cookie verifyOtp just set belongs to the canonical
+  // host. Redirecting across the two silently drops the session, so the student lands on
+  // the reset page and is told their link expired.
+  const redirectTo = (path: string) => {
+    const url = request.nextUrl.clone();
+    const [pathname, search] = path.split("?");
+    url.pathname = pathname;
+    url.search = search ? `?${search}` : "";
+    return NextResponse.redirect(url);
+  };
+
   if (!tokenHash || !type) {
-    return NextResponse.redirect(
-      new URL("/login?notice=invalid-link", request.url),
-    );
+    return redirectTo("/login?notice=invalid-link");
   }
 
   const supabase = await createClient();
@@ -39,12 +50,12 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     console.error("[auth/confirm] verifyOtp failed", error.message);
-    return NextResponse.redirect(new URL("/login?notice=expired-link", request.url));
+    return redirectTo("/login?notice=expired-link");
   }
 
   // A recovery link signs the student in so they can set a new password. Sending them to
   // the dashboard instead would leave them logged in with a password they cannot remember.
   const destination = type === "recovery" ? "/reset-password" : next;
 
-  return NextResponse.redirect(new URL(destination, request.url));
+  return redirectTo(destination);
 }
