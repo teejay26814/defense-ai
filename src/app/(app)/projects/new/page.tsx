@@ -22,7 +22,7 @@ export default function NewProjectPage() {
       <header className="mb-8">
         <h1 className="font-display text-3xl text-ink">Add your project</h1>
         <p className="mt-2 text-ink-muted">
-          Only the title is required — everything else sharpens the questions you will be
+          Only the title is required - everything else sharpens the questions you will be
           asked later, and can be filled in whenever you like.
         </p>
       </header>

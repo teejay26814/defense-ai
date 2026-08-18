@@ -126,7 +126,7 @@ export async function deleteProject(formData: FormData) {
   const { supabase, user } = await requireUser();
 
   // Remove the files first. The database row cascades to documents, but storage objects
-  // are not part of that cascade — deleting the row first would orphan them permanently.
+  // are not part of that cascade - deleting the row first would orphan them permanently.
   const { data: docs } = await supabase
     .from("documents")
     .select("storage_path")
@@ -187,7 +187,7 @@ export async function uploadDocument(
 
   const cleanName = safeFileName(file.name);
   const ext = cleanName.includes(".") ? cleanName.split(".").pop() : "bin";
-  // The first path segment must be the user id — the storage policies pivot on it.
+  // The first path segment must be the user id - the storage policies pivot on it.
   const storagePath = `${user.id}/${projectId}/${crypto.randomUUID()}.${ext}`;
 
   const buffer = await file.arrayBuffer();
@@ -257,11 +257,11 @@ export async function uploadDocument(
         text: result.text,
       });
       indexNote = indexed.skipped
-        ? ` ${indexed.chunkCount} sections saved — ${indexed.skipped}.`
+        ? ` ${indexed.chunkCount} sections saved - ${indexed.skipped}.`
         : ` ${indexed.embeddedCount} of ${indexed.chunkCount} sections are searchable.`;
     } catch (err) {
       console.error("[uploadDocument] indexing failed", err);
-      indexNote = " It could not be made searchable yet — use “Try again” on the document.";
+      indexNote = " It could not be made searchable yet - use “Try again” on the document.";
     }
   } catch (err) {
     const message =
@@ -275,7 +275,7 @@ export async function uploadDocument(
       .eq("user_id", user.id);
 
     revalidatePath(`/projects/${projectId}`);
-    // The upload itself succeeded — the file is stored and the row exists. Say what
+    // The upload itself succeeded - the file is stored and the row exists. Say what
     // actually happened rather than implying nothing was saved.
     return {
       error: `${message} The file was kept, so you can replace it or remove it.`,
@@ -362,7 +362,7 @@ export async function retryExtraction(formData: FormData) {
       .eq("id", id)
       .eq("user_id", user.id);
 
-    // Rebuild the search index too — this is the path a student uses after a failure, so
+    // Rebuild the search index too - this is the path a student uses after a failure, so
     // it has to fix retrieval as well as extraction. Failing here leaves the document
     // readable but not searchable, which is recoverable by pressing it again.
     try {

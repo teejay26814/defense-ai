@@ -11,7 +11,7 @@ const initialState: AuthFormState = {};
 export function SignupForm({ next }: { next?: string }) {
   const [state, formAction] = useActionState(signUp, initialState);
 
-  // Once the confirmation notice is showing, the form has done its job — leaving the
+  // Once the confirmation notice is showing, the form has done its job - leaving the
   // fields up invites a second submission that would only error.
   if (state.notice) {
     return <FormMessage tone="notice">{state.notice}</FormMessage>;

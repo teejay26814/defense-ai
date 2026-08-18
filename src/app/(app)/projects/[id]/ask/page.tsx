@@ -21,7 +21,7 @@ export default async function AskPage({ params }: PageProps<"/projects/[id]/ask"
   if (!project) notFound();
 
   // Only embedded chunks are retrievable, so this count is what the student can actually
-  // ask against — not how much they have uploaded.
+  // ask against - not how much they have uploaded.
   const { count: searchable } = await supabase
     .from("chunks")
     .select("id", { count: "exact", head: true })

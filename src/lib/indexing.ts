@@ -9,7 +9,7 @@ import { namespaceFor, requestEmbedding } from "@/lib/n8n";
  * Turns an extracted document into retrievable chunks.
  *
  * Runs inside a server action, so the Supabase client passed in still carries the
- * student's session — every write below happens under RLS. That is the whole reason
+ * student's session - every write below happens under RLS. That is the whole reason
  * chunking lives here rather than in n8n: n8n has no session, so it would need the
  * service-role key, which bypasses RLS entirely.
  *
@@ -70,7 +70,7 @@ export async function indexDocument(
 
   // Degrade rather than fail when the orchestration layer is not configured yet. The
   // chunks are stored and the document is still readable; only retrieval is unavailable,
-  // and it starts working as soon as the webhook URL is set — no re-upload needed.
+  // and it starts working as soon as the webhook URL is set - no re-upload needed.
   if (!process.env.N8N_EMBED_WEBHOOK_URL) {
     return {
       chunkCount: rows.length,

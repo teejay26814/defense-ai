@@ -17,7 +17,7 @@ const initialState: ActionState = {};
 
 const CHAPTER_OPTIONS = CHAPTERS.map((c) => ({
   value: String(c.value),
-  label: `${c.label} — ${c.hint}`,
+  label: `${c.label} - ${c.hint}`,
 }));
 
 export function UploadForm({ projectId }: { projectId: string }) {
@@ -64,7 +64,7 @@ export function UploadForm({ projectId }: { projectId: string }) {
       <SubmitButton>Upload and read</SubmitButton>
 
       <p className="text-xs text-ink-muted">
-        Scanned PDFs will not work — the text in them is an image. Export from your word
+        Scanned PDFs will not work - the text in them is an image. Export from your word
         processor instead.
       </p>
     </form>

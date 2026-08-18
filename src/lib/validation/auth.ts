@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Auth input schemas. Every one of these runs on the server inside the action, not just
- * in the browser — client-side validation is a convenience, never a control.
+ * in the browser - client-side validation is a convenience, never a control.
  */
 
 const email = z
@@ -15,7 +15,7 @@ const email = z
 
 /**
  * Supabase enforces a minimum of 6 by default; 8 is the floor here. The upper bound
- * matters too — bcrypt silently truncates past 72 bytes, so a longer password would give
+ * matters too - bcrypt silently truncates past 72 bytes, so a longer password would give
  * a false sense of strength.
  */
 const password = z

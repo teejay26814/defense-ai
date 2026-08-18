@@ -61,7 +61,7 @@ export type ActionState = {
  * File checks that must run on the server.
  *
  * The bucket enforces its own size and MIME limits, but failing here gives the student a
- * sentence they can act on instead of a storage API error — and it stops a large upload
+ * sentence they can act on instead of a storage API error - and it stops a large upload
  * being streamed only to be rejected at the end.
  */
 export function validateUpload(file: File): string | null {
@@ -75,7 +75,7 @@ export function validateUpload(file: File): string | null {
   const mimeAllowed = Boolean(ACCEPTED_MIME[file.type]);
 
   // Browsers report an empty or wrong MIME type often enough that the extension has to be
-  // accepted as a fallback — but one of the two must match.
+  // accepted as a fallback - but one of the two must match.
   if (!mimeAllowed && !extAllowed) {
     return "Upload a PDF, Word document (.docx), or plain text file.";
   }

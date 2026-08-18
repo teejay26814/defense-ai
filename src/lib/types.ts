@@ -52,7 +52,7 @@ export type ProjectDocument = {
   updated_at: string;
 };
 
-/** `content` is deliberately omitted — it is large and never needed in a list view. */
+/** `content` is deliberately omitted - it is large and never needed in a list view. */
 export type DocumentSummary = Omit<ProjectDocument, "content">;
 
 export const DEGREE_LABELS: Record<DegreeLevel, string> = {

@@ -7,7 +7,7 @@ import "server-only";
  * file and store it. Chunking, embeddings and retrieval are Phase 3 and deliberately not
  * started here.
  *
- * Nothing in this module calls an AI provider. Extraction is parsing, not inference — the
+ * Nothing in this module calls an AI provider. Extraction is parsing, not inference - the
  * text must be exactly what the student wrote, because every later answer is grounded in
  * it and cites it.
  */
@@ -53,7 +53,7 @@ async function extractPdf(buffer: ArrayBuffer): Promise<ExtractResult> {
   if (!merged) {
     throw new ExtractionError(
       "No text could be read from this PDF. If it is a scan or a photograph of pages, " +
-        "the text is an image — export a text-based PDF from your word processor instead.",
+        "the text is an image - export a text-based PDF from your word processor instead.",
     );
   }
 
@@ -69,7 +69,7 @@ async function extractDocx(buffer: ArrayBuffer): Promise<ExtractResult> {
     throw new ExtractionError("This document appears to be empty.");
   }
 
-  // A .docx has no fixed page count — pagination is decided at render time by the word
+  // A .docx has no fixed page count - pagination is decided at render time by the word
   // processor, so reporting one here would be a guess.
   return { text, wordCount: countWords(text), pageCount: null };
 }

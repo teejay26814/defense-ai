@@ -12,7 +12,7 @@ import { env } from "@/lib/env";
  */
 const PUBLIC_ROUTES = ["/", "/login", "/signup", "/forgot-password"];
 
-/** Routes that only make sense signed out — a signed-in student gets sent to the app. */
+/** Routes that only make sense signed out - a signed-in student gets sent to the app. */
 const SIGNED_OUT_ONLY_ROUTES = ["/login", "/signup", "/forgot-password"];
 
 /** Where a signed-in student lands when they have no more specific destination. */

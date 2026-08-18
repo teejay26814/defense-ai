@@ -1,7 +1,7 @@
 /**
  * The Academia Scribes book mark, inlined so it inherits `currentColor` and can be
  * recoloured per context. The paths are lifted verbatim from
- * Brand_Assest/logo-mark.svg — do not hand-edit them; regenerate from the source PDF.
+ * Brand_Assest/logo-mark.svg - do not hand-edit them; regenerate from the source PDF.
  *
  * The letter A is an even-odd knockout rather than a separate shape, which is why the
  * mark stays legible in a single colour at any size.

@@ -10,15 +10,15 @@ colour space is `ICCBased` with `N 3`, so the operands below are true RGB.
 | --- | --- | --- |
 | `#052659` | `0.0196 0.149 0.349 scn` | The full-bleed 432×432 background square |
 | `#FFFFFF` | `1 1 1 scn` | The mark and the wordmark |
-| `#000000` | `0 0 0 scn` | 5 uses, inside an optional-content group — almost certainly a mask, not a brand colour |
+| `#000000` | `0 0 0 scn` | 5 uses, inside an optional-content group - almost certainly a mask, not a brand colour |
 
-The artwork is 432×432pt (6in square) and fully vector — there are no raster images in it,
+The artwork is 432×432pt (6in square) and fully vector - there are no raster images in it,
 and no colour beyond the three above. So the brand as delivered is **navy and white**.
 
 ## Working palette
 
 Only `#052659` and `#FFFFFF` come from the logo. Everything else below is derived from
-that navy and is a **proposal** — it is the honest minimum needed to build a UI, not
+that navy and is a **proposal** - it is the honest minimum needed to build a UI, not
 brand law. Replace any of it the moment there is a real brand spec.
 
 ### Navy scale
@@ -39,7 +39,7 @@ logo colour and must not be adjusted.
 
 ### Neutrals
 
-Warm, slightly off-white — paper rather than screen-white. This is what keeps the product
+Warm, slightly off-white - paper rather than screen-white. This is what keeps the product
 feeling academic instead of generic SaaS.
 
 | Token | Hex | Use |
@@ -48,7 +48,7 @@ feeling academic instead of generic SaaS.
 | `ink` | `#141821` | Body text |
 | `ink-muted` | `#5A6377` | Secondary text, captions |
 
-### Accent — unconfirmed
+### Accent - unconfirmed
 
 | Token | Hex | Use |
 | --- | --- | --- |
@@ -66,7 +66,7 @@ accent colour, this is the first thing to replace.
 | `warning` | `#B5761E` | Needs review, weak area |
 | `danger` | `#A62B2B` | Failed, destructive action |
 
-## Typography — blocked, see below
+## Typography - blocked, see below
 
 The logo embeds two subsetted fonts:
 
@@ -78,13 +78,13 @@ IELBET+FONTSPRINGDEMO-BiennaleLightRegular    → /F23, used for "Scribes"
 Both are set at 29.25pt, starting at x=180 with the second line offset by (-18.19, -27.89).
 
 `FONTSPRINGDEMO` is the giveaway. These are **Fontspring demo/trial cuts of Biennale**,
-which are licensed for evaluation only — not for a commercial product, not for web
+which are licensed for evaluation only - not for a commercial product, not for web
 embedding, and not for redistribution. Shipping them in a paid SaaS would be a licensing
 violation, and the demo files are usually character-subsetted anyway, so they would break
 on real content.
 
 **This affects the logo file itself, not just the UI.** The wordmark in the PDF is *live
-text*, not outlines — the content streams show `Tj` operators drawing glyph IDs through
+text*, not outlines - the content streams show `Tj` operators drawing glyph IDs through
 `/F16` and `/F23`. So "Academia Scribes" in the artwork is rendered by an unlicensed demo
 font that happens to be embedded. The book mark is unaffected: it is genuine vector paths
 and has been extracted to SVG (see below).
@@ -94,7 +94,7 @@ decision.
 
 Three ways forward, in order of preference:
 
-1. **Buy a Biennale licence** (Fontspring, by Kimmy Design) — keeps the UI matched to the
+1. **Buy a Biennale licence** (Fontspring, by Kimmy Design) - keeps the UI matched to the
    logo exactly.
 2. **Use a free lookalike.** Biennale is a geometric humanist sans; Poppins, Outfit, or
    Figtree sit close and are all SIL Open Font Licence.
@@ -118,7 +118,7 @@ The PDF has **4 pages**, all 432×432pt, all vector, no raster images, no hidden
 
 The book mark was converted straight from the PDF path operators (`m l c h f*`, even-odd
 fill, with the PDF y-up axis flipped to SVG y-down). It occupies x[110.2–155.0],
-y[187.3–247.1] on the page — 44.75 × 59.75pt.
+y[187.3–247.1] on the page - 44.75 × 59.75pt.
 
 | File | Fill | Notes |
 | --- | --- | --- |
@@ -127,7 +127,7 @@ y[187.3–247.1] on the page — 44.75 × 59.75pt.
 | `logo-mark-white.svg` | `#FFFFFF` | Fixed white, for navy or photographic backgrounds |
 | `logo-mark-simple.svg` | `currentColor` | The 65-point outline from pages 1–2, for comparison |
 
-`src/app/icon.svg` is `logo-mark-navy.svg` padded to a square — Next.js picks it up
+`src/app/icon.svg` is `logo-mark-navy.svg` padded to a square - Next.js picks it up
 automatically as the favicon.
 
 The mark is a book with the letter **A** knocked out of it (an even-odd counter, not a
@@ -141,4 +141,4 @@ Because the A is a knockout, the mark reads correctly at any single colour.
   question is settled, the wordmark can either be set in the licensed face or converted to
   outlines and exported.
 - A full lockup SVG (mark + wordmark), which depends on the above.
-- Confirmation of which outline is canonical — the 65-point or the 135-point mark.
+- Confirmation of which outline is canonical - the 65-point or the 135-point mark.

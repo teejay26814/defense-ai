@@ -11,7 +11,7 @@ type ProjectRow = Project & { documents: { count: number }[] };
 export default async function ProjectsPage() {
   const supabase = await createClient();
 
-  // RLS scopes this to the signed-in student — no user filter is needed here, and adding
+  // RLS scopes this to the signed-in student - no user filter is needed here, and adding
   // one would only hide a policy mistake rather than prevent it.
   const { data } = await supabase
     .from("projects")

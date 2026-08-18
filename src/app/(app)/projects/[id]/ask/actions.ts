@@ -27,7 +27,7 @@ const askSchema = z.object({
   question: z
     .string()
     .trim()
-    .min(5, "Ask a fuller question — a few words is not enough to search on.")
+    .min(5, "Ask a fuller question - a few words is not enough to search on.")
     .max(2000, "That question is too long."),
 });
 
@@ -39,13 +39,13 @@ const TOP_K = 8;
  *
  * The sequence is the security model, not just the data flow:
  *
- *   1. n8n searches the vector index and returns chunk ids — never text.
+ *   1. n8n searches the vector index and returns chunk ids - never text.
  *   2. Those ids are hydrated through chunks_by_ids(), a security-invoker function, using
  *      this request's Supabase client. RLS therefore decides what comes back.
  *   3. Only what survived step 2 is put in front of the model.
  *
  * So even if the index returned ids from another student's namespace, nothing of theirs
- * could reach the prompt — the hydration would simply drop them.
+ * could reach the prompt - the hydration would simply drop them.
  */
 export async function askProject(
   _prev: AskState,
@@ -113,7 +113,7 @@ export async function askProject(
     };
   }
 
-  // Hydration under the student's session — this is where RLS applies.
+  // Hydration under the student's session - this is where RLS applies.
   const { data: hydrated, error: hydrateError } = await supabase.rpc("chunks_by_ids", {
     chunk_ids: matches.map((m) => m.chunkId),
   });
@@ -166,7 +166,7 @@ export async function askProject(
       })),
     };
   } catch (err) {
-    // Provider and workflow errors are logged in full but never surfaced — they can carry
+    // Provider and workflow errors are logged in full but never surfaced - they can carry
     // key fragments, model routing details, and account information.
     console.error("[askProject] generation failed", err);
     return { error: "The answer could not be generated. Please try again.", question };

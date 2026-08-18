@@ -10,7 +10,7 @@ const STEPS = [
   },
   {
     title: "Remember",
-    body: "Flashcards and quizzes built from your actual work — not generic study material.",
+    body: "Flashcards and quizzes built from your actual work - not generic study material.",
   },
   {
     title: "Practise",
@@ -74,7 +74,7 @@ export default async function Home() {
             </h1>
             <p className="mt-6 max-w-xl text-lg text-ink-muted">
               Academia Scribes turns your final-year project into a private coach. Upload
-              your chapters and prepare against your own work — not a generic study guide.
+              your chapters and prepare against your own work - not a generic study guide.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -127,7 +127,7 @@ export default async function Home() {
             </h2>
             <p className="mt-4 max-w-xl text-white/70">
               Every project is an isolated knowledge base. No student can reach another
-              student&apos;s work — that is enforced in the database, not just the app.
+              student&apos;s work - that is enforced in the database, not just the app.
             </p>
           </div>
         </section>

@@ -32,12 +32,12 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
     .maybeSingle<Project>();
 
   // RLS makes another student's project indistinguishable from one that does not exist,
-  // which is exactly right — a 404 leaks nothing about what other people have.
+  // which is exactly right - a 404 leaks nothing about what other people have.
   if (!project) notFound();
 
   // Selected as one literal, not a concatenation: the Supabase client parses this string
   // at the type level, and a joined expression collapses the row type to an error type.
-  // `content` is deliberately excluded — it is large and unused in this view.
+  // `content` is deliberately excluded - it is large and unused in this view.
   const { data: docs } = await supabase
     .from("documents")
     .select(
@@ -130,7 +130,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
         </div>
       </header>
 
-      {/* What to do next — the dashboard guardrail applies here too. */}
+      {/* What to do next - the dashboard guardrail applies here too. */}
       <section className="field-parchment surface-grain rounded-2xl border border-navy-100 p-6 shadow-elevated">
         <p className="text-xs font-semibold uppercase tracking-widest text-gold">
           {missingChapters.length === 0 ? "All chapters in" : "Next step"}
@@ -138,7 +138,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
         <h2 className="mt-2 font-display text-xl text-ink">
           {missingChapters.length === 0
             ? "Your project is fully uploaded."
-            : `Upload ${missingChapters[0].label} — ${missingChapters[0].hint}`}
+            : `Upload ${missingChapters[0].label} - ${missingChapters[0].hint}`}
         </h2>
         <p className="mt-1.5 text-sm text-ink-muted">
           {ready.length} of {documents.length || 0} document

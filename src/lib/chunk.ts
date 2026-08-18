@@ -5,7 +5,7 @@ import "server-only";
  *
  * Chunking happens here rather than in n8n on purpose: the student's session is available
  * at upload time, so the rows can be written under RLS. If n8n wrote them it would need
- * the service-role key, which bypasses RLS entirely — see CLAUDE.md. n8n then only
+ * the service-role key, which bypasses RLS entirely - see CLAUDE.md. n8n then only
  * embeds the text it is handed and upserts vectors; it never holds a Supabase credential.
  *
  * The splitter is paragraph-aware. Academic writing carries a lot of meaning in its
@@ -35,7 +35,7 @@ const MIN_TOKENS = 40;
  * Rough token estimate: ~4 characters per token for English prose.
  *
  * Deliberately an approximation. An exact count would mean shipping a tokenizer for
- * whichever embedding model is in use, and the number is only used to size chunks — being
+ * whichever embedding model is in use, and the number is only used to size chunks - being
  * 10% out changes nothing about retrieval quality.
  */
 export function estimateTokens(text: string): number {
@@ -112,7 +112,7 @@ export function chunkText(text: string): Chunk[] {
     const content = (overlap ? `${overlap}\n\n${pieces[i]}` : pieces[i]).trim();
 
     if (estimateTokens(content) < MIN_TOKENS && chunks.length > 0) {
-      // Too small to stand alone — fold it into the previous chunk instead.
+      // Too small to stand alone - fold it into the previous chunk instead.
       const last = chunks[chunks.length - 1];
       last.content = `${last.content}\n\n${pieces[i]}`.trim();
       last.tokenCount = estimateTokens(last.content);

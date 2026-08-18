@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * Public environment values, validated once at the boundary.
  *
- * Only NEXT_PUBLIC_* values belong here — this module is imported by browser code, so
+ * Only NEXT_PUBLIC_* values belong here - this module is imported by browser code, so
  * anything added below ships to the client. Server-only secrets (the service-role key,
  * AI provider keys, n8n credentials) must never be read through this file.
  *

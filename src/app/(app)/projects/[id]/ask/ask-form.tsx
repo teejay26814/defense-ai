@@ -63,7 +63,7 @@ export function AskForm({ projectId }: { projectId: string }) {
           <ul className="flex flex-wrap gap-2">
             {EXAMPLES.map((q) => (
               <li key={q}>
-                {/* Fills the textarea rather than submitting — the student can edit first. */}
+                {/* Fills the textarea rather than submitting - the student can edit first. */}
                 <form action={formAction} className="contents">
                   <input type="hidden" name="projectId" value={projectId} />
                   <input type="hidden" name="question" value={q} />
@@ -114,7 +114,7 @@ export function AskForm({ projectId }: { projectId: string }) {
                       </span>
                       <span className="font-medium text-ink">
                         {s.chapter ? `Chapter ${s.chapter}` : "Section"}
-                        {s.label ? ` — ${s.label}` : ""}
+                        {s.label ? ` - ${s.label}` : ""}
                       </span>
                       {s.cited && (
                         <span className="rounded bg-gold/15 px-1.5 py-0.5 text-xs font-medium text-warning">

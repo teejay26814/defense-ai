@@ -25,7 +25,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           </h1>
           <p className="mt-5 text-white/70">
             Upload your chapters and Academia Scribes turns them into your own private
-            knowledge base — then helps you understand it, remember it, practise it, and
+            knowledge base - then helps you understand it, remember it, practice it, and
             defend it.
           </p>
         </div>

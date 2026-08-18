@@ -1,5 +1,5 @@
 {
-  "name": "Academia Scribes — Embed",
+  "name": "Academia Scribes - Embed",
   "nodes": [
     {
       "parameters": {
@@ -22,7 +22,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Turn the app's payload into Pinecone's NDJSON upsert format.\n//\n// Integrated inference means we send text, not vectors — Pinecone embeds on arrival.\n// The text field name must match the index's field_map, which on this index is `text`.\n//\n// llama-text-embed-v2 caps input at 2048 tokens. The app chunks to ~800, so this is\n// headroom rather than a real limit, but a record over the cap is dropped here with a\n// reason rather than failing the whole batch.\n\nconst body = $input.first().json.body ?? $input.first().json;\nconst { documentId, projectId, userId, namespace, chunks } = body;\n\nif (!namespace || !Array.isArray(chunks)) {\n  throw new Error('payload must include namespace and chunks[]');\n}\n\nconst MAX_CHARS = 2048 * 4; // ~4 chars per token\n\nconst accepted = [];\nconst rejected = [];\n\nfor (const c of chunks) {\n  if (!c.id || typeof c.content !== 'string' || !c.content.trim()) {\n    rejected.push({ chunkId: c.id ?? 'unknown', error: 'empty content' });\n    continue;\n  }\n  if (c.content.length > MAX_CHARS) {\n    rejected.push({ chunkId: c.id, error: 'exceeds model input limit' });\n    continue;\n  }\n  accepted.push({\n    _id: c.id,\n    text: c.content,\n    document_id: documentId,\n    project_id: projectId,\n    user_id: userId,\n    chunk_index: c.index,\n  });\n}\n\nif (accepted.length === 0) {\n  return [{ json: { namespace, ndjson: '', accepted: [], rejected, skip: true } }];\n}\n\nreturn [{\n  json: {\n    namespace,\n    ndjson: accepted.map((r) => JSON.stringify(r)).join('\\n'),\n    accepted: accepted.map((r) => r._id),\n    rejected,\n    skip: false,\n  },\n}];"
+        "jsCode": "// Turn the app's payload into Pinecone's NDJSON upsert format.\n//\n// Integrated inference means we send text, not vectors - Pinecone embeds on arrival.\n// The text field name must match the index's field_map, which on this index is `text`.\n//\n// llama-text-embed-v2 caps input at 2048 tokens. The app chunks to ~800, so this is\n// headroom rather than a real limit, but a record over the cap is dropped here with a\n// reason rather than failing the whole batch.\n\nconst body = $input.first().json.body ?? $input.first().json;\nconst { documentId, projectId, userId, namespace, chunks } = body;\n\nif (!namespace || !Array.isArray(chunks)) {\n  throw new Error('payload must include namespace and chunks[]');\n}\n\nconst MAX_CHARS = 2048 * 4; // ~4 chars per token\n\nconst accepted = [];\nconst rejected = [];\n\nfor (const c of chunks) {\n  if (!c.id || typeof c.content !== 'string' || !c.content.trim()) {\n    rejected.push({ chunkId: c.id ?? 'unknown', error: 'empty content' });\n    continue;\n  }\n  if (c.content.length > MAX_CHARS) {\n    rejected.push({ chunkId: c.id, error: 'exceeds model input limit' });\n    continue;\n  }\n  accepted.push({\n    _id: c.id,\n    text: c.content,\n    document_id: documentId,\n    project_id: projectId,\n    user_id: userId,\n    chunk_index: c.index,\n  });\n}\n\nif (accepted.length === 0) {\n  return [{ json: { namespace, ndjson: '', accepted: [], rejected, skip: true } }];\n}\n\nreturn [{\n  json: {\n    namespace,\n    ndjson: accepted.map((r) => JSON.stringify(r)).join('\\n'),\n    accepted: accepted.map((r) => r._id),\n    rejected,\n    skip: false,\n  },\n}];"
       },
       "id": "a1000000-0000-4000-8000-000000000002",
       "name": "Build Records",
@@ -133,7 +133,7 @@
     },
     {
       "parameters": {
-        "content": "## Embed\n\nApp sends chunk ids + text. Pinecone embeds on arrival (integrated inference), so no embeddings key is needed.\n\n### Two SEPARATE credentials\n\nA credential name is only a label. The header it sends is set INSIDE the credential.\n\n- **Webhook** → header `Authorization`, value `Bearer <N8N_WEBHOOK_SECRET>`\n- **Pinecone Upsert** → header `Api-Key`, value your `pcsk_...`\n\nOne credential cannot serve both nodes. Never paste a key into a header parameter — that stores it in plaintext in the workflow.\n\nReturns `{ embedded: [ids], failed: [...] }` — the app flips exactly those rows.",
+        "content": "## Embed\n\nApp sends chunk ids + text. Pinecone embeds on arrival (integrated inference), so no embeddings key is needed.\n\n### Two SEPARATE credentials\n\nA credential name is only a label. The header it sends is set INSIDE the credential.\n\n- **Webhook** → header `Authorization`, value `Bearer <N8N_WEBHOOK_SECRET>`\n- **Pinecone Upsert** → header `Api-Key`, value your `pcsk_...`\n\nOne credential cannot serve both nodes. Never paste a key into a header parameter - that stores it in plaintext in the workflow.\n\nReturns `{ embedded: [ids], failed: [...] }` - the app flips exactly those rows.",
         "height": 460,
         "width": 420
       },

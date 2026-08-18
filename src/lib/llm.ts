@@ -9,7 +9,7 @@ import "server-only";
  * back into real chunk ids.
  *
  * The prompt is deliberately *not* duplicated here. Two copies of a prompt drift, and a
- * drifted copy is worse than none — the citations would stop lining up with what the model
+ * drifted copy is worse than none - the citations would stop lining up with what the model
  * was actually shown.
  */
 
@@ -32,7 +32,7 @@ export class LlmError extends Error {
  *
  * Position is the whole contract: n8n numbers the excerpts in the order it receives them,
  * so `[1]` is the first chunk this app sent. Anything out of range is dropped rather than
- * guessed at — a wrong citation would point the student at a section that does not support
+ * guessed at - a wrong citation would point the student at a section that does not support
  * the claim, which is worse than showing no source at all.
  */
 export function citedChunkIds(answer: string, chunks: SourceChunk[]): string[] {

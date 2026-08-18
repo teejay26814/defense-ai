@@ -1,8 +1,8 @@
-# Academia Scribes — Defense Coach
+# Academia Scribes - Defense Coach
 
 A personalised AI defense-preparation platform for final-year university students. A
 student uploads their project (Chapters 1–5); the app turns it into an isolated knowledge
-base, then helps them understand, remember, practise, and defend it.
+base, then helps them understand, remember, practice, and defend it.
 
 > *If your defense was tomorrow, would you be ready?*
 
@@ -21,7 +21,7 @@ npm run dev
 ```
 
 `.env.local` needs the project URL and anon key from
-**Supabase → Project Settings → API**. Both are safe in the browser — the anon key is
+**Supabase → Project Settings → API**. Both are safe in the browser - the anon key is
 public by design, and Row Level Security is what protects student data.
 
 The app will not start without them. `src/lib/env.ts` validates both at boot and fails
@@ -52,7 +52,7 @@ If you do not know the region, connect to any regional pooler: the wrong one ans
 `Tenant or user not found`, while the right one gets as far as authentication.
 
 The database password is under **Project Settings → Database**. It is generated, not
-chosen — if it is unknown, reset it. Note that a reset takes a short while to propagate,
+chosen - if it is unknown, reset it. Note that a reset takes a short while to propagate,
 so an immediate connection attempt can still fail.
 
 ## Layout
@@ -60,14 +60,14 @@ so an immediate connection attempt can still fail.
 ```
 src/
   app/
-    (auth)/         signed-out routes — login, signup, shared shell, server actions
-    (app)/          authenticated routes — dashboard, app shell
+    (auth)/         signed-out routes - login, signup, shared shell, server actions
+    (app)/          authenticated routes - dashboard, app shell
     page.tsx        public landing page
     icon.svg        favicon, generated from the brand mark
   components/       logo and shared form primitives
   lib/
     env.ts          validated public environment
-    supabase/       client.ts (browser) and server.ts (server) — do not mix them
+    supabase/       client.ts (browser) and server.ts (server) - do not mix them
     validation/     zod schemas
   proxy.ts          session refresh and route guarding
 supabase/migrations/
@@ -87,7 +87,7 @@ deliberate edit.
 
 - Only `NEXT_PUBLIC_*` values may reach the browser.
 - The service-role key is not used anywhere and must never be imported into a client
-  component — it bypasses RLS entirely.
+  component - it bypasses RLS entirely.
 - RLS is enabled on every table from the first one, scoped by `user_id`.
 - Mutations go through server actions, not client-side database writes.
 
@@ -97,20 +97,20 @@ and an anonymous request sees nothing.
 
 ## Status
 
-**Phase 1** — complete. Supabase wired up, profiles applied with RLS, auth screens, app
+**Phase 1** - complete. Supabase wired up, profiles applied with RLS, auth screens, app
 shell, landing page.
 
-**Phase 2** — complete. Projects and documents with RLS, a private storage bucket, upload,
+**Phase 2** - complete. Projects and documents with RLS, a private storage bucket, upload,
 and plain-text extraction from PDF / .docx / .txt.
 
 Both phases had their security properties verified behaviourally against the live project
-rather than assumed — see below. Phase 3 is RAG, the knowledge base, and Ask My Project,
+rather than assumed - see below. Phase 3 is RAG, the knowledge base, and Ask My Project,
 and is where an AI provider gets chosen. Do not build ahead of the current phase.
 
 ### Document processing
 
 `src/lib/extract.ts` pulls plain text out of an upload and stores it on
-`documents.content`. It calls no AI provider — extraction is parsing, not inference,
+`documents.content`. It calls no AI provider - extraction is parsing, not inference,
 because every later answer is grounded in this text and cites it.
 
 Extraction runs inline in the upload action. At a 25 MB ceiling it is fast enough (a
@@ -132,7 +132,7 @@ RLS is tested, not trusted. With two real student sessions:
 - deleting a project cascades to its documents
 
 `documents.user_id` is denormalised from `projects` so policies avoid a join. A
-`documents_owner_check` trigger keeps it honest — that constraint still holds for a
+`documents_owner_check` trigger keeps it honest - that constraint still holds for a
 future service-role job, which would bypass RLS entirely.
 
 ### Open decisions
@@ -141,5 +141,5 @@ future service-role job, which would bypass RLS entirely.
   are evaluation-only and cannot ship. `--font-display` and `--font-sans` are system
   stacks until this is resolved. See [Brand_Assest/palette.md](./Brand_Assest/palette.md).
 - **The gold accent** `#C9A227` is derived, not brand. The logo is navy and white only.
-- **The wordmark** could not be extracted from the logo PDF — it is live text bound to the
+- **The wordmark** could not be extracted from the logo PDF - it is live text bound to the
   unlicensed font. Only the book mark exists as SVG.

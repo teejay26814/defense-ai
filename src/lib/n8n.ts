@@ -6,13 +6,13 @@ import { createHmac } from "node:crypto";
  * Talking to n8n.
  *
  * n8n orchestrates embedding and retrieval; it is never the database (CLAUDE.md). It
- * receives chunk text to embed and returns which chunk ids succeeded — it holds no
+ * receives chunk text to embed and returns which chunk ids succeeded - it holds no
  * Supabase credential and stores no student text of its own.
  *
  * Both calls are request/response rather than fire-and-callback, which is the deciding
  * design choice here: the server action that calls n8n still has the student's session,
  * so it writes the results itself under RLS. A callback would arrive with no session and
- * would need the service-role key plus a public, signed endpoint — a whole attack surface
+ * would need the service-role key plus a public, signed endpoint - a whole attack surface
  * that simply does not exist this way. In n8n terms, each workflow ends in a
  * "Respond to Webhook" node.
  *
@@ -42,7 +42,7 @@ export type QueryRequest = {
   topK: number;
 };
 
-/** n8n returns ids and scores only — never text. The text is hydrated from Supabase. */
+/** n8n returns ids and scores only - never text. The text is hydrated from Supabase. */
 export type QueryResponse = {
   matches: { chunkId: string; score: number }[];
 };
@@ -50,7 +50,7 @@ export type QueryResponse = {
 /**
  * Answer generation.
  *
- * Unlike the two calls above, this one deliberately sends chunk *text* to n8n — it has to,
+ * Unlike the two calls above, this one deliberately sends chunk *text* to n8n - it has to,
  * because the model needs the excerpts. That is safe only because of when it happens: the
  * caller has already hydrated these chunks out of Postgres under the student's own
  * session, so RLS has decided what is in here before it leaves the app. n8n is handed a
@@ -101,8 +101,8 @@ async function post<T>(url: string, payload: unknown, timeoutMs: number): Promis
       headers: {
         "content-type": "application/json",
         // Bearer token so the n8n Webhook node can authenticate natively with its
-        // built-in Header Auth. The HMAC headers below are stronger — they also cover
-        // replay and body tampering — but verifying them needs `crypto` inside a Code
+        // built-in Header Auth. The HMAC headers below are stronger - they also cover
+        // replay and body tampering - but verifying them needs `crypto` inside a Code
         // node, which self-hosted n8n only exposes when NODE_FUNCTION_ALLOW_BUILTIN is
         // set. Both are sent, so the workflow can start on Header Auth and tighten later.
         authorization: `Bearer ${secret()}`,
@@ -119,7 +119,7 @@ async function post<T>(url: string, payload: unknown, timeoutMs: number): Promis
 
     // A workflow that throws before reaching its "Respond to Webhook" node answers 200
     // with an empty body rather than an error status. Parsing that would surface as
-    // "Unexpected end of JSON input", which says nothing useful — so name it here, and
+    // "Unexpected end of JSON input", which says nothing useful - so name it here, and
     // point at the execution log, which is where the actual reason lives.
     const text = await res.text();
     if (!text.trim()) {
@@ -143,7 +143,7 @@ async function post<T>(url: string, payload: unknown, timeoutMs: number): Promis
  * The vector-index namespace for one project.
  *
  * Both ids are included so a namespace cannot be guessed from a project id alone. This is
- * defence in depth, not the security boundary — retrieval hydrates text from Supabase
+ * defence in depth, not the security boundary - retrieval hydrates text from Supabase
  * under the student's session, so RLS remains what actually separates students.
  */
 export function namespaceFor(userId: string, projectId: string): string {
@@ -164,7 +164,7 @@ export async function requestRetrieval(payload: QueryRequest): Promise<QueryResp
 
 /**
  * Generous timeout: a long answer on a cold workflow can take a while, and the student is
- * watching a spinner until it lands — a premature abort costs them the whole question.
+ * watching a spinner until it lands - a premature abort costs them the whole question.
  */
 export async function requestAnswer(payload: AnswerRequest): Promise<AnswerResponse> {
   const url = process.env.N8N_ANSWER_WEBHOOK_URL;

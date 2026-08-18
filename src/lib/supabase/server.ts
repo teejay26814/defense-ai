@@ -6,7 +6,7 @@ import { env } from "@/lib/env";
 /**
  * Supabase client for server components, server actions, and route handlers.
  *
- * Always create a fresh client per request — never hoist one into a module-level constant.
+ * Always create a fresh client per request - never hoist one into a module-level constant.
  * Next.js caches at the module level, and a shared client would leak one user's session
  * into another user's request.
  *
