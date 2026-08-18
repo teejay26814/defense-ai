@@ -30,18 +30,8 @@ export default async function AskPage({ params }: PageProps<"/projects/[id]/ask"
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <nav>
-        <Link
-          href={`/projects/${project.id}`}
-          className="rounded text-sm text-ink-muted underline-offset-4
-            transition-colors duration-150 hover:text-ink hover:underline"
-        >
-          ← {project.title}
-        </Link>
-      </nav>
-
       <header>
-        <h1 className="font-display text-3xl text-ink">Ask my project</h1>
+        <h2 className="font-display text-2xl text-ink">Ask my project</h2>
         <p className="mt-2 text-ink-muted">
           Every answer comes from your own chapters, with the section it came from.
         </p>

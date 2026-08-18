@@ -44,14 +44,7 @@ export default async function QuizPage({ params }: PageProps<"/projects/[id]/qui
   return (
     <div className="space-y-8">
       <header>
-        <Link
-          href={`/projects/${project.id}`}
-          className="rounded text-sm text-navy-500 underline-offset-4
-            transition-colors duration-150 hover:text-navy-700 hover:underline"
-        >
-          ← {project.title}
-        </Link>
-        <h1 className="mt-2 font-display text-3xl text-ink">Quiz</h1>
+        <h2 className="font-display text-2xl text-ink">Quiz</h2>
         <p className="mt-2 max-w-prose text-ink-muted">
           Multiple choice, drawn from your own chapters. Every option is something your
           project could plausibly have said, so read carefully.

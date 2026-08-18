@@ -58,19 +58,8 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
 
   return (
     <div className="space-y-8">
-      <nav>
-        <Link
-          href="/projects"
-          className="rounded text-sm text-ink-muted underline-offset-4
-            transition-colors duration-150 hover:text-ink hover:underline"
-        >
-          ← Projects
-        </Link>
-      </nav>
-
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="font-display text-3xl leading-tight text-ink">{project.title}</h1>
           {project.topic && (
             <p className="mt-2 max-w-prose text-ink-muted">{project.topic}</p>
           )}
@@ -110,28 +99,6 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
-          {ready.length > 0 && (
-            <>
-              <Link
-                href={`/projects/${project.id}/ask`}
-                className={buttonStyles({ size: "sm" })}
-              >
-                Ask my project
-              </Link>
-              <Link
-                href={`/projects/${project.id}/questions`}
-                className={buttonStyles({ variant: "secondary", size: "sm" })}
-              >
-                Practice questions
-              </Link>
-              <Link
-                href={`/projects/${project.id}/quiz`}
-                className={buttonStyles({ variant: "secondary", size: "sm" })}
-              >
-                Quiz
-              </Link>
-            </>
-          )}
           <Link
             href={`/projects/${project.id}/edit`}
             className={buttonStyles({ variant: "ghost", size: "sm" })}

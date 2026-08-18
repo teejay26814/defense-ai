@@ -158,6 +158,46 @@ export default async function DashboardPage() {
         </Link>
       </section>
 
+      {/*
+        Straight into the work. The dashboard's job is to answer "what do I do next?", and
+        for a student whose chapters are already indexed the answer is almost never "open
+        the project page" - it is practice, or asking something. Making them drill through the
+        project to find these was the single worst thing about getting around the app.
+      */}
+      {current && indexed > 0 && (
+        <section className="grid gap-3 sm:grid-cols-3">
+          {[
+            {
+              href: `/projects/${current.id}/ask`,
+              title: "Ask my project",
+              body: "Get an answer from your own chapters, with the section it came from.",
+            },
+            {
+              href: `/projects/${current.id}/questions`,
+              title: "Practice questions",
+              body: "Questions a panel would ask, answered in your own words.",
+            },
+            {
+              href: `/projects/${current.id}/quiz`,
+              title: "Quiz",
+              body: "Multiple choice against the clock in your head.",
+            },
+          ].map((tool) => (
+            <Link
+              key={tool.href}
+              href={tool.href}
+              className="group rounded-xl border border-navy-100 bg-white p-5 shadow-base
+                transition-[transform,box-shadow,border-color] duration-150
+                hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-elevated
+                active:translate-y-0"
+            >
+              <h3 className="font-display text-lg text-ink">{tool.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{tool.body}</p>
+            </Link>
+          ))}
+        </section>
+      )}
+
       {current && (
         <section className="grid gap-4 lg:grid-cols-5">
           <Card elevation="base" className="lg:col-span-2">
