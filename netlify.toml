@@ -1,0 +1,22 @@
+# Netlify build configuration.
+#
+# Environment variables are deliberately not here - this file is committed. They live in
+# Site configuration, Environment variables.
+
+[build]
+  # Explicitly webpack, not Turbopack, which Next 16 uses by default.
+  #
+  # Turbopack emits chunk files with square brackets in the name, such as
+  # [turbopack]_runtime.js. Netlify's edge bundler, which compiles src/proxy.ts into an
+  # edge function, cannot resolve those paths on Windows: it reads the bracketed segment as
+  # a directory and the build fails with "Cannot find module". Webpack output has no such
+  # names, so the edge function bundles cleanly.
+  #
+  # The cost is a slower build. Worth re-testing on Turbopack after a Netlify runtime
+  # upgrade, since this is their bundler's limitation rather than anything in this project.
+  command = "next build --webpack"
+  publish = ".next"
+
+[build.environment]
+  # Next 16 requires Node 20 or newer. Pinned so a builder default cannot move underneath us.
+  NODE_VERSION = "22"
