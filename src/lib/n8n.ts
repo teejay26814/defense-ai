@@ -2,6 +2,8 @@ import "server-only";
 
 import { createHmac } from "node:crypto";
 
+import type { DefenseScope } from "@/lib/types";
+
 /**
  * Talking to n8n.
  *
@@ -67,6 +69,35 @@ export type AnswerRequest = {
 };
 
 export type AnswerResponse = { answer: string };
+
+/**
+ * Question generation.
+ *
+ * Same rule as answers: the caller has already hydrated these chunks under the student's
+ * own session, so RLS decided what is in the payload before it left the app.
+ *
+ * Unlike retrieval, this is not a similarity search. Questions should cover the project
+ * rather than cluster around one topic, so the caller passes a spread of chunks read
+ * straight from Postgres and Pinecone is not involved at all.
+ */
+export type QuestionsRequest = {
+  projectId: string;
+  userId: string;
+  /** Which occasion the student is preparing for. Changes what the examiner asks. */
+  scope: DefenseScope;
+  count: number;
+  chunks: { id: string; chapter: number | null; label: string | null; content: string }[];
+};
+
+export type QuestionsResponse = {
+  questions: {
+    question: string;
+    answer: string;
+    difficulty: number;
+    /** 0-based positions into the chunks that were sent, so the caller can map to ids. */
+    sourceIndexes: number[];
+  }[];
+};
 
 const SIGNATURE_HEADER = "x-academia-signature";
 const TIMESTAMP_HEADER = "x-academia-timestamp";
@@ -170,4 +201,17 @@ export async function requestAnswer(payload: AnswerRequest): Promise<AnswerRespo
   const url = process.env.N8N_ANSWER_WEBHOOK_URL;
   if (!url) throw new Error("N8N_ANSWER_WEBHOOK_URL is not set.");
   return post<AnswerResponse>(url, payload, 120_000);
+}
+
+/**
+ * The longest timeout of the three: this writes a dozen questions over a wide span of the
+ * project, so it is a much larger generation than a single answer. It is also the one call
+ * a student is not sitting and watching, having been told it takes a moment.
+ */
+export async function requestQuestions(
+  payload: QuestionsRequest,
+): Promise<QuestionsResponse> {
+  const url = process.env.N8N_QUESTIONS_WEBHOOK_URL;
+  if (!url) throw new Error("N8N_QUESTIONS_WEBHOOK_URL is not set.");
+  return post<QuestionsResponse>(url, payload, 180_000);
 }

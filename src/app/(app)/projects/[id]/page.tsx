@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { buttonStyles } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { CHAPTERS, DEGREE_LABELS, type DocumentSummary, type Project } from "@/lib/types";
 import { DocumentList } from "./document-list";
@@ -108,22 +109,26 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
           </dl>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {ready.length > 0 && (
-            <Link
-              href={`/projects/${project.id}/ask`}
-              className="rounded-lg bg-navy-700 px-3.5 py-1.5 text-sm font-medium text-white shadow-elevated
-                transition-[transform,background-color] duration-150
-                hover:bg-navy-600 active:translate-y-px"
-            >
-              Ask my project
-            </Link>
+            <>
+              <Link
+                href={`/projects/${project.id}/ask`}
+                className={buttonStyles({ size: "sm" })}
+              >
+                Ask my project
+              </Link>
+              <Link
+                href={`/projects/${project.id}/questions`}
+                className={buttonStyles({ variant: "secondary", size: "sm" })}
+              >
+                Practice questions
+              </Link>
+            </>
           )}
           <Link
             href={`/projects/${project.id}/edit`}
-            className="rounded-lg border border-navy-100 px-3 py-1.5 text-sm font-medium text-ink
-              transition-[background-color,border-color] duration-150
-              hover:border-navy-300 hover:bg-navy-050 active:bg-navy-100"
+            className={buttonStyles({ variant: "ghost", size: "sm" })}
           >
             Edit details
           </Link>

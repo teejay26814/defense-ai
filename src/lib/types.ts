@@ -75,6 +75,74 @@ export const CHAPTERS: { value: number; label: string; hint: string }[] = [
   { value: 5, label: "Chapter Five", hint: "Conclusion & Recommendations" },
 ];
 
+/**
+ * What the student is actually sitting for.
+ *
+ * These are distinct events, not difficulty settings. A proposal or seminar defense covers
+ * Chapters One to Three and a panel cannot ask about findings that do not exist yet; a
+ * final defense covers everything. Getting this wrong produces questions a student will
+ * never be asked, which wastes the only preparation time they have.
+ *
+ * It also means a student who has uploaded one chapter gets a complete experience rather
+ * than a broken version of the full one.
+ */
+export type DefenseScope = "chapter" | "proposal" | "final";
+
+export const DEFENSE_SCOPES: {
+  value: DefenseScope;
+  label: string;
+  hint: string;
+  chapters: number[];
+}[] = [
+  {
+    value: "chapter",
+    label: "One chapter",
+    hint: "A chapter review or supervisor meeting",
+    chapters: [1],
+  },
+  {
+    value: "proposal",
+    label: "Proposal defense",
+    hint: "Chapters One to Three, before you collect data",
+    chapters: [1, 2, 3],
+  },
+  {
+    value: "final",
+    label: "Final defense",
+    hint: "The whole project, Chapters One to Five",
+    chapters: [1, 2, 3, 4, 5],
+  },
+];
+
+export type Question = {
+  id: string;
+  project_id: string;
+  user_id: string;
+  chapter: number | null;
+  question: string;
+  model_answer: string;
+  source_chunk_ids: string[];
+  difficulty: number;
+  times_seen: number;
+  last_seen_at: string | null;
+  confidence: number | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** 1 recall, 2 explain, 3 defend - the escalation a real panel follows. */
+export const DIFFICULTY_LABELS: Record<number, string> = {
+  1: "Recall",
+  2: "Explain",
+  3: "Defend",
+};
+
+export const CONFIDENCE_LABELS: Record<number, string> = {
+  1: "Shaky",
+  2: "Getting there",
+  3: "Solid",
+};
+
 export const STORAGE_BUCKET = "project-documents";
 
 /** Mirrors the bucket's file_size_limit in the migration. Keep the two in step. */
