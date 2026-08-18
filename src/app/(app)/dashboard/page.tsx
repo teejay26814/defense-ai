@@ -1,20 +1,40 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+import { Card, CardTitle } from "@/components/ui/card";
+import { buttonStyles } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ReadinessMeter } from "@/components/readiness-meter";
+import {
+  ChapterProgress,
+  chapterStateFrom,
+  type ChapterState,
+} from "@/components/chapter-progress";
 import { createClient } from "@/lib/supabase/server";
-import { CHAPTERS, type Project } from "@/lib/types";
+import { CHAPTERS, type DocumentStatus, type Project } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 type ProjectWithDocs = Project & {
-  documents: { chapter: number | null; status: string; word_count: number | null }[];
+  documents: {
+    id: string;
+    chapter: number | null;
+    status: DocumentStatus;
+    word_count: number | null;
+  }[];
 };
 
 /**
  * The dashboard must always answer: what do I need to do next?
  *
- * That answer is computed from real state — no project, no documents, a gap in the
- * chapters, or something that failed to read — rather than shown as a fixed checklist.
+ * That answer is computed from real state - no project, no documents, a gap in the
+ * chapters, or something that failed to read - rather than shown as a fixed checklist.
+ *
+ * The coverage figure is deliberately *not* called a readiness score. It measures how much
+ * of the project is uploaded and searchable, which is all this phase can honestly know. A
+ * real readiness score needs answers graded against the project, which arrives with the
+ * mock defense. Showing an invented number here would undermine the one question the whole
+ * product exists to answer.
  */
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -30,7 +50,7 @@ export default async function DashboardPage() {
 
   const { data } = await supabase
     .from("projects")
-    .select("*, documents(chapter, status, word_count)")
+    .select("*, documents(id, chapter, status, word_count)")
     .order("created_at", { ascending: false });
 
   const projects = (data ?? []) as ProjectWithDocs[];
@@ -38,10 +58,43 @@ export default async function DashboardPage() {
   const current = projects[0];
 
   const docs = current?.documents ?? [];
+
+  // Which documents actually made it into the index. A document can be extracted but not
+  // yet embedded, and only embedded text is askable - so the two are tracked separately.
+  const embeddedDocs = new Set<string>();
+  if (current) {
+    const { data: chunkRows } = await supabase
+      .from("chunks")
+      .select("document_id, embedded")
+      .eq("project_id", current.id)
+      .eq("embedded", true);
+
+    for (const row of chunkRows ?? []) embeddedDocs.add(row.document_id as string);
+  }
+
+  const chapterStates = new Map<number, ChapterState>();
+  for (const doc of docs) {
+    if (doc.chapter === null) continue;
+    const state = chapterStateFrom(doc.status, embeddedDocs.has(doc.id));
+    // If a chapter has several documents, the worst state wins - a student should see the
+    // problem, not the one file that happened to work.
+    const rank: Record<ChapterState, number> = {
+      failed: 0,
+      missing: 1,
+      processing: 2,
+      ready: 3,
+    };
+    const existing = chapterStates.get(doc.chapter);
+    if (!existing || rank[state] < rank[existing]) chapterStates.set(doc.chapter, state);
+  }
+
   const failed = docs.filter((d) => d.status === "failed").length;
   const uploaded = new Set(docs.filter((d) => d.chapter !== null).map((d) => d.chapter));
   const missing = CHAPTERS.filter((c) => !uploaded.has(c.value));
   const words = docs.reduce((s, d) => s + (d.word_count ?? 0), 0);
+
+  const indexed = [...chapterStates.values()].filter((s) => s === "ready").length;
+  const coverage = (indexed / CHAPTERS.length) * 100;
 
   const next = !current
     ? {
@@ -70,7 +123,7 @@ export default async function DashboardPage() {
         : missing.length > 0
           ? {
               eyebrow: "Next step",
-              title: `Upload ${missing[0].label} — ${missing[0].hint}`,
+              title: `Upload ${missing[0].label} - ${missing[0].hint}`,
               body: `${docs.length} document${docs.length === 1 ? "" : "s"} in so far${
                 words > 0 ? `, ${words.toLocaleString()} words` : ""
               }.`,
@@ -80,9 +133,9 @@ export default async function DashboardPage() {
           : {
               eyebrow: "All chapters in",
               title: "Your project is fully uploaded",
-              body: `${words.toLocaleString()} words are ready. Practice tools arrive in the next phase.`,
-              href: `/projects/${current.id}`,
-              cta: "Review your project",
+              body: `${words.toLocaleString()} words are ready. Ask your project anything.`,
+              href: `/projects/${current.id}/ask`,
+              cta: "Ask my project",
             };
 
   return (
@@ -100,20 +153,45 @@ export default async function DashboardPage() {
         </p>
         <h2 className="mt-3 font-display text-2xl text-ink">{next.title}</h2>
         <p className="mt-2 max-w-prose text-ink-muted">{next.body}</p>
-        <Link
-          href={next.href}
-          className="mt-6 inline-block rounded-lg bg-navy-700 px-4 py-2.5 font-medium text-white
-            shadow-elevated transition-[transform,background-color] duration-150
-            hover:bg-navy-600 active:translate-y-px"
-        >
+        <Link href={next.href} className={`mt-6 ${buttonStyles()}`}>
           {next.cta}
         </Link>
       </section>
 
-      {projects.length > 0 && (
-        <section>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-xl text-ink">Your projects</h2>
+      {current && (
+        <section className="grid gap-4 lg:grid-cols-5">
+          <Card elevation="base" className="lg:col-span-2">
+            <CardTitle className="font-display">Knowledge base</CardTitle>
+            <p className="mt-1 mb-5 text-sm text-ink-muted">
+              How much of your project is searchable.
+            </p>
+
+            <ReadinessMeter
+              value={coverage}
+              caption={
+                indexed === CHAPTERS.length
+                  ? "Every chapter is indexed. Anything you ask is answered from your own work."
+                  : "Counts chapters that are uploaded and indexed. Your defense readiness score arrives with the mock defense."
+              }
+            />
+          </Card>
+
+          <Card elevation="base" className="lg:col-span-3">
+            <CardTitle className="font-display">Your chapters</CardTitle>
+            <p className="mt-1 mb-4 text-sm text-ink-muted">
+              {indexed} of {CHAPTERS.length} indexed
+              {words > 0 ? ` · ${words.toLocaleString()} words` : ""}
+            </p>
+
+            <ChapterProgress states={chapterStates} />
+          </Card>
+        </section>
+      )}
+
+      <section>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-display text-xl text-ink">Your projects</h2>
+          {projects.length > 0 && (
             <Link
               href="/projects"
               className="rounded text-sm text-navy-500 underline-offset-4
@@ -121,8 +199,20 @@ export default async function DashboardPage() {
             >
               See all
             </Link>
-          </div>
+          )}
+        </div>
 
+        {projects.length === 0 ? (
+          <EmptyState
+            title="No project yet"
+            description="Add the project you are defending, then upload your chapters one by one. Everything after that is built from your own work."
+            action={
+              <Link href="/projects/new" className={buttonStyles()}>
+                Add your project
+              </Link>
+            }
+          />
+        ) : (
           <ul className="grid gap-4 sm:grid-cols-2">
             {projects.slice(0, 4).map((p) => (
               <li key={p.id}>
@@ -141,8 +231,8 @@ export default async function DashboardPage() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   );
 }

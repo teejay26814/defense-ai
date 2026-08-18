@@ -2,10 +2,12 @@
 
 import { useFormStatus } from "react-dom";
 
+import { buttonStyles, type ButtonVariant } from "@/components/ui/button";
+
 /**
  * Shared form primitives for the auth screens.
  *
- * Per the design guardrails: no `transition-all` — every transition names its properties,
+ * Per the design guardrails: no `transition-all` - every transition names its properties,
  * and every interactive element carries hover, focus-visible and active states.
  */
 
@@ -224,7 +226,16 @@ export function FileField({
   );
 }
 
-export function SubmitButton({ children }: { children: React.ReactNode }) {
+export function SubmitButton({
+  children,
+  variant = "primary",
+  pendingLabel = "Working…",
+}: {
+  children: React.ReactNode;
+  variant?: ButtonVariant;
+  /** Say what is happening, not just that something is. */
+  pendingLabel?: string;
+}) {
   // useFormStatus reads the pending state of the enclosing <form>, so this component has
   // to live inside it rather than receive the state as a prop.
   const { pending } = useFormStatus();
@@ -233,14 +244,10 @@ export function SubmitButton({ children }: { children: React.ReactNode }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-lg bg-navy-700 px-4 py-2.5 font-medium text-white
-        shadow-elevated
-        transition-[transform,background-color,opacity] duration-150
-        hover:bg-navy-600
-        active:translate-y-px
-        disabled:cursor-not-allowed disabled:opacity-60"
+      aria-busy={pending}
+      className={buttonStyles({ variant, full: true })}
     >
-      {pending ? "Working…" : children}
+      {pending ? pendingLabel : children}
     </button>
   );
 }

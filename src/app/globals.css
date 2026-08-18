@@ -3,7 +3,7 @@
 /*
  * Academia Scribes design tokens.
  *
- * Tailwind 4 is configured CSS-first — there is no tailwind.config.js and one must not be
+ * Tailwind 4 is configured CSS-first - there is no tailwind.config.js and one must not be
  * created. Everything declared in @theme below becomes a utility automatically, so
  * --color-navy-700 gives you bg-navy-700, text-navy-700, border-navy-700, and so on.
  *
@@ -28,20 +28,26 @@
   --color-ink: #141821;
   --color-ink-muted: #5a6377;
 
-  /* --- Accent. Not from the logo — see palette.md before relying on it. --- */
+  /* --- Accent. Not from the logo - see palette.md before relying on it. --- */
   --color-gold: #c9a227;
 
   /*
-   * Typography. CLAUDE.md requires headings and body to use different faces, so these are
-   * a display serif paired with a clean sans.
+   * Typography. CLAUDE.md requires headings and body to use different faces, so this is a
+   * display serif paired with a clean sans.
    *
-   * Both are system stacks on purpose — INTERIM. The logo is set in Biennale, but only in
-   * FONTSPRINGDEMO cuts, which are evaluation-only and cannot ship. Nothing is downloaded
-   * here, so there is no licence exposure and no web-font payload. Swap these two values
-   * once the font question is settled; nothing else needs to change.
+   * Both faces load in layout.tsx via next/font, which downloads and self-hosts them at
+   * build time - no request to Google at runtime, no third-party origin in the critical
+   * path, and no swap-in flash.
+   *
+   * Biennale, the logo's own face, is deliberately absent: the only available cuts are
+   * FONTSPRINGDEMO, which are evaluation-only and cannot ship in a paid product. Figtree is
+   * the OFL stand-in closest to its geometry - see Brand_Assest/palette.md, which sets out
+   * that decision in full.
+   *
+   * The system stacks remain as fallbacks so text stays readable if a font file fails.
    */
-  --font-display: ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-display-face), ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   /* --- Semantic --- */
   --color-success: #1e7a5a;
@@ -50,7 +56,7 @@
 
   /*
    * Depth: base → elevated → floating, as three real layers rather than one flat plane.
-   * Shadows are tinted with the brand navy at low opacity — never a neutral grey blur,
+   * Shadows are tinted with the brand navy at low opacity - never a neutral grey blur,
    * and never a flat shadow-md.
    */
   --shadow-base: 0 1px 2px 0 rgb(5 38 89 / 0.04), 0 1px 3px 0 rgb(5 38 89 / 0.06);
@@ -85,7 +91,7 @@
   }
 }
 
-/* Layered radial gradients, per the design guardrails — never a single flat wash. */
+/* Layered radial gradients, per the design guardrails - never a single flat wash. */
 @utility field-navy {
   background-color: var(--color-navy-800);
   background-image:
