@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { citedChunkIds, type SourceChunk } from "@/lib/llm";
 import { namespaceFor, requestAnswer, requestRetrieval } from "@/lib/n8n";
+import { withUsage } from "@/lib/usage";
 import { toFieldErrors } from "@/lib/validation/auth";
 
 export type AskState = {
@@ -136,17 +137,27 @@ export async function askProject(
   try {
     // Chunk order is the citation contract: n8n numbers these as it receives them, and
     // citedChunkIds() maps `[n]` back by position. Send them exactly as hydrated.
-    const { answer } = await requestAnswer({
-      projectId,
-      userId: user.id,
-      question,
-      chunks: chunks.map((c) => ({
-        id: c.id,
-        chapter: c.chapter,
-        label: c.label,
-        content: c.content,
-      })),
-    });
+    const { answer } = await withUsage(
+      supabase,
+      {
+        userId: user.id,
+        projectId,
+        operation: "answer",
+        chunksSent: chunks.length,
+      },
+      () =>
+        requestAnswer({
+          projectId,
+          userId: user.id,
+          question,
+          chunks: chunks.map((c) => ({
+            id: c.id,
+            chapter: c.chapter,
+            label: c.label,
+            content: c.content,
+          })),
+        }),
+    );
 
     if (!answer?.trim()) {
       return { error: "The answer came back empty. Please try again.", question };

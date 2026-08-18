@@ -19,6 +19,16 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
       <LoginForm next={typeof next === "string" ? next : undefined} />
 
+      <p className="mt-6 text-center text-sm">
+        <Link
+          href="/forgot-password"
+          className="rounded text-ink-muted underline-offset-4
+            transition-colors duration-150 hover:text-navy-700 hover:underline"
+        >
+          Forgot your password?
+        </Link>
+      </p>
+
       <p className="mt-8 text-center text-sm text-ink-muted">
         New here?{" "}
         <Link

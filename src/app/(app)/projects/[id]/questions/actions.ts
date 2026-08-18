@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
 import { requestQuestions } from "@/lib/n8n";
+import { withUsage } from "@/lib/usage";
 import { DEFENSE_SCOPES, type DefenseScope } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 
@@ -107,18 +108,30 @@ export async function generateQuestions(
 
   let generated;
   try {
-    ({ questions: generated } = await requestQuestions({
-      projectId,
-      userId: user.id,
-      scope: scope as DefenseScope,
-      count,
-      chunks: sampled.map((c) => ({
-        id: c.id as string,
-        chapter: c.chapter as number | null,
-        label: c.label as string | null,
-        content: c.content as string,
-      })),
-    }));
+    const result = await withUsage(
+      supabase,
+      {
+        userId: user.id,
+        projectId,
+        operation: "questions",
+        chunksSent: sampled.length,
+      },
+      () =>
+        requestQuestions({
+          projectId,
+          userId: user.id,
+          scope: scope as DefenseScope,
+          count,
+          chunks: sampled.map((c) => ({
+            id: c.id as string,
+            chapter: c.chapter as number | null,
+            label: c.label as string | null,
+            content: c.content as string,
+          })),
+        }),
+      (r) => r.questions?.length ?? 0,
+    );
+    generated = result.questions;
   } catch (err) {
     console.error("[generateQuestions] generation failed", err);
     return { error: "The questions could not be generated. Please try again." };
@@ -147,6 +160,10 @@ export async function generateQuestions(
       model_answer: q.answer,
       source_chunk_ids: sources.map((c) => c.id as string),
       difficulty: q.difficulty,
+      // The database constraint requires both or neither, which is also what quiz mode
+      // needs: a question with options but no correct index is an unanswerable screen.
+      options: q.options && q.correct !== null ? q.options : null,
+      correct_option: q.options && q.correct !== null ? q.correct : null,
     };
   });
 

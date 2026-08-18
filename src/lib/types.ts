@@ -123,6 +123,9 @@ export type Question = {
   model_answer: string;
   source_chunk_ids: string[];
   difficulty: number;
+  /** Null on questions generated before quiz mode existed; those still work as flashcards. */
+  options: string[] | null;
+  correct_option: number | null;
   times_seen: number;
   last_seen_at: string | null;
   confidence: number | null;

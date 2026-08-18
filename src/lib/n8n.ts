@@ -96,6 +96,9 @@ export type QuestionsResponse = {
     difficulty: number;
     /** 0-based positions into the chunks that were sent, so the caller can map to ids. */
     sourceIndexes: number[];
+    /** Null when the model's choices came back malformed. The flashcard still works. */
+    options: string[] | null;
+    correct: number | null;
   }[];
 };
 

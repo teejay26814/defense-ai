@@ -124,6 +124,12 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
               >
                 Practice questions
               </Link>
+              <Link
+                href={`/projects/${project.id}/quiz`}
+                className={buttonStyles({ variant: "secondary", size: "sm" })}
+              >
+                Quiz
+              </Link>
             </>
           )}
           <Link

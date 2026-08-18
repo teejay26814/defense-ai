@@ -43,6 +43,20 @@ export const signInSchema = z.object({
   password: z.string().min(1, "Enter your password."),
 });
 
+export const forgotPasswordSchema = z.object({ email });
+
+export const resetPasswordSchema = z
+  .object({
+    password,
+    confirmPassword: z.string(),
+  })
+  // Confirmation is checked here rather than in the browser alone, and the error is
+  // attached to the second field so it appears where the student is looking.
+  .refine((v) => v.password === v.confirmPassword, {
+    message: "Those two passwords do not match.",
+    path: ["confirmPassword"],
+  });
+
 export type SignUpInput = z.infer<typeof signUpSchema>;
 export type SignInInput = z.infer<typeof signInSchema>;
 
