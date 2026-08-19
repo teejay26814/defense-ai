@@ -57,7 +57,7 @@ export function QuizRunner({
     const pct = Math.round((right / answers.length) * 100);
 
     return (
-      <div className="rounded-xl border border-navy-100 bg-white p-8 text-center shadow-elevated">
+      <div className="animate-scale-in bloom rounded-xl border border-navy-100 bg-white p-8 text-center shadow-elevated">
         <p className="font-sans text-5xl font-semibold leading-none tracking-tight text-ink">
           {right}
           <span className="text-2xl font-medium text-ink-muted">/{answers.length}</span>
@@ -141,7 +141,10 @@ export function QuizRunner({
         />
       </div>
 
-      <div className="rounded-xl border border-navy-100 bg-white p-6 shadow-elevated">
+      <div
+        key={question.id}
+        className="animate-scale-in rounded-xl border border-navy-100 bg-white p-6 shadow-elevated"
+      >
         <div className="mb-3 flex flex-wrap items-center gap-2">
           {question.chapter && <Badge tone="info">Chapter {question.chapter}</Badge>}
           <Badge tone="neutral">{DIFFICULTY_LABELS[question.difficulty] ?? "Explain"}</Badge>
@@ -149,7 +152,7 @@ export function QuizRunner({
 
         <p className="font-display text-lg leading-snug text-ink">{question.question}</p>
 
-        <ul className="mt-5 space-y-2.5">
+        <ul className="stagger-children mt-5 space-y-2.5">
           {order.map((option, i) => {
             const isCorrect = option.original === question.correct_option;
             const isChosen = chosen === i;
@@ -185,7 +188,7 @@ export function QuizRunner({
         </ul>
 
         {answered && (
-          <div className="mt-5">
+          <div className="animate-rise mt-5">
             <p
               role="status"
               className={`text-sm font-medium ${chosenIsCorrect ? "text-success" : "text-danger"}`}

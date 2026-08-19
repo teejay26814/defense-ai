@@ -1,14 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { Flashcard } from "./flashcard";
 import { GenerateForm } from "./generate-form";
-import { buttonStyles } from "@/components/ui/button";
+import { QuestionDeck } from "./question-deck";
 import { Card, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { createClient } from "@/lib/supabase/server";
-import { CONFIDENCE_LABELS, type Question } from "@/lib/types";
+import type { Question } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Practice questions" };
 
@@ -64,11 +62,6 @@ export default async function QuestionsPage({
   const defaultScope =
     indexedChapters.size >= 4 ? "final" : indexedChapters.size >= 2 ? "proposal" : "chapter";
 
-  const quizzable = questions.filter((q) => q.options !== null).length;
-  const reviewed = questions.filter((q) => q.confidence !== null);
-  const shaky = questions.filter((q) => q.confidence === 1).length;
-  const solid = questions.filter((q) => q.confidence === 3).length;
-
   return (
     <div className="space-y-8">
       <header>
@@ -90,34 +83,11 @@ export default async function QuestionsPage({
       </Card>
 
       {questions.length > 0 && (
-        <section>
-          <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-            <div className="flex items-baseline gap-3">
-              <h2 className="font-display text-xl text-ink">
-                {questions.length} question{questions.length === 1 ? "" : "s"}
-              </h2>
-              {quizzable > 0 && (
-                <Link
-                  href={`/projects/${project.id}/quiz`}
-                  className={buttonStyles({ variant: "secondary", size: "sm" })}
-                >
-                  Take the quiz
-                </Link>
-              )}
-            </div>
-            <p className="text-sm text-ink-muted">
-              {reviewed.length === 0
-                ? "None reviewed yet"
-                : `${reviewed.length} reviewed · ${solid} ${CONFIDENCE_LABELS[3].toLowerCase()} · ${shaky} ${CONFIDENCE_LABELS[1].toLowerCase()}`}
-            </p>
-          </div>
-
-          <ul className="space-y-4">
-            {questions.map((q) => (
-              <Flashcard key={q.id} question={q} projectId={project.id} />
-            ))}
-          </ul>
-        </section>
+        <QuestionDeck
+          questions={questions}
+          projectId={project.id}
+          quizHref={`/projects/${project.id}/quiz`}
+        />
       )}
 
       {questions.length === 0 && indexedChapters.size > 0 && (

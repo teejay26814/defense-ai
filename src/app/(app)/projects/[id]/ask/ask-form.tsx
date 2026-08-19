@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 import { askProject, type AskState } from "./actions";
 import { FormMessage, SubmitButton } from "@/components/ui/form";
+import { AnswerSkeleton } from "@/components/ui/skeleton";
 
 const initialState: AskState = {};
 
@@ -18,6 +20,27 @@ const EXAMPLES = [
   "How does my work differ from the literature I reviewed?",
   "What is my main contribution?",
 ];
+
+/**
+ * The waiting state.
+ *
+ * Answers take eight to ten seconds and cannot stream, because generation runs behind an
+ * n8n webhook that responds all at once. So the wait has to be furnished: without this the
+ * student stares at an unchanged page and cannot tell a slow answer from a broken one.
+ *
+ * It lives in its own component because useFormStatus only reports the status of the form
+ * above it in the tree, so it has to sit inside that form rather than beside it.
+ */
+function Pending() {
+  const { pending } = useFormStatus();
+  if (!pending) return null;
+
+  return (
+    <div className="animate-fade rounded-2xl border border-navy-100 bg-white/70 p-6 shadow-base">
+      <AnswerSkeleton message="Reading your chapters…" />
+    </div>
+  );
+}
 
 export function AskForm({ projectId }: { projectId: string }) {
   const [state, formAction] = useActionState(askProject, initialState);
@@ -52,7 +75,9 @@ export function AskForm({ projectId }: { projectId: string }) {
           )}
         </div>
 
-        <SubmitButton>Ask my project</SubmitButton>
+        <SubmitButton pendingLabel="Asking your project…">Ask my project</SubmitButton>
+
+        <Pending />
       </form>
 
       {!state.answer && !state.error && (
@@ -86,7 +111,7 @@ export function AskForm({ projectId }: { projectId: string }) {
       {state.error && <FormMessage tone="error">{state.error}</FormMessage>}
 
       {state.answer && (
-        <article className="space-y-5">
+        <article className="animate-rise space-y-5">
           <div className="field-parchment surface-grain rounded-2xl border border-navy-100 p-6 shadow-elevated">
             <p className="text-xs font-semibold uppercase tracking-widest text-gold">
               Answer
@@ -101,7 +126,7 @@ export function AskForm({ projectId }: { projectId: string }) {
               <h2 className="mb-3 font-display text-lg text-ink">
                 From your project
               </h2>
-              <ul className="space-y-2">
+              <ul className="stagger-children space-y-2">
                 {state.sources.map((s, i) => (
                   <li
                     key={s.id}

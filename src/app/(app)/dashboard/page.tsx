@@ -147,7 +147,7 @@ export default async function DashboardPage() {
         <p className="mt-2 text-ink-muted">Here is what to do next.</p>
       </header>
 
-      <section className="field-parchment surface-grain rounded-2xl border border-navy-100 p-8 shadow-elevated">
+      <section className="field-parchment surface-grain bloom animate-rise rounded-2xl border border-navy-100 p-8 shadow-elevated">
         <p className="text-xs font-semibold uppercase tracking-widest text-gold">
           {next.eyebrow}
         </p>
@@ -165,7 +165,7 @@ export default async function DashboardPage() {
         project to find these was the single worst thing about getting around the app.
       */}
       {current && indexed > 0 && (
-        <section className="grid gap-3 sm:grid-cols-3">
+        <section className="stagger-children grid gap-3 sm:grid-cols-3">
           {[
             {
               href: `/projects/${current.id}/ask`,
@@ -186,7 +186,7 @@ export default async function DashboardPage() {
             <Link
               key={tool.href}
               href={tool.href}
-              className="group rounded-xl border border-navy-100 bg-white p-5 shadow-base
+              className="sheen group rounded-xl border border-navy-100 bg-white p-5 shadow-base
                 transition-[transform,box-shadow,border-color] duration-150
                 hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-elevated
                 active:translate-y-0"
@@ -199,7 +199,7 @@ export default async function DashboardPage() {
       )}
 
       {current && (
-        <section className="grid gap-4 lg:grid-cols-5">
+        <section className="stagger-children grid gap-4 lg:grid-cols-5">
           <Card elevation="base" className="lg:col-span-2">
             <CardTitle className="font-display">Knowledge base</CardTitle>
             <p className="mt-1 mb-5 text-sm text-ink-muted">

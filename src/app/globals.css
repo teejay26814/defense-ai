@@ -107,6 +107,148 @@
     radial-gradient(ellipse 50% 40% at 100% 10%, rgb(201 162 39 / 0.07), transparent 55%);
 }
 
+/*
+ * Motion.
+ *
+ * Only transform and opacity are animated, per the design guardrails - those are the two
+ * properties a browser can composite without laying the page out again, so they stay smooth
+ * on the low-end Android phones a lot of students are using.
+ *
+ * Everything here is also short. 200 to 400ms reads as responsive; past about 500ms motion
+ * starts to feel like something the interface is doing *to* you. And all of it collapses
+ * under prefers-reduced-motion via the rule further down, so none of it is load-bearing.
+ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A slow drift for the gradient fields, so a large colour area is never quite static. */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -1.5%, 0) scale(1.04);
+  }
+}
+
+@utility animate-rise {
+  animation: rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-fade {
+  animation: fade 240ms ease-out both;
+}
+
+@utility animate-scale-in {
+  animation: scale-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/*
+ * Stagger a list so items arrive in sequence rather than all at once. Capped at eight:
+ * beyond that the last item waits long enough to feel broken rather than choreographed.
+ */
+@utility stagger-children {
+  & > * {
+    animation: rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  & > *:nth-child(1) { animation-delay: 0ms; }
+  & > *:nth-child(2) { animation-delay: 45ms; }
+  & > *:nth-child(3) { animation-delay: 90ms; }
+  & > *:nth-child(4) { animation-delay: 135ms; }
+  & > *:nth-child(5) { animation-delay: 180ms; }
+  & > *:nth-child(6) { animation-delay: 225ms; }
+  & > *:nth-child(7) { animation-delay: 270ms; }
+  & > *:nth-child(n + 8) { animation-delay: 315ms; }
+}
+
+/*
+ * Overlays.
+ *
+ * A sheen that sweeps across a surface on hover. Used sparingly, on the things a student is
+ * meant to click into: the tool cards and the next-step panel. The pseudo-element is
+ * pointer-events: none so it never intercepts the click it is decorating.
+ */
+@utility sheen {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-60%);
+    background-image: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.55) 50%,
+      transparent 80%
+    );
+    transition:
+      opacity 200ms ease-out,
+      transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &:hover::before {
+    opacity: 1;
+    transform: translateX(60%);
+  }
+}
+
+/*
+ * A soft gold bloom behind a surface, for the one panel on a screen that matters most.
+ * Sits behind its own content via a negative z-index on an isolated stacking context.
+ */
+@utility bloom {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -18% -8% auto -8%;
+    height: 60%;
+    pointer-events: none;
+    background-image: radial-gradient(
+      ellipse at 50% 0%,
+      rgb(201 162 39 / 0.16),
+      transparent 70%
+    );
+    animation: drift 14s ease-in-out infinite;
+  }
+}
+
 @layer base {
   html {
     /* Anchor links and focus jumps should not slam against the viewport edge. */
