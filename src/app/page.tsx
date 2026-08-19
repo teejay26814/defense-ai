@@ -14,7 +14,7 @@ const STEPS = [
     body: "Flashcards and quizzes built from your actual work - not generic study material.",
   },
   {
-    title: "Practise",
+    title: "Practice",
     body: "Face the questions your panel is most likely to ask, and rehearse until the answers are yours.",
   },
   {
@@ -111,10 +111,10 @@ export default async function Home() {
             it is the largest thing above the fold and a late-loading hero is a visible
             lurch.
           */}
-          <div className="relative mt-4 h-[38vw] max-h-[26rem] min-h-[13rem] w-full overflow-hidden">
+          <div className="relative mt-4 h-[30vw] max-h-[21rem] min-h-[11rem] w-full overflow-hidden">
             <Image
               src="/hero/defense-room.png"
-              alt="An empty university defense room in late afternoon light, a bound thesis resting closed on the lectern"
+              alt="An empty university defense room in late afternoon light, the examiners' table and chairs waiting"
               fill
               priority
               sizes="100vw"
