@@ -33,6 +33,7 @@ export function ProjectNav({
     { href: `${base}/ask`, label: "Ask", needsIndex: true },
     { href: `${base}/questions`, label: "Practice", needsIndex: true },
     { href: `${base}/quiz`, label: "Quiz", needsIndex: true },
+    { href: `${base}/mnemonics`, label: "Memory aids", needsIndex: true },
   ];
 
   return (

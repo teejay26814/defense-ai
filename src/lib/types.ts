@@ -133,6 +133,19 @@ export type Question = {
   updated_at: string;
 };
 
+export type Mnemonic = {
+  id: string;
+  project_id: string;
+  user_id: string;
+  chapter: number | null;
+  title: string;
+  items: string[];
+  aid: string;
+  explanation: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 /** 1 recall, 2 explain, 3 defend - the escalation a real panel follows. */
 export const DIFFICULTY_LABELS: Record<number, string> = {
   1: "Recall",

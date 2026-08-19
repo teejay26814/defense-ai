@@ -89,6 +89,28 @@ export type QuestionsRequest = {
   chunks: { id: string; chapter: number | null; label: string | null; content: string }[];
 };
 
+/**
+ * Memory aids.
+ *
+ * An empty array is a legitimate result: plenty of chapters hold no ordered list worth
+ * memorising, and inventing one would break the same grounding rule the questions follow.
+ */
+export type MnemonicsRequest = {
+  projectId: string;
+  userId: string;
+  chunks: { id: string; chapter: number | null; label: string | null; content: string }[];
+};
+
+export type MnemonicsResponse = {
+  mnemonics: {
+    title: string;
+    items: string[];
+    aid: string;
+    explanation: string | null;
+    sourceIndexes: number[];
+  }[];
+};
+
 export type QuestionsResponse = {
   questions: {
     question: string;
@@ -211,6 +233,14 @@ export async function requestAnswer(payload: AnswerRequest): Promise<AnswerRespo
  * project, so it is a much larger generation than a single answer. It is also the one call
  * a student is not sitting and watching, having been told it takes a moment.
  */
+export async function requestMnemonics(
+  payload: MnemonicsRequest,
+): Promise<MnemonicsResponse> {
+  const url = process.env.N8N_MNEMONICS_WEBHOOK_URL;
+  if (!url) throw new Error("N8N_MNEMONICS_WEBHOOK_URL is not set.");
+  return post<MnemonicsResponse>(url, payload, 120_000);
+}
+
 export async function requestQuestions(
   payload: QuestionsRequest,
 ): Promise<QuestionsResponse> {

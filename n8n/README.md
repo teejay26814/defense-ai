@@ -1,6 +1,6 @@
 # n8n workflows
 
-Three importable workflows. n8n orchestrates embedding, retrieval and answer generation -
+Five importable workflows. n8n orchestrates embedding, retrieval and answer generation -
 it is never the database, and it never holds a Supabase credential.
 
 | File | Path | Job |
@@ -8,6 +8,8 @@ it is never the database, and it never holds a Supabase credential.
 | `embed-workflow.json` | `/webhook/academia-embed` | Upsert a document's chunks into Pinecone |
 | `query-workflow.json` | `/webhook/academia-query` | Search a project's namespace, return ids |
 | `answer-workflow.json` | `/webhook/academia-answer` | Build the prompt, run OpenRouter, return the answer |
+| `questions-workflow.json` | `/webhook/academia-questions` | Write defense questions, with multiple choice |
+| `mnemonics-workflow.json` | `/webhook/academia-mnemonics` | Turn ordered lists into memory aids |
 
 Index host baked into both: `academia-scribes-qs7v7wv.svc.aped-4627-b74a.pinecone.io`.
 If you recreate the index, update the URL in the two HTTP Request nodes.

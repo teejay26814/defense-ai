@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
@@ -68,7 +69,7 @@ export default async function Home() {
 
       <main>
         <section className="field-parchment surface-grain">
-          <div className="mx-auto max-w-5xl px-6 py-section">
+          <div className="mx-auto max-w-5xl px-6 pb-12 pt-section">
             <h1 className="max-w-3xl font-display text-4xl leading-[1.1] text-ink sm:text-5xl lg:text-6xl">
               If your defense was tomorrow, would you be ready?
             </h1>
@@ -97,6 +98,40 @@ export default async function Home() {
                 </Link>
               )}
             </div>
+          </div>
+
+          {/*
+            The room, empty, the evening before. It answers the headline rather than
+            decorating it: this is what the student is walking into, and the thesis is
+            already on the lectern waiting for them.
+
+            Treated per the design guardrails - a parchment gradient washes the top edge so
+            the photograph emerges from the section rather than being pasted onto it, and a
+            navy multiply layer pulls its warmth back towards the brand. priority, because
+            it is the largest thing above the fold and a late-loading hero is a visible
+            lurch.
+          */}
+          <div className="relative mt-4 h-[38vw] max-h-[26rem] min-h-[13rem] w-full overflow-hidden">
+            <Image
+              src="/hero/defense-room.png"
+              alt="An empty university defense room in late afternoon light, a bound thesis resting closed on the lectern"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-navy-800/25 mix-blend-multiply"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-parchment to-transparent"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-parchment to-transparent"
+            />
           </div>
         </section>
 
