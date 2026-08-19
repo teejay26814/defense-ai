@@ -28,27 +28,33 @@ between working sessions - when it is off, upload indexing and Ask both fail.
 | --- | --- | --- |
 | Academia Scribes - Embed | `PPEqgvwktq6DtkW1` | active |
 | Academia Scribes - Query | `WhNQrPs0apx0EzPn` | active |
-| Academia Scribes - Answer | `g2rZ9pjdTKsfPd8U` | created **inactive** |
+| Academia Scribes - Answer | `g2rZ9pjdTKsfPd8U` | active |
+| Academia Scribes - Questions | `1JGt0sjq9MG55qly` | active |
+| Academia Scribes - Mnemonics | `4cRzDKXyATDa0PFf` | **inactive, needs switching on** |
 
-All three were created through the n8n MCP connector rather than imported.
+All were created through the n8n MCP connector rather than imported. `create_workflow`
+cannot set `active`, so a newly created workflow always has to be toggled on in the UI.
 
-### Known break: the Webhook credential is wrong on all three
+### Solved: the credential fault that broke everything
 
-Embed and Query both have `hhTc4zHU3PM5Mpo3` ("Header Auth account 3") on the **Webhook**
-node *and* the Pinecone node. One credential, two different required headers - so the
-Webhook nodes are checking for Pinecone's `Api-Key` and reject the app:
+Worth keeping, because the shape of it recurs. Embed and Query originally shared one
+credential between the **Webhook** node and the **Pinecone** node. One credential sends one
+header, and those two nodes need different ones, so the webhooks were checking for
+Pinecone's `Api-Key` and rejecting the app with `403 Authorization data is wrong!`.
 
-```
-POST /webhook/academia-embed  → 403 "Authorization data is wrong!"
-POST /webhook/academia-query  → 403 "Authorization data is wrong!"
-```
+Fixing that moved the fault one layer down: the Pinecone key had been typed into the node's
+**header parameter** box rather than into a credential. Header parameters are stored in
+plaintext in the workflow definition, so the key was readable by anyone who could read the
+workflow, and it also displaced the `X-Pinecone-API-Version` header that box had been
+holding.
 
-Pinecone is fine; the app simply cannot get in. Answer's Webhook node was left with **no**
-credential on purpose, so n8n flags it rather than inheriting the same fault silently.
+The working arrangement is three credentials, one header each:
 
-The fix is one new credential in the UI - Header Auth, header name `Authorization`, value
-`Bearer <N8N_WEBHOOK_SECRET>` - attached to the Webhook node of all three workflows. The
-Pinecone nodes keep `hhTc4zHU3PM5Mpo3`.
+| Credential | Header | Nodes |
+| --- | --- | --- |
+| Academia Webhook Auth | `Authorization: Bearer <secret>` | every **Webhook** node |
+| Pinecone API Key | `Api-Key: pcsk_...` | **Pinecone Upsert**, **Pinecone Search** |
+| OpenRouter account | built in | every **OpenRouter Model** node |
 
 The files here are the source of truth for their shape. They deliberately carry **no**
 `credentials` blocks - credential ids are instance-specific and secrets never belong in a
@@ -61,15 +67,15 @@ Getting these confused is what broke the first setup: credential names were type
 nodes' header-parameter fields, so Pinecone received a header called `Pinecone API` in one
 workflow and the n8n webhook secret in the other.
 
-Create **two** Header Auth credentials:
+Create **two** Header Auth credentials (the third, OpenRouter, is a native credential type):
 
 | Call it | Header **name** inside it | Header **value** | Attach to |
 | --- | --- | --- | --- |
-| Academia Webhook Auth | `Authorization` | `Bearer <N8N_WEBHOOK_SECRET>` | the **Webhook** node, all three workflows |
+| Academia Webhook Auth | `Authorization` | `Bearer <N8N_WEBHOOK_SECRET>` | the **Webhook** node, every workflow |
 | Pinecone API | `Api-Key` | your `pcsk_...` | the **Pinecone** node, Embed and Query |
 
-The Answer workflow needs no Header Auth credential of its own beyond the webhook one -
-its model node uses the existing **OpenRouter account** credential (`openRouterApi`).
+The Answer, Questions and Mnemonics workflows need no Header Auth credential beyond the
+webhook one - their model nodes use the existing **OpenRouter account** credential.
 
 `N8N_WEBHOOK_SECRET` is in the app's `.env.local`; the values must match exactly, `Bearer `
 prefix included.
