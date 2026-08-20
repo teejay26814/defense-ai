@@ -90,6 +90,32 @@ export type QuestionsRequest = {
 };
 
 /**
+ * Marking one answer.
+ *
+ * The reference answer is sent with the question, so n8n never looks anything up: what the
+ * project says arrives already read from Postgres under the student's session, exactly as
+ * with the other generating calls.
+ *
+ * Note what is not here. No chunks, no project id in the prompt, no chapter. The examiner
+ * is deliberately given only this question and this answer, because a marker that can see
+ * the whole project starts marking the project.
+ */
+export type EvaluateRequest = {
+  projectId: string;
+  userId: string;
+  question: string;
+  answer: string;
+  modelAnswer: string;
+};
+
+export type EvaluateResponse = {
+  score: number;
+  covered: string[];
+  missed: string[];
+  feedback: string;
+};
+
+/**
  * Memory aids.
  *
  * An empty array is a legitimate result: plenty of chapters hold no ordered list worth
@@ -233,6 +259,16 @@ export async function requestAnswer(payload: AnswerRequest): Promise<AnswerRespo
  * project, so it is a much larger generation than a single answer. It is also the one call
  * a student is not sitting and watching, having been told it takes a moment.
  */
+export async function requestEvaluation(
+  payload: EvaluateRequest,
+): Promise<EvaluateResponse> {
+  const url = process.env.N8N_EVALUATE_WEBHOOK_URL;
+  if (!url) throw new Error("N8N_EVALUATE_WEBHOOK_URL is not set.");
+  // Shorter than the others: this one runs while the student sits watching, between one
+  // question and the next, so a long stall is felt far more than it is during generation.
+  return post<EvaluateResponse>(url, payload, 90_000);
+}
+
 export async function requestMnemonics(
   payload: MnemonicsRequest,
 ): Promise<MnemonicsResponse> {

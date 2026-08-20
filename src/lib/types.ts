@@ -146,6 +146,67 @@ export type Mnemonic = {
   updated_at: string;
 };
 
+export type DefenseSession = {
+  id: string;
+  project_id: string;
+  user_id: string;
+  scope: DefenseScope;
+  status: "in_progress" | "complete" | "abandoned";
+  readiness: number | null;
+  started_at: string;
+  completed_at: string | null;
+};
+
+export type DefenseAnswer = {
+  id: string;
+  session_id: string;
+  project_id: string;
+  user_id: string;
+  question_id: string | null;
+  question: string;
+  answer: string;
+  model_answer: string;
+  score: number;
+  covered: string[];
+  missed: string[];
+  feedback: string | null;
+  answered_at: string;
+};
+
+/** Long enough to be a real sitting, short enough that a student finishes it. */
+export const DEFENSE_SITTING_LENGTH = 8;
+
+/**
+ * Readiness bands.
+ *
+ * Worded as a state of preparation rather than a grade. A student seeing this the week of
+ * their defense needs to know what to do next, not to be told they are failing.
+ */
+export function readinessBand(score: number): { label: string; note: string } {
+  if (score >= 85) {
+    return {
+      label: "Ready",
+      note: "You can answer your panel from your own work. Keep it warm.",
+    };
+  }
+  if (score >= 70) {
+    return {
+      label: "Nearly there",
+      note: "Solid across most of it. Tighten the ones you were vague on.",
+    };
+  }
+  if (score >= 50) {
+    return {
+      label: "Getting there",
+      note: "The shape is right. Go back over what your project says on the weaker answers.",
+    };
+  }
+  return {
+    label: "Worth more practice",
+    note: "Reread the chapters behind the questions you missed, then sit it again.",
+  };
+}
+
 /** 1 recall, 2 explain, 3 defend - the escalation a real panel follows. */
 export const DIFFICULTY_LABELS: Record<number, string> = {
   1: "Recall",

@@ -1,6 +1,6 @@
 # n8n workflows
 
-Five importable workflows. n8n orchestrates embedding, retrieval and answer generation -
+Six importable workflows. n8n orchestrates embedding, retrieval and answer generation -
 it is never the database, and it never holds a Supabase credential.
 
 | File | Path | Job |
@@ -10,6 +10,7 @@ it is never the database, and it never holds a Supabase credential.
 | `answer-workflow.json` | `/webhook/academia-answer` | Build the prompt, run OpenRouter, return the answer |
 | `questions-workflow.json` | `/webhook/academia-questions` | Write defense questions, with multiple choice |
 | `mnemonics-workflow.json` | `/webhook/academia-mnemonics` | Turn ordered lists into memory aids |
+| `evaluate-workflow.json` | `/webhook/academia-evaluate` | Mark one mock-defense answer against the project |
 
 Index host baked into both: `academia-scribes-qs7v7wv.svc.aped-4627-b74a.pinecone.io`.
 If you recreate the index, update the URL in the two HTTP Request nodes.
@@ -30,7 +31,8 @@ between working sessions - when it is off, upload indexing and Ask both fail.
 | Academia Scribes - Query | `WhNQrPs0apx0EzPn` | active |
 | Academia Scribes - Answer | `g2rZ9pjdTKsfPd8U` | active |
 | Academia Scribes - Questions | `1JGt0sjq9MG55qly` | active |
-| Academia Scribes - Mnemonics | `4cRzDKXyATDa0PFf` | **inactive, needs switching on** |
+| Academia Scribes - Mnemonics | `4cRzDKXyATDa0PFf` | active |
+| Academia Scribes - Evaluate | `g56OsDr0VAaLPAHZ` | **inactive, needs switching on** |
 
 All were created through the n8n MCP connector rather than imported. `create_workflow`
 cannot set `active`, so a newly created workflow always has to be toggled on in the UI.
