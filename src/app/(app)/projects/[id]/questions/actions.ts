@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requestQuestions } from "@/lib/n8n";
 import { withUsage } from "@/lib/usage";
+import { assertWithinPlan, PlanLimitError } from "@/lib/plans";
 import { DEFENSE_SCOPES, type DefenseScope } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 
@@ -64,6 +65,15 @@ export async function generateQuestions(
     .maybeSingle();
 
   if (!project) return { error: "That project could not be found." };
+
+  // Checked in the action, before the AI call, never in the UI. A disabled button is
+  // a courtesy; this is the boundary.
+  try {
+    await assertWithinPlan(supabase, user.id, "questions");
+  } catch (err) {
+    if (err instanceof PlanLimitError) return { error: err.message };
+    throw err;
+  }
 
   if (!process.env.N8N_QUESTIONS_WEBHOOK_URL) {
     return {

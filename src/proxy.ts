@@ -21,6 +21,11 @@ const PUBLIC_ROUTES = [
   // Reachable signed out so it can explain that the link expired, rather than bouncing to
   // login where the student would have no idea what went wrong.
   "/reset-password",
+  // Paystack's webhook. It arrives from Paystack with no session at all, so without this
+  // the guard would redirect it to /login, the handler would never run, and payments would
+  // silently never activate. It is not unprotected: it authenticates by verifying an HMAC
+  // signature over the raw body, which is a stronger check than a session cookie.
+  "/api/webhooks",
 ];
 
 /**

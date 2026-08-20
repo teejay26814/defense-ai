@@ -54,6 +54,13 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             >
               Projects
             </Link>
+            <Link
+              href="/billing"
+              className="rounded-lg px-3 py-1.5 font-medium text-ink
+                transition-colors duration-150 hover:bg-navy-050 active:bg-navy-100"
+            >
+              Plans
+            </Link>
           </nav>
 
           <div className="flex items-center gap-4">

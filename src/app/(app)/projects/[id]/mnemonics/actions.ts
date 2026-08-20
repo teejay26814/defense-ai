@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requestMnemonics } from "@/lib/n8n";
 import { withUsage } from "@/lib/usage";
+import { assertWithinPlan, PlanLimitError } from "@/lib/plans";
 import { toFieldErrors } from "@/lib/validation/auth";
 
 export type MnemonicsState = {
@@ -53,6 +54,15 @@ export async function generateMnemonics(
     .maybeSingle();
 
   if (!project) return { error: "That project could not be found." };
+
+  // Checked in the action, before the AI call, never in the UI. A disabled button is
+  // a courtesy; this is the boundary.
+  try {
+    await assertWithinPlan(supabase, user.id, "mnemonics");
+  } catch (err) {
+    if (err instanceof PlanLimitError) return { error: err.message };
+    throw err;
+  }
 
   if (!process.env.N8N_MNEMONICS_WEBHOOK_URL) {
     return { error: "Memory aids are not connected yet." };

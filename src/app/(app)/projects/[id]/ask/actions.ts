@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { citedChunkIds, type SourceChunk } from "@/lib/llm";
 import { namespaceFor, requestAnswer, requestRetrieval } from "@/lib/n8n";
 import { withUsage } from "@/lib/usage";
+import { assertWithinPlan, PlanLimitError } from "@/lib/plans";
 import { toFieldErrors } from "@/lib/validation/auth";
 
 export type AskState = {
@@ -81,6 +82,15 @@ export async function askProject(
     .maybeSingle();
 
   if (!project) return { error: "That project could not be found.", question };
+
+  // Checked in the action, before the AI call, never in the UI. A disabled button is
+  // a courtesy; this is the boundary.
+  try {
+    await assertWithinPlan(supabase, user.id, "answer");
+  } catch (err) {
+    if (err instanceof PlanLimitError) return { error: err.message };
+    throw err;
+  }
 
   if (!process.env.N8N_QUERY_WEBHOOK_URL || !process.env.N8N_ANSWER_WEBHOOK_URL) {
     return {

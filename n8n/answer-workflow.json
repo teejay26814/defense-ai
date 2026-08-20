@@ -52,7 +52,7 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-opus-4.1",
+        "model": "anthropic/claude-sonnet-4.5",
         "options": {}
       },
       "id": "c1000000-0000-4000-8000-000000000004",
@@ -63,7 +63,7 @@
         260,
         200
       ],
-      "notes": "Attach the existing 'OpenRouter account' credential. Model is a one-field change - drop to anthropic/claude-sonnet-4.5 to cut cost per question."
+      "notes": "Sonnet, not Opus. Ask is the most-used feature, so it was the largest line on the bill; Sonnet's answers held up across questions, marking and mnemonics. One field to revert if quality ever slips."
     },
     {
       "parameters": {
