@@ -4,6 +4,11 @@
  * This is the product's north star made visible: "If your defense was tomorrow, would you
  * be ready?" A number you can see beats a sentence you have to read.
  *
+ * It shows coverage until a mock defense has been sat, and the real readiness score after
+ * that. The distinction matters and the caller is responsible for labelling it honestly:
+ * coverage counts uploads, readiness is earned by answering. Presenting the first as the
+ * second would be the one lie this product cannot afford.
+ *
  * Form choices are deliberate, not stylistic:
  *
  * - A **meter**, not a radial gauge. A gauge for one ratio is a two-slice pie wearing a

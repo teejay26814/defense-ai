@@ -11,7 +11,12 @@ import {
   type ChapterState,
 } from "@/components/chapter-progress";
 import { createClient } from "@/lib/supabase/server";
-import { CHAPTERS, type DocumentStatus, type Project } from "@/lib/types";
+import {
+  CHAPTERS,
+  readinessBand,
+  type DocumentStatus,
+  type Project,
+} from "@/lib/types";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -96,6 +101,24 @@ export default async function DashboardPage() {
   const indexed = [...chapterStates.values()].filter((s) => s === "ready").length;
   const coverage = (indexed / CHAPTERS.length) * 100;
 
+  // Once a mock defense has been sat, readiness replaces coverage. The *latest* sitting,
+  // not the best one: this figure answers "would you be ready tomorrow", and the best score
+  // a student ever got is not an answer to that.
+  let readiness: number | null = null;
+  if (current) {
+    const { data: lastSitting } = await supabase
+      .from("defense_sessions")
+      .select("readiness")
+      .eq("project_id", current.id)
+      .eq("status", "complete")
+      .not("readiness", "is", null)
+      .order("completed_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    readiness = (lastSitting?.readiness as number | null) ?? null;
+  }
+
   const next = !current
     ? {
         eyebrow: "Next step",
@@ -165,7 +188,7 @@ export default async function DashboardPage() {
         project to find these was the single worst thing about getting around the app.
       */}
       {current && indexed > 0 && (
-        <section className="stagger-children grid gap-3 sm:grid-cols-3">
+        <section className="stagger-children grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
               href: `/projects/${current.id}/ask`,
@@ -181,6 +204,11 @@ export default async function DashboardPage() {
               href: `/projects/${current.id}/quiz`,
               title: "Quiz",
               body: "Multiple choice against the clock in your head.",
+            },
+            {
+              href: `/projects/${current.id}/defense`,
+              title: "Mock defense",
+              body: "Answer from memory and be marked against your own project.",
             },
           ].map((tool) => (
             <Link
@@ -201,19 +229,34 @@ export default async function DashboardPage() {
       {current && (
         <section className="stagger-children grid gap-4 lg:grid-cols-5">
           <Card elevation="base" className="lg:col-span-2">
-            <CardTitle className="font-display">Knowledge base</CardTitle>
+            <CardTitle className="font-display">
+              {readiness !== null ? "Defense readiness" : "Knowledge base"}
+            </CardTitle>
             <p className="mt-1 mb-5 text-sm text-ink-muted">
-              How much of your project is searchable.
+              {readiness !== null
+                ? readinessBand(readiness).label
+                : "How much of your project is searchable."}
             </p>
 
             <ReadinessMeter
-              value={coverage}
+              value={readiness ?? coverage}
               caption={
-                indexed === CHAPTERS.length
-                  ? "Every chapter is indexed. Anything you ask is answered from your own work."
-                  : "Counts chapters that are uploaded and indexed. Your defense readiness score arrives with the mock defense."
+                readiness !== null
+                  ? `${readinessBand(readiness).note} From your last mock defense.`
+                  : indexed === CHAPTERS.length
+                    ? "Every chapter is indexed. Sit a mock defense to turn this into a real readiness score."
+                    : "Counts chapters that are uploaded and indexed. Your defense readiness score arrives once you sit a mock defense."
               }
             />
+
+            {readiness === null && indexed > 0 && (
+              <Link
+                href={`/projects/${current.id}/defense`}
+                className={`mt-5 ${buttonStyles({ variant: "secondary", size: "sm" })}`}
+              >
+                Sit a mock defense
+              </Link>
+            )}
           </Card>
 
           <Card elevation="base" className="lg:col-span-3">
