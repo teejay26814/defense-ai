@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { PLANS, type Plan } from "@/lib/plans";
-import { verifyTransaction, verifyWebhookSignature } from "@/lib/paystack";
+import { isConfigured, verifyTransaction, verifyWebhookSignature } from "@/lib/paystack";
 
 /**
  * Where Paystack tells us a payment succeeded.
@@ -21,6 +21,13 @@ export async function POST(request: NextRequest) {
   // The raw body, before any parsing. The signature is over the exact bytes Paystack sent,
   // so re-serialising a parsed object would produce a different string and never match.
   const raw = await request.text();
+
+  // Checked before the signature so a misconfigured deployment answers 500 and Paystack
+  // retries, rather than 401 which would look like a forgery and be silently dropped.
+  if (!isConfigured()) {
+    console.error("[paystack webhook] PAYSTACK_SECRET_KEY is not set on this deployment");
+    return NextResponse.json({ error: "not configured" }, { status: 500 });
+  }
 
   if (!verifyWebhookSignature(raw, request.headers.get("x-paystack-signature"))) {
     console.error("[paystack webhook] bad signature");

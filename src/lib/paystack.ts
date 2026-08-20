@@ -15,6 +15,11 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 const API = "https://api.paystack.co";
 
+/** Whether the secret key is present at all. Distinguishes misconfiguration from a forgery. */
+export function isConfigured(): boolean {
+  return Boolean(process.env.PAYSTACK_SECRET_KEY);
+}
+
 function secretKey(): string {
   const key = process.env.PAYSTACK_SECRET_KEY;
   if (!key) {
@@ -87,7 +92,12 @@ export async function initialiseTransaction(params: {
 export function verifyWebhookSignature(rawBody: string, signature: string | null): boolean {
   if (!signature) return false;
 
-  const expected = createHmac("sha512", secretKey()).update(rawBody).digest("hex");
+  // Never throws. A missing key is a deployment fault, not an authentication one, and the
+  // caller checks isConfigured() separately so the two get different status codes.
+  const key = process.env.PAYSTACK_SECRET_KEY;
+  if (!key) return false;
+
+  const expected = createHmac("sha512", key).update(rawBody).digest("hex");
 
   const a = Buffer.from(expected, "utf8");
   const b = Buffer.from(signature, "utf8");
