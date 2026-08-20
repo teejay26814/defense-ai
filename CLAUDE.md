@@ -118,6 +118,14 @@ working assumption and may need revising.
 - Mutations go through **server actions**, not client-side database writes.
 - Migrations live in `supabase/migrations/`, numbered and ordered.
 - Keep modules small and focused. Avoid unnecessary dependencies.
+- **Never run `next dev` against a `.next` left by `next build`.** The production build
+  writes a route manifest the dev server misreads, and the symptom is badly misleading: new
+  routes return 404 while old ones work, and the page's own code never runs, so no error
+  appears anywhere. `rm -rf .next` and restart. This cost two separate debugging sessions,
+  once on `/questions` and once on `/quiz` and `/mnemonics`.
+- A signed-out request cannot tell you whether a route exists: `src/proxy.ts` redirects
+  everything non-public to `/login`, so a real route and a nonexistent one both return 307.
+  Check a route by hitting it signed in, or by looking for it in `next build` output.
 
 ## Priorities, in order
 
