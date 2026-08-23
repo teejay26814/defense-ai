@@ -33,7 +33,7 @@ export default async function ProjectsPage() {
         </div>
         <Link
           href="/projects/new"
-          className="rounded-lg bg-navy-700 px-4 py-2.5 font-medium text-white shadow-elevated
+          className="rounded-lg bg-navy-700 px-4 py-2.5 font-medium text-white shadow-lifted
             transition-[transform,background-color] duration-150
             hover:bg-navy-600 active:translate-y-px"
         >
@@ -42,7 +42,7 @@ export default async function ProjectsPage() {
       </header>
 
       {projects.length === 0 ? (
-        <div className="field-parchment surface-grain rounded-2xl border border-navy-100 p-10 text-center shadow-elevated">
+        <div className="field-parchment surface-grain rounded-feature border border-navy-100 p-10 text-center shadow-lifted">
           <h2 className="font-display text-2xl text-ink">Start with your project</h2>
           <p className="mx-auto mt-2 max-w-md text-ink-muted">
             Add it once, upload your chapters, and everything after that is built from
@@ -51,7 +51,7 @@ export default async function ProjectsPage() {
           <Link
             href="/projects/new"
             className="mt-6 inline-block rounded-lg bg-navy-700 px-5 py-2.5 font-medium text-white
-              shadow-elevated transition-[transform,background-color] duration-150
+              shadow-lifted transition-[transform,background-color] duration-150
               hover:bg-navy-600 active:translate-y-px"
           >
             Add your project
@@ -65,9 +65,9 @@ export default async function ProjectsPage() {
               <li key={p.id}>
                 <Link
                   href={`/projects/${p.id}`}
-                  className="block h-full rounded-xl border border-navy-100 bg-white/70 p-5 shadow-base
+                  className="block h-full rounded-surface border border-navy-100/70 bg-white/70 p-5 shadow-raised
                     transition-[transform,box-shadow,border-color] duration-200
-                    hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-elevated
+                    hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-lifted
                     active:translate-y-0"
                 >
                   <h2 className="font-display text-lg leading-snug text-ink">{p.title}</h2>

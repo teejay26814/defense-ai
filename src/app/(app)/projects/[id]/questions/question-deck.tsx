@@ -46,7 +46,7 @@ export function QuestionDeck({
     <section>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <div className="flex flex-wrap items-baseline gap-3">
-          <h2 className="font-display text-xl text-ink">
+          <h2 className="font-display text-2xl text-ink">
             {questions.length} question{questions.length === 1 ? "" : "s"}
           </h2>
           <button
@@ -68,7 +68,7 @@ export function QuestionDeck({
         </p>
       </div>
 
-      <ul className="space-y-4">
+      <ul className="border-t border-navy-100">
         {questions.map((q) => (
           <Flashcard key={q.id} question={q} projectId={projectId} />
         ))}

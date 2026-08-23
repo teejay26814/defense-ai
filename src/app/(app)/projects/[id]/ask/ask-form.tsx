@@ -36,7 +36,7 @@ function Pending() {
   if (!pending) return null;
 
   return (
-    <div className="animate-fade rounded-2xl border border-navy-100 bg-white/70 p-6 shadow-base">
+    <div className="animate-fade rounded-feature border border-navy-100/70 bg-white/70 p-6 shadow-raised">
       <AnswerSkeleton message="Reading your chapters…" />
     </div>
   );
@@ -62,7 +62,7 @@ export function AskForm({ projectId }: { projectId: string }) {
             defaultValue={state.question}
             placeholder="What would your panel ask you about this?"
             aria-invalid={Boolean(state.fieldErrors?.question) || undefined}
-            className={`w-full resize-y rounded-lg border bg-white px-3.5 py-2.5 text-ink shadow-base
+            className={`w-full resize-y rounded-control border bg-white px-3.5 py-2.5 text-ink shadow-raised
               transition-[border-color,box-shadow] duration-150
               placeholder:text-ink-muted/60
               hover:border-navy-300 focus-visible:border-navy-500
@@ -82,7 +82,7 @@ export function AskForm({ projectId }: { projectId: string }) {
 
       {!state.answer && !state.error && (
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-ink-muted">
+          <p className="label-eyebrow mb-2">
             Try one of these
           </p>
           <ul className="flex flex-wrap gap-2">
@@ -94,7 +94,7 @@ export function AskForm({ projectId }: { projectId: string }) {
                   <input type="hidden" name="question" value={q} />
                   <button
                     type="submit"
-                    className="rounded-full border border-navy-100 bg-white/70 px-3 py-1.5 text-left text-xs text-ink
+                    className="rounded-full border border-navy-100/70 bg-white/70 px-3 py-1.5 text-left text-xs text-ink
                       transition-[background-color,border-color,transform] duration-150
                       hover:border-navy-300 hover:bg-navy-050
                       active:translate-y-px"
@@ -112,29 +112,32 @@ export function AskForm({ projectId }: { projectId: string }) {
 
       {state.answer && (
         <article className="animate-rise space-y-5">
-          <div className="field-parchment surface-grain rounded-2xl border border-navy-100 p-6 shadow-elevated">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gold">
-              Answer
-            </p>
-            <div className="mt-3 space-y-3 whitespace-pre-wrap leading-relaxed text-ink">
+          {/*
+            The answer is set as prose, not boxed. It is the longest text on the screen and
+            the reason the student is here; enclosing it in a card makes it look like a
+            widget's output rather than something written for them.
+          */}
+          <div>
+            <p className="label-eyebrow text-gold">Answer</p>
+            <div className="measure mt-4 whitespace-pre-wrap font-display text-lg leading-[1.7] text-ink">
               {state.answer}
             </div>
           </div>
 
           {state.sources && state.sources.length > 0 && (
             <section>
-              <h2 className="mb-3 font-display text-lg text-ink">
+              <h2 className="label-eyebrow mb-1 border-t border-navy-100 pt-5">
                 From your project
               </h2>
-              <ul className="stagger-children space-y-2">
+              <ul className="stagger-children">
                 {state.sources.map((s, i) => (
                   <li
                     key={s.id}
-                    className={`rounded-xl border p-4 text-sm shadow-base transition-[border-color] duration-150
-                      ${s.cited ? "border-gold/40 bg-white/80" : "border-navy-100 bg-white/50"}`}
+                    className={`rule-hairline py-4 text-sm transition-opacity duration-200
+                      ${s.cited ? "" : "opacity-55"}`}
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded bg-navy-050 px-1.5 py-0.5 text-xs font-medium text-navy-700">
+                      <span className="figures-data rounded bg-navy-050 px-1.5 py-0.5 text-2xs font-semibold text-navy-700">
                         [{i + 1}]
                       </span>
                       <span className="font-medium text-ink">

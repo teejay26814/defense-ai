@@ -24,7 +24,7 @@ export function DocumentList({
 }) {
   if (documents.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-navy-300 p-8 text-center text-sm text-ink-muted">
+      <p className="border-t border-navy-100 py-10 text-center text-ink-muted">
         No documents yet. Upload your first chapter to get started.
       </p>
     );
@@ -35,7 +35,7 @@ export function DocumentList({
       {documents.map((d) => (
         <li
           key={d.id}
-          className="rounded-xl border border-navy-100 bg-white/70 p-4 shadow-base"
+          className="rule-hairline py-4"
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">

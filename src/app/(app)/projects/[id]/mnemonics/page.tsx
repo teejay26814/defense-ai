@@ -44,8 +44,8 @@ export default async function MnemonicsPage({
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="font-display text-2xl text-ink">Memory aids</h2>
-        <p className="mt-2 max-w-prose text-ink-muted">
+        <h2 className="font-display text-3xl text-ink">Memory aids</h2>
+        <p className="measure mt-3 text-ink-muted">
           Hooks for the lists you have to recite in order: your objectives, your research
           questions, your limitations. Built from your own wording, so what you memorise is
           what you wrote.
@@ -68,11 +68,11 @@ export default async function MnemonicsPage({
           description="Build a set above. If your chapters have numbered objectives or research questions, those are what these work best on."
         />
       ) : (
-        <ul className="stagger-children space-y-4">
+        <ul className="stagger-children border-t border-navy-100">
           {mnemonics.map((m) => (
             <li
               key={m.id}
-              className="rounded-xl border border-navy-100 bg-white p-5 shadow-base sm:p-6"
+              className="rule-hairline py-7"
             >
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <h3 className="font-display text-lg text-ink">{m.title}</h3>
@@ -84,10 +84,10 @@ export default async function MnemonicsPage({
 
               {/* The hook, given the weight it needs to actually stick. */}
               <div className="bloom rounded-lg border-l-2 border-gold bg-navy-050/60 py-4 pl-4 pr-3">
-                <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
+                <p className="label-eyebrow">
                   Remember it as
                 </p>
-                <p className="mt-1.5 font-display text-xl leading-snug text-ink">{m.aid}</p>
+                <p className="mt-2 font-display text-2xl leading-snug text-ink">{m.aid}</p>
                 {m.explanation && (
                   <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                     {m.explanation}

@@ -89,7 +89,7 @@ export function StudySession({
     const solid = rated.filter((r) => r === 3).length;
 
     return (
-      <div className="animate-scale-in bloom rounded-2xl border border-navy-100 bg-white p-8 text-center shadow-elevated">
+      <div className="animate-scale-in bloom rounded-feature border border-navy-100/70 bg-white p-8 text-center shadow-lifted">
         <p className="font-sans text-4xl font-semibold leading-none text-ink">{rated.length}</p>
         <p className="mt-2 font-display text-xl text-ink">
           {rated.length === 1 ? "card reviewed" : "cards reviewed"}
@@ -151,7 +151,7 @@ export function StudySession({
 
       <div
         key={current.id}
-        className="animate-scale-in rounded-2xl border border-navy-100 bg-white p-6 shadow-elevated sm:p-8"
+        className="animate-scale-in rounded-feature border border-navy-100/70 bg-white p-6 shadow-lifted sm:p-8"
       >
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {current.chapter && <Badge tone="info">Chapter {current.chapter}</Badge>}
@@ -177,7 +177,7 @@ export function StudySession({
         ) : (
           <div className="mt-6">
             <div className="animate-rise rounded-lg border-l-2 border-gold bg-navy-050/60 py-4 pl-4 pr-3">
-              <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
+              <p className="label-eyebrow">
                 From your project
               </p>
               <p className="mt-2 whitespace-pre-line leading-relaxed text-ink">

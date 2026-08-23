@@ -65,8 +65,8 @@ export default async function QuestionsPage({
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="font-display text-2xl text-ink">Practice questions</h2>
-        <p className="mt-2 max-w-prose text-ink-muted">
+        <h2 className="font-display text-3xl text-ink">Practice questions</h2>
+        <p className="measure mt-3 text-ink-muted">
           Questions a panel would actually ask, written from your own chapters. Try to
           answer out loud before you reveal what your project says.
         </p>

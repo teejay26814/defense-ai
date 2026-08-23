@@ -60,7 +60,7 @@ export function Sitting({
 
   if (done) {
     return (
-      <div className="animate-scale-in rounded-2xl border border-navy-100 bg-white p-8 text-center shadow-elevated">
+      <div className="animate-scale-in rounded-feature border border-navy-100/70 bg-white p-8 text-center shadow-lifted">
         <h2 className="font-display text-2xl text-ink">That is the last question.</h2>
         <p className="mx-auto mt-2 max-w-prose text-sm text-ink-muted">
           Close the sitting to see your readiness, what you covered, and what your project
@@ -102,7 +102,7 @@ export function Sitting({
 
       <div
         key={current.id}
-        className="animate-scale-in rounded-2xl border border-navy-100 bg-white p-6 shadow-elevated sm:p-8"
+        className="animate-scale-in rounded-feature border border-navy-100/70 bg-white p-6 shadow-lifted sm:p-8"
       >
         {current.chapter && (
           <Badge tone="info" className="mb-3">
@@ -134,7 +134,7 @@ export function Sitting({
             rows={7}
             autoFocus
             placeholder="Answer as you would say it out loud…"
-            className="w-full resize-y rounded-lg border border-navy-100 bg-white px-4 py-3 leading-relaxed text-ink shadow-base
+            className="w-full resize-y rounded-lg border border-navy-100/70 bg-white px-4 py-3 leading-relaxed text-ink shadow-raised
               transition-[border-color] duration-150
               placeholder:text-ink-muted/60
               hover:border-navy-300 focus-visible:border-navy-500"

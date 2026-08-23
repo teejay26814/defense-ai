@@ -58,7 +58,7 @@ export function Field({
           [invalid ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") ||
           undefined
         }
-        className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-ink shadow-base
+        className={`w-full rounded-control border bg-white px-3.5 py-2.5 text-ink shadow-raised
           transition-[border-color,box-shadow] duration-150
           placeholder:text-ink-muted/60
           hover:border-navy-300
@@ -82,7 +82,7 @@ export function Field({
 }
 
 const controlClass = (invalid: boolean) =>
-  `w-full rounded-lg border bg-white px-3.5 py-2.5 text-ink shadow-base
+  `w-full rounded-control border bg-white px-3.5 py-2.5 text-ink shadow-raised
    transition-[border-color,box-shadow] duration-150
    placeholder:text-ink-muted/60
    hover:border-navy-300
@@ -211,7 +211,7 @@ export function FileField({
         accept={accept}
         required
         aria-invalid={invalid || undefined}
-        className={`w-full rounded-lg border bg-white text-sm text-ink-muted shadow-base
+        className={`w-full rounded-control border bg-white text-sm text-ink-muted shadow-raised
           transition-[border-color] duration-150
           hover:border-navy-300
           file:mr-4 file:cursor-pointer file:border-0 file:bg-navy-050

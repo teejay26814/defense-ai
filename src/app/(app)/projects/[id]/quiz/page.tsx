@@ -44,8 +44,8 @@ export default async function QuizPage({ params }: PageProps<"/projects/[id]/qui
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="font-display text-2xl text-ink">Quiz</h2>
-        <p className="mt-2 max-w-prose text-ink-muted">
+        <h2 className="font-display text-3xl text-ink">Quiz</h2>
+        <p className="measure mt-3 text-ink-muted">
           Multiple choice, drawn from your own chapters. Every option is something your
           project could plausibly have said, so read carefully.
         </p>

@@ -109,8 +109,8 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
       </header>
 
       {/* What to do next - the dashboard guardrail applies here too. */}
-      <section className="field-parchment surface-grain rounded-2xl border border-navy-100 p-6 shadow-elevated">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gold">
+      <section className="field-parchment surface-grain rounded-feature border border-navy-100 p-6 shadow-lifted">
+        <p className="label-eyebrow text-gold">
           {missingChapters.length === 0 ? "All chapters in" : "Next step"}
         </p>
         <h2 className="mt-2 font-display text-xl text-ink">
@@ -134,7 +134,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-navy-100 bg-white/70 p-5 shadow-base">
+          <div className="rounded-feature border border-navy-100/70 bg-white/70 p-5 shadow-raised">
             <h2 className="font-display text-lg text-ink">Add a document</h2>
             <p className="mt-1 mb-4 text-sm text-ink-muted">
               One chapter at a time works best.
@@ -142,7 +142,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
             <UploadForm projectId={project.id} />
           </div>
 
-          <div className="rounded-2xl border border-danger/20 bg-white/60 p-5">
+          <div className="rounded-feature border border-danger/20 bg-white/60 p-5">
             <h2 className="font-display text-lg text-ink">Delete project</h2>
             <p className="mt-1 mb-3 text-sm text-ink-muted">
               Removes the project and every document in it. This cannot be undone.

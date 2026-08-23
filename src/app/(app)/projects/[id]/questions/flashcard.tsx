@@ -34,7 +34,7 @@ export function Flashcard({
   const answered = question.confidence !== null;
 
   return (
-    <li className="rounded-xl border border-navy-100 bg-white p-5 shadow-base">
+    <li className="rule-hairline py-6">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         {question.chapter && (
           <Badge tone="info">Chapter {question.chapter}</Badge>
@@ -49,7 +49,7 @@ export function Flashcard({
         )}
       </div>
 
-      <p className="font-display text-lg leading-snug text-ink">{question.question}</p>
+      <p className="measure font-display text-xl leading-snug text-ink">{question.question}</p>
 
       {!revealed ? (
         <button
@@ -62,10 +62,10 @@ export function Flashcard({
       ) : (
         <div className="mt-4">
           <div className="rounded-lg border-l-2 border-gold bg-navy-050/60 py-3 pl-4 pr-3">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
+            <p className="label-eyebrow">
               From your project
             </p>
-            <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink">
+            <p className="measure mt-2 whitespace-pre-line leading-relaxed text-ink">
               {question.model_answer}
             </p>
           </div>

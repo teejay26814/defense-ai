@@ -52,8 +52,8 @@ export default async function DefensePage({
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="font-display text-2xl text-ink">Mock defense</h2>
-        <p className="mt-2 max-w-prose text-ink-muted">
+        <h2 className="font-display text-3xl text-ink">Mock defense</h2>
+        <p className="measure mt-3 text-ink-muted">
           Answer as you would in the room, in your own words, without looking anything up.
           Each answer is marked against what your project actually says.
         </p>
@@ -102,25 +102,24 @@ export default async function DefensePage({
             )}
           </div>
 
-          <ul className="stagger-children space-y-2.5">
+          <ul className="stagger-children border-t border-navy-100">
             {complete.map((s) => {
               const band = readinessBand(s.readiness!);
               return (
                 <li key={s.id}>
                   <Link
                     href={`/projects/${id}/defense/${s.id}`}
-                    className="flex items-center gap-4 rounded-xl border border-navy-100 bg-white p-4 shadow-base
-                      transition-[transform,box-shadow,border-color] duration-150
-                      hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-elevated
-                      active:translate-y-0"
+                    className="rule-hairline press flex items-center gap-5 py-4
+                      transition-[background-color,padding] duration-200
+                      hover:bg-navy-050/60 hover:px-3"
                   >
-                    <span className="font-sans text-2xl font-semibold tabular-nums text-ink">
+                    <span className="figures-data w-14 shrink-0 font-sans text-2xl font-semibold text-ink">
                       {s.readiness}
                       <span className="text-sm font-medium text-ink-muted">%</span>
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-medium text-ink">{band.label}</span>
-                      <span className="block text-xs text-ink-muted">
+                      <span className="block font-medium text-ink">{band.label}</span>
+                      <span className="block text-sm text-ink-muted">
                         {new Date(s.started_at).toLocaleDateString()}
                       </span>
                     </span>
