@@ -307,13 +307,19 @@
     content: "";
     position: absolute;
     z-index: -1;
-    inset: -18% -8% auto -8%;
-    height: 60%;
+    /*
+      Kept inside its own element. The first version used a negative top inset so the glow
+      would spill past the edge, which looked right in isolation and, on the plans page,
+      pushed a warm smudge up behind the usage figures sitting above the card. A decorative
+      effect that reaches into unrelated content is a bug, not atmosphere.
+    */
+    inset: 0 0 auto 0;
+    height: 55%;
     pointer-events: none;
     background-image: radial-gradient(
       ellipse at 50% 0%,
-      rgb(201 162 39 / 0.16),
-      transparent 70%
+      rgb(201 162 39 / 0.2),
+      transparent 72%
     );
     animation: drift 14s ease-in-out infinite;
   }

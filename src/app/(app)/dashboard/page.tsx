@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 
 import { Card, CardTitle } from "@/components/ui/card";
 import { buttonStyles } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ReadinessMeter } from "@/components/readiness-meter";
 import {
   ChapterProgress,
@@ -203,11 +202,11 @@ export default async function DashboardPage() {
         */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-16 top-0 hidden h-full w-80 opacity-[0.16] lg:block"
+          className="pointer-events-none absolute -right-10 top-0 hidden h-full w-96 opacity-[0.3] lg:block"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.9) 0 1px, transparent 1px 14px)",
-            maskImage: "linear-gradient(to left, black, transparent 85%)",
+              "repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.85) 0 1px, transparent 1px 12px)",
+            maskImage: "linear-gradient(to left, black 10%, transparent 92%)",
           }}
         />
       </section>
@@ -325,10 +324,16 @@ export default async function DashboardPage() {
         </section>
       )}
 
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-xl text-ink">Your projects</h2>
-          {projects.length > 0 && (
+      {/*
+        Only shown once there is something to list. With no project the focal panel above is
+        already the call to action, and repeating "Add your project" underneath it in a
+        dashed box said the same thing twice while reintroducing exactly the weak, floating
+        container the rest of this redesign removed.
+      */}
+      {projects.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-baseline justify-between gap-4">
+            <h2 className="label-eyebrow">Your projects</h2>
             <Link
               href="/projects"
               className="rounded text-sm text-navy-500 underline-offset-4
@@ -336,40 +341,37 @@ export default async function DashboardPage() {
             >
               See all
             </Link>
-          )}
-        </div>
+          </div>
 
-        {projects.length === 0 ? (
-          <EmptyState
-            title="No project yet"
-            description="Add the project you are defending, then upload your chapters one by one. Everything after that is built from your own work."
-            action={
-              <Link href="/projects/new" className={buttonStyles()}>
-                Add your project
-              </Link>
-            }
-          />
-        ) : (
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <ul className="border-t border-navy-100">
             {projects.slice(0, 4).map((p) => (
-              <li key={p.id}>
+              <li key={p.id} className="rule-hairline">
                 <Link
                   href={`/projects/${p.id}`}
-                  className="block h-full rounded-surface border border-navy-100/70 bg-white/70 p-5 shadow-raised
-                    transition-[transform,box-shadow,border-color] duration-200
-                    hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-lifted
-                    active:translate-y-0"
+                  className="press flex items-baseline gap-5 py-5
+                    transition-[background-color,padding] duration-200
+                    hover:bg-navy-050/60 hover:px-4"
                 >
-                  <h3 className="font-display text-lg leading-snug text-ink">{p.title}</h3>
-                  <p className="mt-2 text-xs text-ink-muted">
-                    {p.documents.length} document{p.documents.length === 1 ? "" : "s"}
-                  </p>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-xl text-ink">{p.title}</span>
+                    <span className="mt-1 block text-sm text-ink-muted">
+                      {p.documents.length} document{p.documents.length === 1 ? "" : "s"}
+                    </span>
+                  </span>
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-navy-300 transition-transform duration-200
+                      group-hover:translate-x-1"
+                  >
+                    &rarr;
+                  </span>
                 </Link>
               </li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
+
     </div>
   );
 }
