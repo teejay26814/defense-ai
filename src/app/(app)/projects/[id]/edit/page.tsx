@@ -36,7 +36,8 @@ export default async function EditProjectPage({
       </nav>
 
       <header className="mb-8">
-        <h1 className="font-display text-3xl text-ink">Edit details</h1>
+        <p className="label-eyebrow">Project details</p>
+        <h1 className="mt-2 font-display text-4xl text-ink">Edit details</h1>
       </header>
 
       <ProjectForm

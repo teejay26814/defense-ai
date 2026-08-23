@@ -20,18 +20,32 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         </Link>
 
         <div className="max-w-md">
-          <h1 className="font-display text-4xl leading-tight">
+          <div className="flex items-center gap-4">
+            <span aria-hidden className="h-px w-10 bg-gold" />
+            <p className="label-eyebrow text-gold">Defense Coach</p>
+          </div>
+
+          <h1 className="mt-7 font-display text-4xl leading-[1.1]">
             If your defense was tomorrow, would you be ready?
           </h1>
-          <p className="mt-5 text-white/70">
+          <p className="mt-6 leading-relaxed text-white/65">
             Upload your chapters and Academia Scribes turns them into your own private
-            knowledge base - then helps you understand it, remember it, practice it, and
+            knowledge base, then helps you understand it, remember it, practice it, and
             defend it.
           </p>
         </div>
 
-        <p className="text-sm text-white/50">
-          Your project stays yours. Nothing you upload is shared with another student.
+        {/*
+          The reassurance sits at the foot of the brand panel rather than under the form.
+          It is the objection a student actually has at this moment - that their unpublished
+          work is about to leave their laptop - and it belongs where they are reading, not
+          buried beneath a password field.
+        */}
+        <p className="flex items-start gap-3 text-sm leading-relaxed text-white/50">
+          <span aria-hidden className="mt-2 h-px w-6 shrink-0 bg-white/25" />
+          <span className="measure-tight">
+            Your project stays yours. Nothing you upload is shared with another student.
+          </span>
         </p>
       </aside>
 
@@ -39,7 +53,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         <Link href="/" className="mb-10 w-fit text-navy-700 lg:hidden">
           <Logo />
         </Link>
-        <div className="mx-auto w-full max-w-sm">{children}</div>
+        <div className="animate-rise mx-auto w-full max-w-sm">{children}</div>
       </main>
     </div>
   );

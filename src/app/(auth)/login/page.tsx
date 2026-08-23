@@ -11,8 +11,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <>
       <header className="mb-8">
-        <h1 className="font-display text-3xl text-ink">Welcome back</h1>
-        <p className="mt-2 text-ink-muted">
+        <p className="label-eyebrow">Sign in</p>
+        <h1 className="mt-2 font-display text-4xl text-ink">Welcome back</h1>
+        <p className="mt-3 text-ink-muted">
           Pick up where you left off with your defense preparation.
         </p>
       </header>

@@ -30,22 +30,37 @@ export default async function BillingPage() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="font-display text-3xl text-ink">Plans</h1>
-        <p className="mt-2 max-w-prose text-ink-muted">
+        <p className="label-eyebrow">Access</p>
+        <h1 className="mt-2 font-display text-4xl text-ink">Plans</h1>
+        <p className="measure mt-3 text-ink-muted">
           You defend once, so you pay once. Access covers your preparation, not a recurring
           month you have to remember to cancel.
         </p>
       </header>
 
       {plan === "free" && (
-        <Card elevation="base">
-          <p className="text-sm font-medium text-ink">You are on the free plan</p>
-          <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-ink-muted">
-            <li>{remaining.answer ?? "unlimited"} questions to your project left</li>
-            <li>{remaining.questions ?? "unlimited"} question sets left</li>
-            <li>{remaining.mnemonics ?? "unlimited"} memory aid builds left</li>
-          </ul>
-        </Card>
+        <div>
+          <p className="label-eyebrow">On the free plan, remaining</p>
+          {/*
+            What is left, set as figures rather than a sentence. A student deciding whether
+            to pay is doing arithmetic, and three large numerals answer that in a glance
+            where "you have 3 question sets left" has to be read.
+          */}
+          <dl className="mt-4 grid grid-cols-3 border-t border-navy-100">
+            {[
+              { label: "Asks", value: remaining.answer },
+              { label: "Question sets", value: remaining.questions },
+              { label: "Memory aids", value: remaining.mnemonics },
+            ].map((item) => (
+              <div key={item.label} className="border-r border-navy-100 py-5 pr-4 last:border-r-0">
+                <dd className="figures-display font-sans text-3xl font-semibold text-ink">
+                  {item.value ?? "∞"}
+                </dd>
+                <dt className="label-eyebrow mt-1">{item.label}</dt>
+              </div>
+            ))}
+          </dl>
+        </div>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -60,18 +75,16 @@ export default async function BillingPage() {
               className={key === "full" ? "bloom" : undefined}
             >
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="font-display text-xl text-ink">{limits.label}</h2>
+                <h2 className="font-display text-2xl text-ink">{limits.label}</h2>
                 {isCurrent && <Badge tone="ready">Current</Badge>}
               </div>
 
-              <p className="mt-3 font-sans text-3xl font-semibold tracking-tight text-ink">
+              <p className="figures-display mt-4 font-sans text-4xl font-semibold text-ink">
                 {naira(PRICES_KOBO[key])}
               </p>
-              <p className="mt-1 text-sm text-ink-muted">
-                one payment · {limits.days} days of access
-              </p>
+              <p className="label-eyebrow mt-2">one payment · {limits.days} days</p>
 
-              <ul className="mt-4 space-y-1.5 text-sm text-ink-muted">
+              <ul className="mt-6 space-y-2 border-t border-navy-100 pt-5 text-sm text-ink-muted">
                 <li>
                   Chapters 1 to {limits.chapters}
                   {key === "proposal" && " - before you collect data"}

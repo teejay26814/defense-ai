@@ -11,7 +11,8 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
   return (
     <>
       <header className="mb-8">
-        <h1 className="font-display text-3xl text-ink">Start preparing</h1>
+        <p className="label-eyebrow">Create an account</p>
+        <h1 className="mt-2 font-display text-4xl text-ink">Start preparing</h1>
         <p className="mt-2 text-ink-muted">
           Create your account, then upload your project and we will build your defense
           coach around it.

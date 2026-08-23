@@ -32,7 +32,7 @@ export default async function BillingCallbackPage() {
             <p className="label-eyebrow text-gold">
               Payment received
             </p>
-            <h1 className="mt-3 font-display text-2xl text-ink">
+            <h1 className="mt-3 font-display text-3xl text-ink">
               You are on {PLANS[plan].label}
             </h1>
             <p className="mx-auto mt-2 max-w-prose text-sm leading-relaxed text-ink-muted">
@@ -47,7 +47,7 @@ export default async function BillingCallbackPage() {
           </>
         ) : (
           <>
-            <h1 className="font-display text-2xl text-ink">Confirming your payment</h1>
+            <h1 className="font-display text-3xl text-ink">Confirming your payment</h1>
             <p className="mx-auto mt-2 max-w-prose text-sm leading-relaxed text-ink-muted">
               Paystack confirms payments in a separate message to us, which occasionally
               arrives a moment after you land here. Give it a few seconds and refresh.

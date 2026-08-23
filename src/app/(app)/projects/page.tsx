@@ -24,7 +24,8 @@ export default async function ProjectsPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl text-ink">Your projects</h1>
+          <p className="label-eyebrow">Library</p>
+          <h1 className="mt-2 font-display text-4xl text-ink">Your projects</h1>
           <p className="mt-2 text-ink-muted">
             {projects.length === 0
               ? "Nothing here yet."
@@ -43,7 +44,7 @@ export default async function ProjectsPage() {
 
       {projects.length === 0 ? (
         <div className="field-parchment surface-grain rounded-feature border border-navy-100 p-10 text-center shadow-lifted">
-          <h2 className="font-display text-2xl text-ink">Start with your project</h2>
+          <h2 className="font-display text-3xl text-ink">Start with your project</h2>
           <p className="mx-auto mt-2 max-w-md text-ink-muted">
             Add it once, upload your chapters, and everything after that is built from
             your own work.

@@ -23,7 +23,8 @@ export default async function ResetPasswordPage() {
     return (
       <>
         <header className="mb-6">
-          <h1 className="font-display text-3xl text-ink">That link has expired</h1>
+          <p className="label-eyebrow">Account recovery</p>
+          <h1 className="mt-2 font-display text-4xl text-ink">That link has expired</h1>
           <p className="mt-2 text-ink-muted">
             Reset links can only be used once, and they run out after an hour. Ask for a
             fresh one and it will work.
@@ -44,7 +45,8 @@ export default async function ResetPasswordPage() {
   return (
     <>
       <header className="mb-8">
-        <h1 className="font-display text-3xl text-ink">Set a new password</h1>
+        <p className="label-eyebrow">Account recovery</p>
+        <h1 className="mt-2 font-display text-4xl text-ink">Set a new password</h1>
         <p className="mt-2 text-ink-muted">
           Choose something you will remember. You will stay signed in afterwards.
         </p>
