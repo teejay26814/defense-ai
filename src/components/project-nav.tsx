@@ -70,12 +70,15 @@ export function ProjectNav({
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`inline-block border-b-2 px-3 py-2.5 text-sm font-medium
-                  transition-[color,border-color] duration-150
+                className={`relative inline-block px-3 py-3 text-sm font-medium
+                  transition-colors duration-200
+                  after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full
+                  after:origin-left after:transition-transform after:duration-300
+                  after:content-[''] after:ease-[cubic-bezier(0.22,1,0.36,1)]
                   ${
                     active
-                      ? "border-gold text-ink"
-                      : "border-transparent text-ink-muted hover:border-navy-300 hover:text-ink"
+                      ? "text-ink after:scale-x-100 after:bg-gold"
+                      : "text-ink-muted hover:text-ink after:scale-x-0 after:bg-navy-300 hover:after:scale-x-100"
                   }`}
               >
                 {tab.label}

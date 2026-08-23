@@ -63,12 +63,12 @@ export function ReadinessMeter({
           The hero figure. Sans, large, proportional digits. The % sign is deliberately
           smaller and muted so the number itself carries the weight.
         */}
-        <p className="font-sans text-5xl font-semibold leading-none tracking-tight text-ink">
+        <p className="figures-display font-sans text-5xl font-semibold text-ink">
           {pct}
-          <span className="ml-0.5 text-2xl font-medium text-ink-muted">%</span>
+          <span className="ml-0.5 align-top text-xl font-medium text-ink-muted">%</span>
         </p>
 
-        <p className="text-sm font-medium text-ink-muted">{label}</p>
+        <p className="label-eyebrow">{label}</p>
       </div>
 
       {/*
@@ -81,16 +81,16 @@ export function ReadinessMeter({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuetext={`${pct} percent, ${label}`}
-        className="mt-3 h-2 w-full overflow-hidden rounded-full bg-navy-300"
+        className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-navy-100 shadow-[inset_0_1px_2px_rgb(5_38_89/0.12)]"
       >
         <div
-          className={`h-full rounded-full transition-[width] duration-500 ${FILL[level]}`}
+          className={`h-full rounded-full shadow-[0_1px_2px_rgb(5_38_89/0.18)] transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${FILL[level]}`}
           style={{ width: `${pct}%` }}
         />
       </div>
 
       {caption && (
-        <p className="mt-2.5 text-xs leading-relaxed text-ink-muted">{caption}</p>
+        <p className="measure mt-3 text-sm leading-relaxed text-ink-muted">{caption}</p>
       )}
     </div>
   );

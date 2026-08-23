@@ -163,22 +163,53 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="font-display text-3xl text-ink">
-          {firstName ? `Welcome, ${firstName}.` : "Welcome."}
+      <header className="pt-2">
+        <p className="label-eyebrow">
+          {new Date().toLocaleDateString(undefined, {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
+        </p>
+        <h1 className="mt-2 font-display text-4xl text-ink sm:text-5xl">
+          {firstName ? `Welcome back, ${firstName}.` : "Welcome back."}
         </h1>
-        <p className="mt-2 text-ink-muted">Here is what to do next.</p>
       </header>
 
-      <section className="field-parchment surface-grain bloom animate-rise rounded-2xl border border-navy-100 p-8 shadow-elevated">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gold">
-          {next.eyebrow}
-        </p>
-        <h2 className="mt-3 font-display text-2xl text-ink">{next.title}</h2>
-        <p className="mt-2 max-w-prose text-ink-muted">{next.body}</p>
-        <Link href={next.href} className={`mt-6 ${buttonStyles()}`}>
-          {next.cta}
-        </Link>
+      {/*
+        The focal panel. Deliberately the only dark surface on the page: one thing carrying
+        the weight is what gives a screen a centre, and a page of equally weighted white
+        cards is exactly what reads as unconsidered.
+      */}
+      <section className="field-navy surface-grain animate-rise relative overflow-hidden rounded-feature p-8 text-white shadow-overlay sm:p-10">
+        <div className="relative z-10 max-w-2xl">
+          <p className="label-eyebrow text-gold">{next.eyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl leading-tight text-white sm:text-4xl">
+            {next.title}
+          </h2>
+          <p className="measure mt-4 text-base leading-relaxed text-white/70">{next.body}</p>
+          <Link
+            href={next.href}
+            className={`mt-8 ${buttonStyles({ variant: "accent", size: "lg" })}`}
+          >
+            {next.cta}
+          </Link>
+        </div>
+
+        {/*
+          A ruled field bleeding off the right edge. Asymmetric on purpose - it is the
+          cheapest way to make a panel read as composed rather than as a centred box, and
+          it echoes the ruled paper the product is about.
+        */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 top-0 hidden h-full w-80 opacity-[0.16] lg:block"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.9) 0 1px, transparent 1px 14px)",
+            maskImage: "linear-gradient(to left, black, transparent 85%)",
+          }}
+        />
       </section>
 
       {/*
@@ -188,41 +219,64 @@ export default async function DashboardPage() {
         project to find these was the single worst thing about getting around the app.
       */}
       {current && indexed > 0 && (
-        <section className="stagger-children grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              href: `/projects/${current.id}/ask`,
-              title: "Ask my project",
-              body: "Get an answer from your own chapters, with the section it came from.",
-            },
-            {
-              href: `/projects/${current.id}/questions`,
-              title: "Practice questions",
-              body: "Questions a panel would ask, answered in your own words.",
-            },
-            {
-              href: `/projects/${current.id}/quiz`,
-              title: "Quiz",
-              body: "Multiple choice against the clock in your head.",
-            },
-            {
-              href: `/projects/${current.id}/defense`,
-              title: "Mock defense",
-              body: "Answer from memory and be marked against your own project.",
-            },
-          ].map((tool) => (
-            <Link
-              key={tool.href}
-              href={tool.href}
-              className="sheen group rounded-xl border border-navy-100 bg-white p-5 shadow-base
-                transition-[transform,box-shadow,border-color] duration-150
-                hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-elevated
-                active:translate-y-0"
-            >
-              <h3 className="font-display text-lg text-ink">{tool.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{tool.body}</p>
-            </Link>
-          ))}
+        <section>
+          <h2 className="label-eyebrow mb-4">Practise</h2>
+          {/*
+            A numbered list rather than a card grid. Four equal white boxes carry no
+            hierarchy and read as a template; a ruled list with figures reads as an index,
+            which is both more honest about what it is and considerably harder to mistake
+            for a landing page.
+          */}
+          <ul className="stagger-children rule-hairline border-t border-navy-100">
+            {[
+              {
+                href: `/projects/${current.id}/ask`,
+                title: "Ask my project",
+                body: "An answer from your own chapters, with the section it came from.",
+              },
+              {
+                href: `/projects/${current.id}/questions`,
+                title: "Practice questions",
+                body: "Questions a panel would ask, answered in your own words.",
+              },
+              {
+                href: `/projects/${current.id}/quiz`,
+                title: "Quiz",
+                body: "Multiple choice, drawn from what you wrote.",
+              },
+              {
+                href: `/projects/${current.id}/defense`,
+                title: "Mock defense",
+                body: "Answer from memory and be marked against your project.",
+              },
+            ].map((tool, i) => (
+              <li key={tool.href} className="rule-hairline">
+                <Link
+                  href={tool.href}
+                  className="press group flex items-baseline gap-5 py-5
+                    transition-[background-color,padding] duration-200
+                    hover:bg-navy-050/60 hover:px-4 sm:gap-7"
+                >
+                  <span className="figures-data label-eyebrow w-6 shrink-0 pt-1 text-navy-300">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-xl text-ink">{tool.title}</span>
+                    <span className="measure mt-1 block text-sm text-ink-muted">
+                      {tool.body}
+                    </span>
+                  </span>
+                  <span
+                    aria-hidden
+                    className="shrink-0 pt-1 text-navy-300 transition-transform duration-200
+                      group-hover:translate-x-1 group-hover:text-navy-700"
+                  >
+                    &rarr;
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

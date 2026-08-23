@@ -15,9 +15,9 @@ import type { ComponentProps } from "react";
 export type CardElevation = "base" | "elevated" | "floating";
 
 const ELEVATION: Record<CardElevation, string> = {
-  base: "shadow-base",
-  elevated: "shadow-elevated",
-  floating: "shadow-floating",
+  base: "shadow-raised",
+  elevated: "shadow-lifted",
+  floating: "shadow-overlay",
 };
 
 export function Card({
@@ -32,10 +32,10 @@ export function Card({
   return (
     <div
       className={[
-        "rounded-xl border border-navy-100 bg-white p-5",
+        "rounded-surface border border-navy-100/70 bg-white p-6",
         ELEVATION[elevation],
         interactive
-          ? "transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-elevated active:translate-y-0"
+          ? "press hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-lifted"
           : "",
         className ?? "",
       ]
@@ -53,7 +53,7 @@ export function CardHeader({ className, ...props }: ComponentProps<"div">) {
 export function CardTitle({ className, ...props }: ComponentProps<"h3">) {
   return (
     <h3
-      className={`text-lg leading-snug text-ink${className ? ` ${className}` : ""}`}
+      className={`font-display text-xl leading-snug text-ink${className ? ` ${className}` : ""}`}
       {...props}
     />
   );

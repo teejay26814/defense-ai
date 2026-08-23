@@ -49,6 +49,76 @@
   --font-display: var(--font-display-face), ui-serif, Georgia, Cambria, "Times New Roman", serif;
   --font-sans: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
+  /*
+   * Type scale.
+   *
+   * The single biggest reason the old interface read as cheap: 67% of its text sat at 12
+   * or 14px, and `base` was used three times in the entire codebase. Everything whispered,
+   * so nothing had authority.
+   *
+   * This is a modular scale on roughly a major third (1.25), deliberately widening at the
+   * top. Swiss modernism gets its presence from *contrast* between sizes, not from making
+   * everything large - so body settles at a confident 16px and display sizes jump hard
+   * away from it rather than creeping.
+   *
+   * Line heights are paired with each size rather than left global. Display type needs to
+   * be tight to read as one object; body needs air to be readable at length.
+   */
+  --text-2xs: 0.6875rem;      /* 11px - metadata, small caps only */
+  --text-2xs--line-height: 1.45;
+  --text-2xs--letter-spacing: 0.08em;
+  --text-xs: 0.75rem;         /* 12px */
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;        /* 14px - secondary text, never the main voice */
+  --text-sm--line-height: 1.55;
+  --text-base: 1rem;          /* 16px - the default. Body belongs here. */
+  --text-base--line-height: 1.65;
+  --text-lg: 1.1875rem;       /* 19px */
+  --text-lg--line-height: 1.55;
+  --text-xl: 1.4375rem;       /* 23px */
+  --text-xl--line-height: 1.4;
+  --text-2xl: 1.8125rem;      /* 29px */
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 2.375rem;       /* 38px */
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 3.125rem;       /* 50px */
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 4.0625rem;      /* 65px */
+  --text-5xl--line-height: 1.05;
+  --text-6xl: 5.25rem;        /* 84px */
+  --text-6xl--line-height: 1;
+
+  /*
+   * Radii. Three values and a rule, replacing four used interchangeably.
+   *
+   * Controls are tighter than the surfaces holding them. A button with the same corner as
+   * its card reads as a sticker on the card rather than part of it.
+   */
+  --radius-control: 0.5rem;   /* buttons, inputs, badges */
+  --radius-surface: 0.875rem; /* cards, panels */
+  --radius-feature: 1.5rem;   /* the one panel a screen is built around */
+
+  /*
+   * Depth. Reworked to be a light source rather than a blur.
+   *
+   * Every layer casts a tight contact shadow plus a wider ambient one, both tinted with
+   * the brand navy. A single soft blur is what makes a card look printed on the page
+   * instead of resting above it.
+   */
+  --shadow-hairline: 0 0 0 1px rgb(5 38 89 / 0.055);
+  --shadow-raised:
+    0 0 0 1px rgb(5 38 89 / 0.05),
+    0 1px 2px -1px rgb(5 38 89 / 0.1),
+    0 4px 12px -4px rgb(5 38 89 / 0.08);
+  --shadow-lifted:
+    0 0 0 1px rgb(5 38 89 / 0.055),
+    0 2px 4px -2px rgb(5 38 89 / 0.1),
+    0 12px 28px -8px rgb(5 38 89 / 0.12);
+  --shadow-overlay:
+    0 0 0 1px rgb(5 38 89 / 0.07),
+    0 4px 8px -4px rgb(5 38 89 / 0.12),
+    0 28px 56px -12px rgb(5 38 89 / 0.2);
+
   /* --- Semantic --- */
   --color-success: #1e7a5a;
   --color-warning: #b5761e;
@@ -249,6 +319,92 @@
   }
 }
 
+/*
+ * Editorial utilities.
+ *
+ * These are the parts of Swiss modernism that a token file cannot express: separation by
+ * rule rather than by box, a measured column, and numerals treated as data.
+ */
+
+/*
+ * A metadata label. Small caps, wide tracking, muted.
+ *
+ * This is the detail that most cheaply signals "designed": a label set at 11px with 0.08em
+ * tracking above a large figure reads as considered, where the same words at 14px regular
+ * read as leftover text.
+ */
+@utility label-eyebrow {
+  font-size: var(--text-2xs);
+  line-height: 1.45;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+}
+
+/*
+ * A hairline that separates without enclosing. Thirty-eight bordered boxes were what made
+ * the old interface read as a form; a rule does the same job without drawing a container.
+ */
+@utility rule-hairline {
+  border-block-end: 1px solid rgb(5 38 89 / 0.08);
+}
+
+/*
+ * Figures set as data: equal-width digits so a column of scores does not shimmer as it
+ * updates, and old-style commas kept out of the way.
+ */
+@utility figures-data {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/*
+ * A display figure. Proportional on purpose - tabular digits make a large standalone
+ * number look gappy, which is the opposite of what a hero figure needs.
+ */
+@utility figures-display {
+  font-variant-numeric: proportional-nums lining-nums;
+  letter-spacing: -0.03em;
+  font-feature-settings: "pnum" 1, "lnum" 1;
+}
+
+/* A comfortable reading column. Prose past about 70 characters loses the return sweep. */
+@utility measure {
+  max-inline-size: 68ch;
+}
+
+@utility measure-tight {
+  max-inline-size: 46ch;
+}
+
+/*
+ * The twelve-column grid Swiss modernism is built on. Used where a layout should feel
+ * composed rather than stacked - the dashboard and the landing page - and left alone
+ * elsewhere, since a grid applied to everything is just another uniformity.
+ */
+@utility grid-editorial {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+/*
+ * A pressed state for surfaces that are genuinely clickable. Scale rather than translate:
+ * a card that moves sideways under the cursor reads as a glitch, one that compresses reads
+ * as a physical response.
+ */
+@utility press {
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 180ms ease-out;
+
+  &:active {
+    transform: scale(0.988);
+  }
+}
+
 @layer base {
   html {
     /* Anchor links and focus jumps should not slam against the viewport edge. */
@@ -259,6 +415,8 @@
     background-color: var(--color-parchment);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -267,9 +425,19 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.015em;
     text-wrap: balance;
+    /*
+     * Fraunces is a variable font with an optical-size axis. Letting it track the rendered
+     * size is most of why a serif looks typeset rather than scaled: the large cuts thin
+     * their strokes and tighten their spacing the way a metal face would.
+     */
+    font-optical-sizing: auto;
   }
+
+  /* Tracking tightens as size grows, which is how display type stays a single object. */
+  h1 { letter-spacing: -0.028em; }
+  h2 { letter-spacing: -0.022em; }
+  h3 { letter-spacing: -0.016em; }
 
   /*
    * Every interactive element gets a visible focus ring, and it is the same ring

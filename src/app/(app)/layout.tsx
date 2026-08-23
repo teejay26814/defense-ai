@@ -30,8 +30,8 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-10 border-b border-navy-100 bg-parchment/85 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
+      <header className="sticky top-0 z-20 border-b border-navy-100/70 bg-parchment/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
           <Link
             href="/dashboard"
             className="rounded text-navy-700 transition-opacity duration-150 hover:opacity-80"
@@ -42,22 +42,22 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <nav className="flex items-center gap-1 text-sm">
             <Link
               href="/dashboard"
-              className="rounded-lg px-3 py-1.5 font-medium text-ink
-                transition-colors duration-150 hover:bg-navy-050 active:bg-navy-100"
+              className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted
+                transition-colors duration-150 hover:bg-navy-050 hover:text-ink active:bg-navy-100"
             >
               Dashboard
             </Link>
             <Link
               href="/projects"
-              className="rounded-lg px-3 py-1.5 font-medium text-ink
-                transition-colors duration-150 hover:bg-navy-050 active:bg-navy-100"
+              className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted
+                transition-colors duration-150 hover:bg-navy-050 hover:text-ink active:bg-navy-100"
             >
               Projects
             </Link>
             <Link
               href="/billing"
-              className="rounded-lg px-3 py-1.5 font-medium text-ink
-                transition-colors duration-150 hover:bg-navy-050 active:bg-navy-100"
+              className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted
+                transition-colors duration-150 hover:bg-navy-050 hover:text-ink active:bg-navy-100"
             >
               Plans
             </Link>
@@ -70,10 +70,8 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <form action={signOut}>
               <button
                 type="submit"
-                className="rounded-lg border border-navy-100 px-3 py-1.5 text-sm font-medium text-ink
-                  transition-[background-color,border-color] duration-150
-                  hover:border-navy-300 hover:bg-navy-050
-                  active:bg-navy-100"
+                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted
+                  transition-colors duration-150 hover:bg-navy-050 hover:text-ink active:bg-navy-100"
               >
                 Sign out
               </button>
@@ -82,7 +80,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <main className="mx-auto max-w-6xl px-6 pb-24 pt-10">
         <p className="sr-only">Signed in as {displayName}</p>
         {children}
       </main>
