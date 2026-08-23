@@ -11,7 +11,7 @@ import { Logo } from "@/components/logo";
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[1.1fr_1fr]">
-      <aside className="field-navy surface-grain relative hidden flex-col justify-between p-12 text-white lg:flex">
+      <aside className="field-navy surface-grain relative hidden flex-col justify-between gap-10 overflow-hidden px-12 py-10 text-white lg:flex xl:px-14 xl:py-12">
         <Link
           href="/"
           className="w-fit rounded-lg transition-opacity duration-150 hover:opacity-85"
@@ -25,10 +25,10 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
             <p className="label-eyebrow text-gold">Defense Coach</p>
           </div>
 
-          <h1 className="mt-7 font-display text-4xl leading-[1.1]">
+          <h1 className="mt-6 font-display text-[2.125rem] leading-[1.12] xl:text-4xl">
             If your defense was tomorrow, would you be ready?
           </h1>
-          <p className="mt-6 leading-relaxed text-white/65">
+          <p className="mt-5 leading-relaxed text-white/65">
             Upload your chapters and Academia Scribes turns them into your own private
             knowledge base, then helps you understand it, remember it, practice it, and
             defend it.

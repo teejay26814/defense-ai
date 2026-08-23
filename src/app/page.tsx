@@ -86,7 +86,7 @@ export default async function Home() {
               If your defense was tomorrow, would you be ready?
             </h1>
 
-            <p className="animate-rise measure mt-7 text-lg leading-relaxed text-ink-muted">
+            <p className="animate-rise measure mt-7 text-xl leading-relaxed text-ink/75">
               Academia Scribes turns your final-year project into a private coach. Upload
               your chapters and prepare against your own work, not a generic study guide.
             </p>
@@ -101,7 +101,7 @@ export default async function Home() {
               {!user && (
                 <Link
                   href="/login"
-                  className={buttonStyles({ variant: "ghost", size: "lg" })}
+                  className={buttonStyles({ variant: "secondary", size: "lg" })}
                 >
                   I already have an account
                 </Link>
@@ -120,26 +120,26 @@ export default async function Home() {
             it is the largest thing above the fold and a late-loading hero is a visible
             lurch.
           */}
-          <div className="relative mt-4 h-[30vw] max-h-[21rem] min-h-[11rem] w-full overflow-hidden">
+          {/*
+            The room, empty, the evening before.
+
+            The treatment was overdone at first: two parchment gradients and a navy multiply
+            turned a strong photograph into fog. What it needs is one soft join at the top
+            edge so it emerges from the section, and nothing else - the photograph already
+            carries the brand's navy and gold in its own light.
+          */}
+          <div className="relative mt-10 h-[38vw] max-h-[30rem] min-h-[15rem] w-full overflow-hidden">
             <Image
               src="/hero/defense-room.png"
               alt="An empty university defense room in late afternoon light, the examiners' table and chairs waiting"
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center"
+              className="object-cover object-[center_35%]"
             />
             <div
               aria-hidden
-              className="absolute inset-0 bg-navy-800/25 mix-blend-multiply"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-parchment to-transparent"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-parchment to-transparent"
+              className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-parchment to-transparent"
             />
           </div>
         </section>
