@@ -18,6 +18,23 @@ absence of tests.
 | `shipping-and-launch` | Actively launching. |
 | `api-and-interface-design` | The six n8n webhook contracts are an API, and their payload shapes are load-bearing. |
 
+## Design skills
+
+From [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill),
+MIT licensed. Three of its seven.
+
+| Skill | Why it is here |
+| --- | --- |
+| `ui-ux-pro-max` | Searchable style, palette, font-pairing and UX-guideline data. The reason to keep it is that it reasons by product category, and an academic tool for anxious students is a very different brief from a consumer app. |
+| `design-system` | Three-layer token architecture, which is what `globals.css` already reaches for with its `@theme` block. |
+| `brand` | Visual identity and voice. `Brand_Assest/palette.md` records the two real brand colours and the Biennale licensing problem; this gives that somewhere to grow into. |
+
+**`ui-styling` was deliberately not installed**, despite being the largest and most obviously
+UI-shaped of them. It is built on shadcn/ui and Radix, and this project uses neither: it has
+its own primitives on Tailwind 4's CSS-first `@theme`. Installing 5.8 MB of guidance for a
+component library that is not here would push every future change towards rewriting what
+already works. `banner-design` and `slides` are for marketing artefacts rather than the app.
+
 ## Deliberately not installed
 
 The other fourteen are about deciding what to build (`interview-me`, `idea-refine`,
