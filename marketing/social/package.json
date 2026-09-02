@@ -1,0 +1,7 @@
+{
+  "name": "as-social-post",
+  "private": true,
+  "type": "module",
+  "scripts": { "render": "node render.mjs" },
+  "devDependencies": { "playwright-core": "^1.48.0" }
+}
