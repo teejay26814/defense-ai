@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Academia Scribes - launch carousel</title>
+    <link rel="stylesheet" href="./fonts.css" />
+
+    <!--
+      Launch carousel, rendered locally to PNG by headless Chromium (render.mjs).
+
+      Written as HTML/CSS rather than generated, which is the point: it uses the real brand,
+      not an approximation. The exact navy and gold from Brand_Assest/palette.md, the real
+      logo mark with its A knockout, and the same Fraunces and Figtree pairing the app loads.
+      Fonts are embedded from local ./fonts/*.woff2, so a render needs no network and can
+      never produce a slide with fallback type in it.
+
+      Each <section class="slide"> is one 1080x1350 (4:5) card. render.mjs waits for
+      document.fonts.ready, then screenshots each slide element in turn. Edit the copy here,
+      re-run `npm run render`, and every slide is regenerated identically.
+    -->
+
+    <style>
+      :root {
+        --navy-900: #010f26;
+        --navy-800: #02193c;
+        --navy-700: #052659; /* the logo navy - do not adjust */
+        --navy-500: #1155a8;
+        --navy-300: #8fb4dc;
+        --parchment: #fdfbf7;
+        --ink-muted: #5a6377;
+        --gold: #c9a227;
+
+        --slide-w: 1080px;
+        --slide-h: 1350px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #0b1524;
+        /* Stack the slides in a column with a gap, so a screenshot of the whole page is a
+           legible contact sheet during editing. render.mjs shoots each slide individually. */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        padding: 40px;
+      }
+
+      .slide {
+        position: relative;
+        width: var(--slide-w);
+        height: var(--slide-h);
+        overflow: hidden;
+        background: var(--navy-900);
+        color: var(--parchment);
+        font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
+        /* every slide is a self-contained card */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 96px 88px;
+      }
+
+      /* Layered radial gradients, never a flat wash - the same rule the app follows. */
+      .field {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          radial-gradient(ellipse 70% 55% at 18% 12%, rgb(17 85 168 / 0.38), transparent 62%),
+          radial-gradient(ellipse 62% 48% at 88% 16%, rgb(201 162 39 / 0.12), transparent 58%),
+          radial-gradient(ellipse 110% 80% at 50% 118%, rgb(1 15 38 / 0.92), transparent 70%);
+      }
+
+      /* Faint grain so the large flat colour areas do not band on compression. */
+      .grain {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+
+      /* A shaft of gold light, echoing the launch film so carousel and video read as one. */
+      .shaft {
+        position: absolute;
+        top: -30%;
+        left: 6%;
+        width: 30%;
+        height: 170%;
+        pointer-events: none;
+        transform: rotate(14deg);
+        transform-origin: top center;
+        background: linear-gradient(
+          to bottom,
+          rgb(201 162 39 / 0.20),
+          rgb(201 162 39 / 0.05) 55%,
+          transparent 85%
+        );
+        filter: blur(30px);
+      }
+
+      /* content sits above the atmosphere */
+      .top,
+      .mid,
+      .bot {
+        position: relative;
+        z-index: 2;
+      }
+      .mid {
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+      }
+
+      /* --- shared components -------------------------------------------- */
+      .brandrow {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .mark {
+        width: 46px;
+        height: auto;
+        color: var(--parchment);
+        flex: none;
+      }
+      .brandname {
+        font-family: Fraunces, ui-serif, Georgia, serif;
+        font-weight: 600;
+        font-size: 30px;
+        letter-spacing: -0.01em;
+      }
+      .eyebrow {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: rgb(253 251 247 / 0.55);
+      }
+
+      h1,
+      h2 {
+        font-family: Fraunces, ui-serif, Georgia, serif;
+        font-weight: 500;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+      }
+      h1 {
+        font-size: 96px;
+      }
+      h2 {
+        font-size: 74px;
+      }
+      em {
+        font-style: normal;
+        color: var(--gold);
+      }
+      .body {
+        font-size: 34px;
+        line-height: 1.42;
+        color: rgb(253 251 247 / 0.82);
+        max-width: 34ch;
+      }
+      .body strong {
+        color: var(--parchment);
+        font-weight: 600;
+      }
+
+      .rule {
+        width: 128px;
+        height: 3px;
+        background: linear-gradient(to right, var(--gold), transparent);
+        border: 0;
+      }
+
+      /* footer line shared by inner slides */
+      .foot {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 22px;
+        letter-spacing: 0.06em;
+        color: rgb(253 251 247 / 0.5);
+      }
+      .foot .tag {
+        text-transform: uppercase;
+        letter-spacing: 0.28em;
+        font-size: 19px;
+      }
+
+      /* step numeral for the four method slides */
+      .step {
+        font-family: Fraunces, ui-serif, Georgia, serif;
+        font-weight: 600;
+        font-size: 40px;
+        color: var(--gold);
+        letter-spacing: 0.04em;
+      }
+      .steplabel {
+        display: flex;
+        align-items: baseline;
+        gap: 22px;
+      }
+      .steplabel .of {
+        font-size: 22px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: rgb(253 251 247 / 0.45);
+      }
+
+      /* swipe hint on the cover */
+      .swipe {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 24px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 600;
+      }
+      .swipe .arrow {
+        font-size: 30px;
+      }
+
+      /* checklist on the CTA */
+      .checks {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        font-size: 32px;
+        color: rgb(253 251 247 / 0.85);
+      }
+      .checks div {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .checks .tick {
+        color: var(--gold);
+        font-size: 30px;
+        flex: none;
+      }
+
+      .cta-badge {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 22px 40px;
+        border: 2px solid var(--gold);
+        border-radius: 999px;
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--parchment);
+      }
+      .cta-badge b {
+        color: var(--gold);
+      }
+
+      /* the big soft numeral bleeding off inner slides for depth */
+      .ghost {
+        position: absolute;
+        z-index: 1;
+        right: -60px;
+        bottom: -140px;
+        font-family: Fraunces, ui-serif, Georgia, serif;
+        font-weight: 600;
+        font-size: 620px;
+        line-height: 1;
+        color: rgb(201 162 39 / 0.06);
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* cover-specific scale */
+      .cover .mid {
+        gap: 44px;
+        margin-bottom: 20px;
+      }
+      .cover h1 {
+        font-size: 104px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ============ 1 · COVER ============ -->
+    <section class="slide cover" id="slide-1">
+      <div class="field"></div>
+      <div class="shaft"></div>
+      <div class="grain"></div>
+
+      <div class="top brandrow">
+        <svg class="mark" viewBox="0 0 44.748 59.754" role="img" aria-label="Academia Scribes">
+          <path fill="currentColor" fill-rule="evenodd" d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/>
+          <path fill="currentColor" fill-rule="evenodd" d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/>
+          <path fill="currentColor" fill-rule="evenodd" d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/>
+        </svg>
+        <span class="eyebrow">Academia Scribes</span>
+      </div>
+
+      <div class="mid">
+        <h1>If your defense was tomorrow, <em>would you be ready?</em></h1>
+        <p class="body">A defense coach built from <strong>your own project</strong> &mdash; not a generic study app.</p>
+      </div>
+
+      <div class="bot foot">
+        <span class="swipe"><span class="arrow">&rarr;</span> Swipe</span>
+        <span class="tag">Defense Coach</span>
+      </div>
+    </section>
+
+    <!-- ============ 2 · THE PROBLEM ============ -->
+    <section class="slide" id="slide-2">
+      <div class="field"></div>
+      <div class="grain"></div>
+
+      <div class="top"><span class="eyebrow">The gap nobody prepares for</span></div>
+
+      <div class="mid">
+        <h2>Your panel has already read your project.</h2>
+        <p class="body">Every choice you made is a question waiting to be asked. Most students polish the write-up. <strong>Almost none rehearse the defense.</strong></p>
+      </div>
+
+      <div class="bot foot">
+        <span>Academia Scribes</span>
+        <span class="tag">Defense Coach</span>
+      </div>
+    </section>
+
+    <!-- ============ 3 · UNDERSTAND (01) ============ -->
+    <section class="slide" id="slide-3">
+      <div class="field"></div>
+      <div class="grain"></div>
+      <div class="ghost">01</div>
+
+      <div class="top steplabel"><span class="step">01</span><span class="of">Understand</span></div>
+
+      <div class="mid">
+        <h2>Know every chapter cold.</h2>
+        <p class="body">Upload Chapters 1&ndash;5 and they become a private knowledge base. Ask anything and get an answer grounded in <strong>your work</strong>, with the chapter it came from.</p>
+        <hr class="rule" />
+      </div>
+
+      <div class="bot foot">
+        <span>Ask My Project</span>
+        <span class="tag">Understand</span>
+      </div>
+    </section>
+
+    <!-- ============ 4 · REMEMBER (02) ============ -->
+    <section class="slide" id="slide-4">
+      <div class="field"></div>
+      <div class="grain"></div>
+      <div class="ghost">02</div>
+
+      <div class="top steplabel"><span class="step">02</span><span class="of">Remember</span></div>
+
+      <div class="mid">
+        <h2>Hold on to what matters.</h2>
+        <p class="body">Flashcards and mnemonics for the definitions, figures and findings you will be asked to recite &mdash; built from <strong>your project</strong>, not a textbook.</p>
+        <hr class="rule" />
+      </div>
+
+      <div class="bot foot">
+        <span>Flashcards &amp; memory aids</span>
+        <span class="tag">Remember</span>
+      </div>
+    </section>
+
+    <!-- ============ 5 · PRACTICE (03) ============ -->
+    <section class="slide" id="slide-5">
+      <div class="field"></div>
+      <div class="grain"></div>
+      <div class="ghost">03</div>
+
+      <div class="top steplabel"><span class="step">03</span><span class="of">Practise</span></div>
+
+      <div class="mid">
+        <h2>Rehearse under pressure.</h2>
+        <p class="body">Real defense questions and quizzes, generated from your project. Drill the weak spots <strong>before the panel finds them.</strong></p>
+        <hr class="rule" />
+      </div>
+
+      <div class="bot foot">
+        <span>Question drills &amp; quizzes</span>
+        <span class="tag">Practise</span>
+      </div>
+    </section>
+
+    <!-- ============ 6 · DEFEND (04) ============ -->
+    <section class="slide" id="slide-6">
+      <div class="field"></div>
+      <div class="grain"></div>
+      <div class="ghost">04</div>
+
+      <div class="top steplabel"><span class="step">04</span><span class="of">Defend</span></div>
+
+      <div class="mid">
+        <h2>Face a mock panel first.</h2>
+        <p class="body">A mock defense scores your answers and gives you a <strong>readiness score you earn</strong> &mdash; so you walk in already knowing you are ready.</p>
+        <hr class="rule" />
+      </div>
+
+      <div class="bot foot">
+        <span>Mock defense &amp; readiness score</span>
+        <span class="tag">Defend</span>
+      </div>
+    </section>
+
+    <!-- ============ 7 · CTA ============ -->
+    <section class="slide cover" id="slide-7">
+      <div class="field"></div>
+      <div class="shaft"></div>
+      <div class="grain"></div>
+
+      <div class="top steplabel">
+        <span class="step" style="font-size: 46px">Understand &middot; Remember &middot; Practise &middot; Defend</span>
+      </div>
+
+      <div class="mid">
+        <h2>If your defense was tomorrow &mdash; <em>start today.</em></h2>
+        <div class="checks">
+          <div><span class="tick">&#10003;</span> Grounded in your own project</div>
+          <div><span class="tick">&#10003;</span> A readiness score you can trust</div>
+          <div><span class="tick">&#10003;</span> Ready before you walk in</div>
+        </div>
+        <span class="cta-badge">Start your prep at <b>Academia Scribes</b></span>
+      </div>
+
+      <div class="bot brandrow">
+        <svg class="mark" viewBox="0 0 44.748 59.754" role="img" aria-label="Academia Scribes">
+          <path fill="currentColor" fill-rule="evenodd" d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/>
+          <path fill="currentColor" fill-rule="evenodd" d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/>
+          <path fill="currentColor" fill-rule="evenodd" d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/>
+        </svg>
+        <div>
+          <div class="brandname">Academia Scribes</div>
+          <div class="tag" style="letter-spacing: 0.28em; text-transform: uppercase; font-size: 18px; color: rgb(253 251 247 / 0.5)">Defense Coach</div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

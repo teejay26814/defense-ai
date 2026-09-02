@@ -1,0 +1,12 @@
+{
+  "name": "academia-scribes-carousel",
+  "private": true,
+  "type": "module",
+  "description": "Local, brand-exact marketing carousel for Academia Scribes. Written as HTML/CSS, rendered to PNG slides by headless Chromium. No API, no credits.",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.48.0"
+  }
+}
