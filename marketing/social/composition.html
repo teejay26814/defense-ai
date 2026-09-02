@@ -6,98 +6,122 @@
     <link rel="stylesheet" href="./fonts.css" />
 
     <!--
-      Single 4:5 post image (1080x1350), rendered locally to PNG by render.mjs.
-      Black, white, one red accent - the dropped reference's style, applied to the
-      "nobody is buying AI" message. Heavy, slightly condensed Figtree. The strikethrough
-      is the only mark; no decorative dots or rules. Fonts embedded from local ./fonts.
+      Single square post image (1080x1080), rendered locally to PNG by render.mjs.
+      Deliberately plain: one accent, one typeface, lots of air. Fonts embedded from local
+      ./fonts, so a render needs no network and cannot produce fallback type.
     -->
     <style>
       :root {
-        --ink: #0a0a0b;
-        --paper: #f2f3f0;
-        --muted: #8b8f96;
-        --red: #e5252b;
+        --ink: #0a0c0f;
+        --paper: #f4f7f5;
+        --muted: #8b95a1;
+        --emerald: #34d399;
+        --emerald-dim: rgb(52 211 153 / 0.14);
         --w: 1080px;
-        --h: 1350px;
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { background: #050506; display: flex; justify-content: center; padding: 40px; }
+      body { background: #05060a; display: flex; justify-content: center; padding: 40px; }
 
       .card {
         position: relative;
         width: var(--w);
-        height: var(--h);
+        height: var(--w);
         overflow: hidden;
         background: var(--ink);
         color: var(--paper);
         font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
-        padding: 96px 90px 90px;
+        padding: 80px 84px 70px;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .glow {
+        position: absolute; inset: 0; pointer-events: none;
+        background-image:
+          radial-gradient(ellipse 60% 50% at 12% 6%, rgb(52 211 153 / 0.16), transparent 60%),
+          radial-gradient(ellipse 70% 60% at 92% 104%, rgb(52 211 153 / 0.07), transparent 62%),
+          radial-gradient(ellipse 90% 70% at 50% 120%, rgb(5 6 10 / 0.9), transparent 70%);
       }
       .grain {
-        position: absolute; inset: 0; pointer-events: none; opacity: 0.045;
+        position: absolute; inset: 0; pointer-events: none; opacity: 0.05;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       }
-      .eyebrow, .hero, .sub, .sign { position: relative; z-index: 2; }
+      .top, .mid, .bot { position: relative; z-index: 2; }
 
       .eyebrow {
-        font-size: 25px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
-        color: var(--red);
-        margin-bottom: 54px;
+        display: inline-flex; align-items: center; gap: 14px;
+        font-size: 21px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase;
+        color: var(--muted);
+      }
+      .eyebrow .dot { width: 12px; height: 12px; border-radius: 999px; background: var(--emerald); box-shadow: 0 0 18px 2px rgb(52 211 153 / 0.6); }
+
+      .hero {
+        font-weight: 800; font-size: 90px; line-height: 1.02; letter-spacing: -0.035em;
+        text-wrap: balance;
+      }
+      .hero .accent { color: var(--emerald); }
+      .hero .row2 { color: var(--paper); }
+
+      .list { display: flex; flex-direction: column; gap: 22px; margin-top: 40px; }
+      .list .item {
+        display: flex; align-items: center; gap: 20px;
+        font-size: 33px; font-weight: 500; color: rgb(244 247 245 / 0.9); letter-spacing: -0.01em;
+      }
+      .list .k {
+        flex: none; width: 40px; height: 40px; border-radius: 10px;
+        display: grid; place-items: center;
+        background: var(--emerald-dim); color: var(--emerald);
+        font-size: 24px; font-weight: 800;
       }
 
-      /* ---- hero ------------------------------------------------------- */
-      .hero { text-transform: uppercase; font-weight: 900; letter-spacing: -0.015em; }
-      .hero .lead { font-size: 78px; line-height: 1; }
-      .hero .big {
-        display: block; font-size: 130px; line-height: 0.98;
-        transform: scaleX(0.9); transform-origin: left;
+      .bot { display: flex; flex-direction: column; gap: 26px; }
+      .thesis { font-weight: 800; font-size: 46px; letter-spacing: -0.03em; line-height: 1.08; }
+      .thesis .g { color: var(--emerald); }
+      .thesis .sub {
+        display: block; margin-top: 14px;
+        font-size: 24px; font-weight: 500; letter-spacing: 0.01em; color: var(--muted);
       }
-      .hero .strike {
-        text-decoration: line-through;
-        text-decoration-color: var(--red);
-        text-decoration-thickness: 9px;
-      }
-      .hero .lead.gap { margin-top: 40px; }
-      .hero .red { color: var(--red); }
 
-      /* ---- supporting copy ------------------------------------------- */
-      .sub {
-        margin-top: 56px;
-        font-size: 35px; font-weight: 500; line-height: 1.42; color: var(--muted);
-        max-width: 24ch;
-      }
-      .sub b { color: var(--paper); font-weight: 700; }
-
-      /* ---- signature (no dot) ---------------------------------------- */
-      .sign { margin-top: auto; }
-      .sign .name { font-size: 34px; font-weight: 800; letter-spacing: 0.01em; text-transform: uppercase; }
-      .sign .role { margin-top: 8px; font-size: 24px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+      /* signature */
+      .sign { display: flex; flex-direction: column; gap: 4px; padding-top: 24px; border-top: 1px solid rgb(255 255 255 / 0.08); }
+      .sign .name { font-size: 29px; font-weight: 700; letter-spacing: -0.01em; }
+      .sign .role { font-size: 21px; font-weight: 500; letter-spacing: 0.05em; color: var(--muted); }
     </style>
   </head>
 
   <body>
     <div class="card" id="card">
+      <div class="glow"></div>
       <div class="grain"></div>
 
-      <div class="eyebrow">What businesses actually buy</div>
-
-      <div class="hero">
-        <div class="lead">Nobody is</div>
-        <span class="big strike">Buying AI.</span>
-        <div class="lead gap">They&rsquo;re buying</div>
-        <span class="big red">Time back.</span>
+      <div class="top">
+        <span class="eyebrow"><span class="dot"></span> On building AI systems</span>
       </div>
 
-      <div class="sub">
-        Not the tech. Not the tools. What they pay for is the <b>outcome</b> &mdash; hours back,
-        every single week.
+      <div class="mid">
+        <div class="hero">
+          <div>Nobody is buying AI.</div>
+          <div class="row2">They&rsquo;re buying <span class="accent">time back.</span></div>
+        </div>
+
+        <div class="list">
+          <div class="item"><span class="k">&rarr;</span> Missed calls, answered</div>
+          <div class="item"><span class="k">&rarr;</span> Leads that never go cold</div>
+          <div class="item"><span class="k">&rarr;</span> Reports that write themselves</div>
+        </div>
       </div>
 
-      <div class="sign">
-        <div class="name">Tolulope Fatoyinbo</div>
-        <div class="role">AI Automation Specialist</div>
+      <div class="bot">
+        <div class="thesis">
+          Build simple. <span class="g">Solve real.</span>
+          <span class="sub">Simplicity sells. Outcomes close.</span>
+        </div>
+
+        <div class="sign">
+          <span class="name">Tolulope Fatoyinbo</span>
+          <span class="role">AI Automation Specialist</span>
+        </div>
       </div>
     </div>
   </body>
