@@ -6,20 +6,25 @@
     <link rel="stylesheet" href="./fonts.css" />
 
     <!--
-      Single square post image (1080x1080), rendered locally to PNG by render.mjs.
-      Deliberately plain: one accent, one typeface, lots of air - the design practising the
-      post's own argument that simplicity sells. Fonts are embedded from local ./fonts, so a
-      render needs no network and cannot produce fallback type.
+      Single 4:5 post image (1080x1350), rendered locally to PNG by render.mjs.
+      Near-black, one emerald accent, one typeface. A hook, a small time infographic that
+      makes "buying time back" concrete (the same task, manual vs automated), the thesis,
+      and a signature. Fonts are embedded from local ./fonts so a render needs no network.
+
+      The infographic figures are illustrative of a typical repetitive task, not a data claim.
     -->
     <style>
       :root {
-        --ink: #0a0c0f;      /* near-black ground */
-        --ink-2: #0e1116;
-        --paper: #f4f7f5;    /* off-white text */
-        --muted: #8b95a1;    /* secondary text */
-        --emerald: #34d399;  /* the one accent */
+        --ink: #0a0c0f;
+        --ink-2: #10141a;      /* elevated panel */
+        --line: rgb(255 255 255 / 0.08);
+        --paper: #f4f7f5;
+        --muted: #8b95a1;
+        --steel: #46545f;      /* the "manual / cost" bar */
+        --emerald: #34d399;
         --emerald-dim: rgb(52 211 153 / 0.14);
         --w: 1080px;
+        --h: 1350px;
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { background: #05060a; display: flex; justify-content: center; padding: 40px; }
@@ -27,78 +32,92 @@
       .card {
         position: relative;
         width: var(--w);
-        height: var(--w);
+        height: var(--h);
         overflow: hidden;
         background: var(--ink);
         color: var(--paper);
         font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
-        padding: 96px 92px;
+        padding: 84px 84px 76px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        gap: 48px;
       }
 
-      /* one soft emerald glow, nothing more */
       .glow {
         position: absolute; inset: 0; pointer-events: none;
         background-image:
-          radial-gradient(ellipse 60% 50% at 12% 6%, rgb(52 211 153 / 0.16), transparent 60%),
-          radial-gradient(ellipse 70% 60% at 92% 104%, rgb(52 211 153 / 0.07), transparent 62%),
-          radial-gradient(ellipse 90% 70% at 50% 120%, rgb(5 6 10 / 0.9), transparent 70%);
+          radial-gradient(ellipse 58% 42% at 10% 4%, rgb(52 211 153 / 0.16), transparent 60%),
+          radial-gradient(ellipse 70% 55% at 94% 102%, rgb(52 211 153 / 0.06), transparent 62%),
+          radial-gradient(ellipse 90% 60% at 50% 120%, rgb(5 6 10 / 0.9), transparent 70%);
       }
       .grain {
         position: absolute; inset: 0; pointer-events: none; opacity: 0.05;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       }
-      .top, .mid, .bot { position: relative; z-index: 2; }
+      .top, .mid, .info, .thesis, .sign { position: relative; z-index: 2; }
 
       .eyebrow {
         display: inline-flex; align-items: center; gap: 14px;
-        font-size: 21px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase;
+        font-size: 20px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase;
         color: var(--muted);
       }
-      .eyebrow .dot { width: 12px; height: 12px; border-radius: 999px; background: var(--emerald); box-shadow: 0 0 18px 2px rgb(52 211 153 / 0.6); }
+      .eyebrow .dot { width: 11px; height: 11px; border-radius: 999px; background: var(--emerald); box-shadow: 0 0 18px 2px rgb(52 211 153 / 0.6); }
 
       .hero {
-        font-weight: 800;
-        font-size: 92px;
-        line-height: 1.02;
-        letter-spacing: -0.035em;
+        font-weight: 800; font-size: 80px; line-height: 1.03; letter-spacing: -0.035em;
         text-wrap: balance;
       }
       .hero .accent { color: var(--emerald); }
-      .hero .row2 { color: var(--paper); }
 
-      .list {
-        display: flex; flex-direction: column; gap: 22px;
-        margin-top: 42px;
+      /* ---- time infographic ------------------------------------------- */
+      .info {
+        background: var(--ink-2);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 42px 46px 46px;
+        box-shadow: 0 26px 64px -32px rgb(52 211 153 / 0.28);
       }
-      .list .item {
-        display: flex; align-items: center; gap: 20px;
-        font-size: 33px; font-weight: 500; color: rgb(244 247 245 / 0.9);
-        letter-spacing: -0.01em;
+      .info-head {
+        display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+        margin-bottom: 36px;
       }
-      .list .k {
-        flex: none; width: 40px; height: 40px; border-radius: 10px;
+      .info-title { font-size: 21px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+      .info-task { font-size: 22px; font-weight: 600; color: rgb(244 247 245 / 0.82); }
+
+      .bar-row { display: grid; grid-template-columns: 168px 1fr 132px; align-items: center; gap: 24px; }
+      .bar-row + .bar-row { margin-top: 24px; }
+      .bar-label { font-size: 27px; font-weight: 700; letter-spacing: -0.01em; }
+      .bar-track { display: block; height: 40px; border-radius: 12px; background: rgb(255 255 255 / 0.05); border: 1px solid rgb(255 255 255 / 0.06); overflow: hidden; }
+      .bar-fill { display: block; height: 100%; border-radius: 11px; }
+      .bar-fill.manual { width: 100%; background: linear-gradient(90deg, #55636f, var(--steel)); }
+      .bar-fill.auto { width: 12%; min-width: 60px; background: var(--emerald); box-shadow: 0 0 24px 2px rgb(52 211 153 / 0.55); }
+      .bar-val { font-size: 27px; font-weight: 700; text-align: right; letter-spacing: -0.01em; }
+      .bar-row.is-auto .bar-label, .bar-row.is-auto .bar-val { color: var(--emerald); }
+      .bar-row.is-manual .bar-label, .bar-row.is-manual .bar-val { color: var(--muted); }
+
+      .reclaim {
+        margin-top: 38px; padding-top: 32px; border-top: 1px solid var(--line);
+        display: flex; align-items: center; gap: 26px;
+      }
+      .reclaim .num { font-size: 72px; font-weight: 800; letter-spacing: -0.04em; color: var(--emerald); line-height: 1; white-space: nowrap; }
+      .reclaim .txt { flex: 1; font-size: 27px; font-weight: 500; line-height: 1.3; color: rgb(244 247 245 / 0.85); }
+      .reclaim .txt b { color: var(--paper); font-weight: 700; }
+
+      /* ---- thesis + signature ----------------------------------------- */
+      .thesis { font-weight: 800; font-size: 44px; letter-spacing: -0.03em; }
+      .thesis .g { color: var(--emerald); }
+      .thesis .sub { display: block; margin-top: 14px; font-size: 23px; font-weight: 500; color: var(--muted); }
+
+      .sign { margin-top: auto; display: flex; align-items: center; gap: 18px; padding-top: 30px; border-top: 1px solid var(--line); }
+      .avatar {
+        flex: none; width: 60px; height: 60px; border-radius: 999px;
         display: grid; place-items: center;
         background: var(--emerald-dim); color: var(--emerald);
-        font-size: 24px; font-weight: 800;
+        font-size: 27px; font-weight: 800; letter-spacing: -0.02em;
+        border: 1px solid rgb(52 211 153 / 0.35);
       }
-
-      .bot { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; }
-      .thesis {
-        font-weight: 800; font-size: 46px; letter-spacing: -0.03em; line-height: 1.08;
-      }
-      .thesis .g { color: var(--emerald); }
-      .thesis .sub {
-        display: block; margin-top: 14px;
-        font-size: 24px; font-weight: 500; letter-spacing: 0.01em; color: var(--muted);
-      }
-      .mark {
-        flex: none; text-align: right;
-        font-size: 22px; font-weight: 700; letter-spacing: -0.01em; color: rgb(244 247 245 / 0.75);
-      }
-      .mark .tag { display: block; font-size: 16px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+      .sign .name { font-size: 31px; font-weight: 700; letter-spacing: -0.01em; }
+      .sign .role { font-size: 19px; font-weight: 500; letter-spacing: 0.05em; color: var(--muted); margin-top: 4px; }
     </style>
   </head>
 
@@ -113,21 +132,44 @@
 
       <div class="mid">
         <div class="hero">
-          <div>Nobody is buying AI.</div>
-          <div class="row2">They&rsquo;re buying <span class="accent">time back.</span></div>
-        </div>
-
-        <div class="list">
-          <div class="item"><span class="k">&rarr;</span> Missed calls, answered</div>
-          <div class="item"><span class="k">&rarr;</span> Leads that never go cold</div>
-          <div class="item"><span class="k">&rarr;</span> Reports that write themselves</div>
+          Nobody is buying AI.<br />
+          They&rsquo;re buying <span class="accent">time back.</span>
         </div>
       </div>
 
-      <div class="bot">
-        <div class="thesis">
-          Build simple. <span class="g">Solve real.</span>
-          <span class="sub">Simplicity sells. Outcomes close.</span>
+      <div class="info">
+        <div class="info-head">
+          <span class="info-title">Same task, per week</span>
+          <span class="info-task">Following up leads</span>
+        </div>
+
+        <div class="bar-row is-manual">
+          <span class="bar-label">Manual</span>
+          <span class="bar-track"><span class="bar-fill manual"></span></span>
+          <span class="bar-val">6 hrs</span>
+        </div>
+        <div class="bar-row is-auto">
+          <span class="bar-label">Automated</span>
+          <span class="bar-track"><span class="bar-fill auto"></span></span>
+          <span class="bar-val">~20 min</span>
+        </div>
+
+        <div class="reclaim">
+          <span class="num">5.5 hrs</span>
+          <span class="txt"><b>back every week.</b> That is the sale &mdash; not the software.</span>
+        </div>
+      </div>
+
+      <div class="thesis">
+        Build simple. <span class="g">Solve real.</span>
+        <span class="sub">Simplicity sells. Outcomes close.</span>
+      </div>
+
+      <div class="sign">
+        <span class="avatar">TF</span>
+        <div>
+          <div class="name">Tolulope Fatoyinbo</div>
+          <div class="role">AI Automation Systems</div>
         </div>
       </div>
     </div>
