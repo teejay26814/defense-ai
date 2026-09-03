@@ -2,91 +2,85 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Nobody is buying AI - post image</title>
+    <title>AI in Nigeria - the gap</title>
     <link rel="stylesheet" href="./fonts.css" />
 
     <!--
-      Single square post image (1080x1080), rendered locally to PNG by render.mjs.
-      Deliberately plain: one accent, one typeface, lots of air. Fonts embedded from local
-      ./fonts, so a render needs no network and cannot produce fallback type.
+      Single 4:5 infographic (1080x1350), rendered locally to PNG by render.mjs.
+      Near-black, one emerald accent, Figtree. Real Nigeria data with sources printed small.
+      Kept deliberately simple: the gap (usage vs business integration), one trend line, and
+      the positioning line. Fonts embedded from local ./fonts, no network at render.
     -->
     <style>
       :root {
         --ink: #0a0c0f;
+        --ink-2: #10141a;
+        --line: rgb(255 255 255 / 0.08);
         --paper: #f4f7f5;
         --muted: #8b95a1;
+        --faint: #5c6672;
         --emerald: #34d399;
-        --emerald-dim: rgb(52 211 153 / 0.14);
         --w: 1080px;
+        --h: 1350px;
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { background: #05060a; display: flex; justify-content: center; padding: 40px; }
+      body { background: #050506; display: flex; justify-content: center; padding: 40px; }
 
       .card {
-        position: relative;
-        width: var(--w);
-        height: var(--w);
-        overflow: hidden;
-        background: var(--ink);
-        color: var(--paper);
+        position: relative; width: var(--w); height: var(--h); overflow: hidden;
+        background: var(--ink); color: var(--paper);
         font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
-        padding: 80px 84px 70px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        padding: 76px 76px 64px; display: flex; flex-direction: column;
       }
-
       .glow {
         position: absolute; inset: 0; pointer-events: none;
         background-image:
-          radial-gradient(ellipse 60% 50% at 12% 6%, rgb(52 211 153 / 0.16), transparent 60%),
-          radial-gradient(ellipse 70% 60% at 92% 104%, rgb(52 211 153 / 0.07), transparent 62%),
-          radial-gradient(ellipse 90% 70% at 50% 120%, rgb(5 6 10 / 0.9), transparent 70%);
+          radial-gradient(ellipse 55% 40% at 10% 3%, rgb(52 211 153 / 0.14), transparent 60%),
+          radial-gradient(ellipse 80% 60% at 50% 122%, rgb(5 5 6 / 0.9), transparent 70%);
       }
       .grain {
-        position: absolute; inset: 0; pointer-events: none; opacity: 0.05;
+        position: absolute; inset: 0; pointer-events: none; opacity: 0.045;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       }
-      .top, .mid, .bot { position: relative; z-index: 2; }
+      .top, .hero, .stats, .chartwrap, .cta, .foot { position: relative; z-index: 2; }
 
       .eyebrow {
-        display: inline-flex; align-items: center; gap: 14px;
-        font-size: 21px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase;
-        color: var(--muted);
+        font-size: 21px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--emerald); margin-bottom: 34px;
       }
-      .eyebrow .dot { width: 12px; height: 12px; border-radius: 999px; background: var(--emerald); box-shadow: 0 0 18px 2px rgb(52 211 153 / 0.6); }
+      .hero { font-weight: 800; font-size: 60px; line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; }
+      .hero .g { color: var(--emerald); }
 
-      .hero {
-        font-weight: 800; font-size: 90px; line-height: 1.02; letter-spacing: -0.035em;
-        text-wrap: balance;
-      }
-      .hero .accent { color: var(--emerald); }
-      .hero .row2 { color: var(--paper); }
+      /* the gap */
+      .stats { display: flex; align-items: stretch; gap: 30px; margin-top: 44px; }
+      .stat { flex: 1; }
+      .stat .num { font-size: 104px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.9; }
+      .stat .num.up { color: var(--paper); }
+      .stat .num.gap { color: var(--emerald); }
+      .stat .lab { margin-top: 14px; font-size: 26px; font-weight: 500; line-height: 1.3; color: var(--muted); }
+      .stat.divide { flex: none; width: 1px; background: var(--line); }
 
-      .list { display: flex; flex-direction: column; gap: 22px; margin-top: 40px; }
-      .list .item {
-        display: flex; align-items: center; gap: 20px;
-        font-size: 33px; font-weight: 500; color: rgb(244 247 245 / 0.9); letter-spacing: -0.01em;
-      }
-      .list .k {
-        flex: none; width: 40px; height: 40px; border-radius: 10px;
-        display: grid; place-items: center;
-        background: var(--emerald-dim); color: var(--emerald);
-        font-size: 24px; font-weight: 800;
-      }
+      /* chart */
+      .chartwrap { margin-top: 44px; }
+      .chart-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+      .chart-title { font-size: 22px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+      .chart-growth { font-size: 22px; font-weight: 700; color: var(--emerald); }
+      svg { display: block; width: 100%; height: auto; }
+      .ax { font-size: 20px; font-weight: 500; fill: var(--faint); font-family: Figtree, sans-serif; }
+      .val { font-size: 24px; font-weight: 700; font-family: Figtree, sans-serif; }
 
-      .bot { display: flex; flex-direction: column; gap: 26px; }
-      .thesis { font-weight: 800; font-size: 46px; letter-spacing: -0.03em; line-height: 1.08; }
-      .thesis .g { color: var(--emerald); }
-      .thesis .sub {
-        display: block; margin-top: 14px;
-        font-size: 24px; font-weight: 500; letter-spacing: 0.01em; color: var(--muted);
+      /* cta / positioning */
+      .cta {
+        margin-top: 46px; font-weight: 700; font-size: 36px; line-height: 1.28; letter-spacing: -0.01em;
       }
+      .cta .lead { color: var(--muted); font-weight: 600; }
+      .cta .g { color: var(--emerald); }
 
-      /* signature */
-      .sign { display: flex; flex-direction: column; gap: 4px; padding-top: 24px; border-top: 1px solid rgb(255 255 255 / 0.08); }
-      .sign .name { font-size: 29px; font-weight: 700; letter-spacing: -0.01em; }
-      .sign .role { font-size: 21px; font-weight: 500; letter-spacing: 0.05em; color: var(--muted); }
+      /* footer */
+      .foot { margin-top: auto; padding-top: 26px; border-top: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+      .foot .name { font-size: 28px; font-weight: 800; letter-spacing: -0.01em; }
+      .foot .role { margin-top: 4px; font-size: 20px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+      .foot .src { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--faint); text-align: right; max-width: 46%; }
     </style>
   </head>
 
@@ -95,33 +89,64 @@
       <div class="glow"></div>
       <div class="grain"></div>
 
-      <div class="top">
-        <span class="eyebrow"><span class="dot"></span> On building AI systems</span>
+      <div class="top"><div class="eyebrow">The state of AI in Nigeria &middot; 2025</div></div>
+
+      <div class="hero">Nigeria already uses AI.<br />Most <span class="g">businesses</span> just haven&rsquo;t built it in.</div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="num up">88%</div>
+          <div class="lab">of Nigerians use at least one AI tool</div>
+        </div>
+        <div class="stat divide"></div>
+        <div class="stat">
+          <div class="num gap">14%</div>
+          <div class="lab">of SMEs have built AI into the business</div>
+        </div>
       </div>
 
-      <div class="mid">
-        <div class="hero">
-          <div>Nobody is buying AI.</div>
-          <div class="row2">They&rsquo;re buying <span class="accent">time back.</span></div>
+      <div class="chartwrap">
+        <div class="chart-head">
+          <span class="chart-title">Nigeria&rsquo;s AI market &middot; US$ billions</span>
+          <span class="chart-growth">&#9650; ~27% / year</span>
         </div>
-
-        <div class="list">
-          <div class="item"><span class="k">&rarr;</span> Missed calls, answered</div>
-          <div class="item"><span class="k">&rarr;</span> Leads that never go cold</div>
-          <div class="item"><span class="k">&rarr;</span> Reports that write themselves</div>
-        </div>
+        <svg viewBox="0 0 928 300" role="img" aria-label="Nigeria AI market growing from 1.4 billion dollars in 2025 to 4.6 billion by 2030">
+          <defs>
+            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#34d399" stop-opacity="0.28" />
+              <stop offset="100%" stop-color="#34d399" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <!-- baseline -->
+          <line x1="40" y1="250" x2="888" y2="250" stroke="rgb(255 255 255 / 0.10)" stroke-width="1" />
+          <!-- area under the line -->
+          <path d="M60,229 212,209 364,184 516,152 668,111 856,59 L856,250 60,250 Z" fill="url(#area)" />
+          <!-- the trend line -->
+          <polyline points="60,229 212,209 364,184 516,152 668,111 856,59"
+                    fill="none" stroke="#34d399" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- endpoints -->
+          <circle cx="60" cy="229" r="7" fill="#34d399" />
+          <circle cx="856" cy="59" r="10" fill="#34d399" />
+          <!-- value labels -->
+          <text x="60" y="215" class="val" fill="#f4f7f5" text-anchor="start">$1.4bn</text>
+          <text x="856" y="45" class="val" fill="#34d399" text-anchor="end">$4.6bn</text>
+          <!-- x axis -->
+          <text x="60"  y="282" class="ax" text-anchor="start">2025</text>
+          <text x="856" y="282" class="ax" text-anchor="end">2030</text>
+        </svg>
       </div>
 
-      <div class="bot">
-        <div class="thesis">
-          Build simple. <span class="g">Solve real.</span>
-          <span class="sub">Simplicity sells. Outcomes close.</span>
-        </div>
+      <div class="cta">
+        <span class="lead">This is where we come in.</span><br />
+        We put AI to work inside your business &mdash; so you <span class="g">save time and money.</span>
+      </div>
 
-        <div class="sign">
-          <span class="name">Tolulope Fatoyinbo</span>
-          <span class="role">AI Automation Specialist</span>
+      <div class="foot">
+        <div>
+          <div class="name">Tolulope Fatoyinbo</div>
+          <div class="role">AI Automation Specialist</div>
         </div>
+        <div class="src">Sources: TechBuild Africa; Leadership NG survey; Statista AI Market &mdash; Nigeria (2025&ndash;2030).</div>
       </div>
     </div>
   </body>
