@@ -66,7 +66,7 @@
       .btrack { display: block; height: 34px; border-radius: 10px; background: rgb(11 26 46 / 0.05); overflow: hidden; }
       .bfill { display: block; height: 100%; border-radius: 10px; }
       .bfill.manual { width: 100%; background: linear-gradient(90deg, #b3bdca, var(--steel)); }
-      .bfill.auto { width: 11%; min-width: 46px; background: var(--accent); }
+      .bfill.auto { width: 38%; min-width: 46px; background: var(--accent); }
       .bval { text-align: right; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
 
       .reclaim { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--rule); display: flex; align-items: center; gap: 22px; }
@@ -74,9 +74,10 @@
       .reclaim .txt { font-size: 26px; font-weight: 600; line-height: 1.28; color: var(--navy); }
       .reclaim .txt .lead { font-family: Fraunces, ui-serif, Georgia, serif; font-style: italic; font-weight: 500; }
 
-      .foot { margin-top: auto; padding-top: 22px; border-top: 1px solid var(--rule); }
+      .foot { margin-top: auto; padding-top: 22px; border-top: 1px solid var(--rule); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
       .foot .name { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
       .foot .role { margin-top: 4px; font-size: 19px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); }
+      .foot .src { font-size: 15px; font-weight: 500; line-height: 1.55; color: var(--faint); text-align: right; max-width: 46%; }
     </style>
   </head>
 
@@ -101,26 +102,29 @@
       </div>
 
       <div class="payoff">
-        <div class="ptitle">What it adds up to, in a typical week</div>
+        <div class="ptitle">Hours a week a small business spends on admin</div>
         <div class="brow manual">
           <span class="blabel">By hand</span>
           <span class="btrack"><span class="bfill manual"></span></span>
-          <span class="bval">~10 hrs</span>
+          <span class="bval">~16 hrs</span>
         </div>
         <div class="brow auto">
           <span class="blabel">Automated</span>
           <span class="btrack"><span class="bfill auto"></span></span>
-          <span class="bval">~1 hr</span>
+          <span class="bval">~6 hrs</span>
         </div>
         <div class="reclaim">
-          <span class="num">~9 hrs</span>
+          <span class="num">~10 hrs</span>
           <span class="txt"><span class="lead">back every week.</span> This is where we come in.</span>
         </div>
       </div>
 
       <div class="foot">
-        <div class="name">Tolulope Fatoyinbo</div>
-        <div class="role">AI Automation Specialist</div>
+        <div>
+          <div class="name">Tolulope Fatoyinbo</div>
+          <div class="role">AI Automation Specialist</div>
+        </div>
+        <div class="src">Sources: Xero, Sage and Intuit small-business admin-time studies.</div>
       </div>
     </div>
   </body>
