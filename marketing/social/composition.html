@@ -2,20 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>AI in Nigeria - the gap</title>
+    <title>Manual work that eats your week</title>
     <link rel="stylesheet" href="./fonts.css" />
 
     <!--
       Single 4:5 infographic (1080x1350), rendered locally to PNG by render.mjs.
-      Editorial white ground, deep-navy type, one blue accent. Full-width structure with
-      hairline rules and a bordered stat card, so the composition is balanced rather than
-      left-heavy. Serif headline (Fraunces) over Figtree. No em dashes. Fonts embedded
-      from local ./fonts, no network at render.
+      Same editorial system as the AI-in-Nigeria post: white ground, deep-navy type, one
+      blue accent, Fraunces serif headline over Figtree. A simple numbered checklist of the
+      manual tasks that waste a business's time. Deliberately uncluttered. No em dashes.
+      Fonts embedded from local ./fonts, no network at render.
     -->
     <style>
       :root {
         --paper: #f6f7f9;
-        --card: #ffffff;
         --navy: #0b1a2e;
         --slate: #55637a;
         --faint: #8a97a7;
@@ -31,59 +30,38 @@
         position: relative; width: var(--w); height: var(--h); overflow: hidden;
         background: var(--paper); color: var(--navy);
         font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
-        padding: 66px 78px 56px; display: flex; flex-direction: column;
+        padding: 74px 78px 60px; display: flex; flex-direction: column;
       }
 
       .accentbar { width: 54px; height: 4px; background: var(--accent); margin-bottom: 22px; }
 
       .header { display: flex; align-items: center; justify-content: space-between; }
-      .eyebrow { font-size: 21px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--slate); }
-      .tag { font-size: 21px; font-weight: 700; letter-spacing: 0.14em; color: var(--accent); }
+      .eyebrow { font-size: 21px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--slate); }
+      .tag { font-size: 21px; font-weight: 700; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; }
 
       .hero {
         font-family: Fraunces, ui-serif, Georgia, serif; font-weight: 600;
-        font-size: 55px; line-height: 1.1; letter-spacing: -0.01em;
+        font-size: 58px; line-height: 1.08; letter-spacing: -0.01em;
         margin-top: 26px; text-wrap: balance;
       }
 
-      /* the gap - a bordered card so it reads as a designed unit */
-      .gapcard {
-        margin-top: 34px; background: var(--card); border: 1px solid var(--rule); border-radius: 18px;
-        box-shadow: 0 22px 50px -34px rgb(11 26 46 / 0.35);
-        display: flex; align-items: stretch;
-      }
-      .cell { flex: 1; padding: 32px 42px; }
-      .cell + .cell { border-left: 1px solid var(--rule); }
-      .cell .num { font-size: 84px; font-weight: 800; letter-spacing: -0.04em; line-height: 0.9; font-variant-numeric: tabular-nums; }
-      .cell .num.up { color: var(--navy); }
-      .cell .num.gap { color: var(--accent); }
-      .cell .lab { margin-top: 12px; font-size: 23px; font-weight: 500; line-height: 1.3; color: var(--slate); }
+      .list { margin-top: 34px; }
+      .row { display: flex; align-items: center; gap: 26px; padding: 21px 4px; border-top: 1px solid var(--rule); }
+      .row:first-child { border-top: none; padding-top: 6px; }
+      .row .n { flex: none; width: 46px; font-size: 30px; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+      .row .t { font-size: 32px; font-weight: 600; letter-spacing: -0.01em; color: var(--navy); }
 
-      /* chart */
-      .chartwrap { margin-top: 34px; padding-top: 32px; border-top: 1px solid var(--rule); }
-      .chart-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
-      .chart-title { font-size: 21px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); }
-      .chart-growth { font-size: 23px; font-weight: 700; color: var(--accent); }
-      svg { display: block; width: 100%; height: auto; }
-      .ax { font-size: 21px; font-weight: 500; fill: var(--faint); font-family: Figtree, sans-serif; }
-      .val { font-size: 25px; font-weight: 700; font-family: Figtree, sans-serif; }
-
-      /* cta */
-      .cta { margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--rule); }
+      .cta { margin-top: 32px; padding-top: 30px; border-top: 1px solid var(--rule); }
       .cta .lead {
         font-family: Fraunces, ui-serif, Georgia, serif; font-style: italic; font-weight: 500;
         font-size: 38px; color: var(--navy); letter-spacing: -0.01em;
       }
-      .cta .line {
-        margin-top: 12px; font-size: 31px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; color: var(--navy);
-      }
+      .cta .line { margin-top: 12px; font-size: 31px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; color: var(--navy); }
       .cta .line .g { color: var(--accent); }
 
-      /* footer */
-      .foot { margin-top: auto; padding-top: 24px; border-top: 1px solid var(--rule); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+      .foot { margin-top: auto; padding-top: 24px; border-top: 1px solid var(--rule); }
       .foot .name { font-size: 27px; font-weight: 700; letter-spacing: -0.01em; }
       .foot .role { margin-top: 5px; font-size: 19px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); }
-      .foot .src { font-size: 15px; font-weight: 500; line-height: 1.55; color: var(--faint); text-align: right; max-width: 46%; }
     </style>
   </head>
 
@@ -92,63 +70,29 @@
       <div class="accentbar"></div>
 
       <div class="header">
-        <div class="eyebrow">The state of AI in Nigeria</div>
-        <div class="tag">2025</div>
+        <div class="eyebrow">Manual work every business does</div>
+        <div class="tag">Automate it</div>
       </div>
 
-      <div class="hero">Nigeria already uses AI.<br />Most businesses just haven&rsquo;t&nbsp;built&nbsp;it&nbsp;in.</div>
+      <div class="hero">The busywork quietly stealing your week.</div>
 
-      <div class="gapcard">
-        <div class="cell">
-          <div class="num up">88%</div>
-          <div class="lab">of Nigerians use at least one AI tool</div>
-        </div>
-        <div class="cell">
-          <div class="num gap">14%</div>
-          <div class="lab">of SMEs have built AI into the business</div>
-        </div>
-      </div>
-
-      <div class="chartwrap">
-        <div class="chart-head">
-          <span class="chart-title">Nigeria&rsquo;s AI market &middot; US$ billions</span>
-          <span class="chart-growth">+27% a year</span>
-        </div>
-        <svg viewBox="0 0 928 214" role="img" aria-label="Nigeria AI market growing from 1.4 billion dollars in 2025 to 4.6 billion by 2030">
-          <defs>
-            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2563eb" stop-opacity="0.14" />
-              <stop offset="100%" stop-color="#2563eb" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-          <line x1="40" y1="60"  x2="888" y2="60"  stroke="rgb(11 26 46 / 0.06)" stroke-width="1" />
-          <line x1="40" y1="100" x2="888" y2="100" stroke="rgb(11 26 46 / 0.06)" stroke-width="1" />
-          <line x1="40" y1="140" x2="888" y2="140" stroke="rgb(11 26 46 / 0.06)" stroke-width="1" />
-          <line x1="40" y1="180" x2="888" y2="180" stroke="rgb(11 26 46 / 0.14)" stroke-width="1" />
-          <path d="M60,167 212,155 364,139 516,119 668,94 856,62 L856,180 60,180 Z" fill="url(#area)" />
-          <polyline points="60,167 212,155 364,139 516,119 668,94 856,62"
-                    fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-          <circle cx="60" cy="167" r="7" fill="#2563eb" />
-          <circle cx="856" cy="62" r="10" fill="#2563eb" />
-          <circle cx="856" cy="62" r="18" fill="none" stroke="#2563eb" stroke-opacity="0.25" stroke-width="2" />
-          <text x="60" y="152" class="val" fill="#0b1a2e" text-anchor="start">$1.4bn</text>
-          <text x="856" y="47" class="val" fill="#2563eb" text-anchor="end">$4.6bn</text>
-          <text x="60"  y="206" class="ax" text-anchor="start">2025</text>
-          <text x="856" y="206" class="ax" text-anchor="end">2030</text>
-        </svg>
+      <div class="list">
+        <div class="row"><span class="n">01</span><span class="t">Answering the same questions on WhatsApp and DM</span></div>
+        <div class="row"><span class="n">02</span><span class="t">Following up leads by hand</span></div>
+        <div class="row"><span class="n">03</span><span class="t">Booking appointments back and forth</span></div>
+        <div class="row"><span class="n">04</span><span class="t">Copying data between apps and spreadsheets</span></div>
+        <div class="row"><span class="n">05</span><span class="t">Sending invoices and chasing payment</span></div>
+        <div class="row"><span class="n">06</span><span class="t">Writing the same reports every week</span></div>
       </div>
 
       <div class="cta">
         <div class="lead">This is where we come in.</div>
-        <div class="line">We put AI to work inside your business, so you <span class="g">save time and money.</span></div>
+        <div class="line">We automate the busywork, so you <span class="g">save time and money.</span></div>
       </div>
 
       <div class="foot">
-        <div>
-          <div class="name">Tolulope Fatoyinbo</div>
-          <div class="role">AI Automation Specialist</div>
-        </div>
-        <div class="src">Sources: TechBuild Africa; Leadership NG; Statista, Nigeria AI market 2025 to 2030.</div>
+        <div class="name">Tolulope Fatoyinbo</div>
+        <div class="role">AI Automation Specialist</div>
       </div>
     </div>
   </body>
