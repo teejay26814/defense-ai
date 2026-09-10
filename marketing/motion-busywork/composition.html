@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Busywork - motion</title>
+    <link rel="stylesheet" href="../social/fonts.css" />
+    <!--
+      ~14s motion piece, 1280x720, rendered locally to MP4 by render.mjs (Chromium screenshots
+      each frame after seeking every CSS animation to that moment, then ffmpeg encodes).
+      One global timeline: every animation-delay is an absolute time in seconds. Only transform
+      and opacity animate. Navy ground, white type, one azure accent. Fonts from ../social/fonts.
+    -->
+    <style>
+      :root{
+        --navy:#0b1a2e; --navy2:#0f2236; --paper:#f6f9fc; --muted:#9fb0c4;
+        --accent:#58a6ff; --steel:#5a6b80; --line:rgb(255 255 255 / 0.10);
+      }
+      *{margin:0;padding:0;box-sizing:border-box}
+      html,body{width:100%;height:100%;overflow:hidden;background:var(--navy)}
+      .stage{position:relative;width:1280px;height:720px;background:var(--navy);overflow:hidden;
+        font-family:Figtree,ui-sans-serif,system-ui,sans-serif;color:var(--paper)}
+
+      .field{position:absolute;inset:0;opacity:0;animation:fin 1.2s ease-out .1s both;
+        background-image:
+          radial-gradient(ellipse 60% 45% at 12% 6%, rgb(88 166 255 / 0.16), transparent 60%),
+          radial-gradient(ellipse 70% 55% at 90% 108%, rgb(88 166 255 / 0.07), transparent 62%),
+          radial-gradient(ellipse 100% 70% at 50% 122%, rgb(3 8 16 / 0.9), transparent 70%);}
+      .grain{position:absolute;inset:0;opacity:.04;pointer-events:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+      .scene{position:absolute;inset:0}
+
+      /* keyframes */
+      @keyframes fin{to{opacity:1}}
+      @keyframes fout{to{opacity:0}}
+      @keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+      @keyframes cardin{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+      @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+      @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+      @keyframes bar{to{transform:scaleX(1)}}
+
+      /* ---------- SCENE 1 : cards + headline ---------- */
+      .s1{opacity:1;animation:fout .6s ease-in 4.6s both}
+      .cards{position:absolute;left:96px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:22px;width:420px}
+      .card{background:var(--navy2);border:1px solid var(--line);border-radius:16px;padding:24px 26px;
+        display:flex;align-items:center;gap:18px;opacity:0;box-shadow:0 20px 40px -28px rgb(0 0 0 / .6)}
+      .card .ic{width:44px;height:44px;border-radius:11px;background:rgb(88 166 255 / .14);color:var(--accent);
+        display:grid;place-items:center;font-size:22px;font-weight:800;flex:none}
+      .card .tx{font-size:26px;font-weight:600;letter-spacing:-.01em}
+      .card .tag{margin-top:4px;font-size:16px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+      .c1{animation:cardin .7s cubic-bezier(.22,1,.36,1) .3s both}
+      .c2{animation:cardin .7s cubic-bezier(.22,1,.36,1) .6s both}
+      .c3{animation:cardin .7s cubic-bezier(.22,1,.36,1) .9s both}
+
+      .head{position:absolute;right:90px;top:50%;transform:translateY(-50%);width:600px;text-align:left}
+      .head .l{font-family:Fraunces,serif;font-weight:600;font-size:66px;line-height:1.06;letter-spacing:-.02em;opacity:0}
+      .h1{animation:up .8s cubic-bezier(.22,1,.36,1) 1.3s both}
+      .h2{animation:up .8s cubic-bezier(.22,1,.36,1) 1.7s both}
+      .h3{animation:up .8s cubic-bezier(.22,1,.36,1) 2.1s both}
+      .head .a{color:var(--accent)}
+
+      /* ---------- SCENE 2 : the time bar ---------- */
+      .s2{opacity:0;animation:fin .7s ease-out 5.2s both, fout .6s ease-in 9.2s both}
+      .wrap2{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:900px}
+      .s2 .t{font-size:24px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:34px;opacity:0;animation:up .7s ease-out 5.5s both}
+      .brow{display:grid;grid-template-columns:210px 1fr 150px;align-items:center;gap:24px;margin-bottom:22px}
+      .blabel{font-size:30px;font-weight:700}
+      .btrack{display:block;height:44px;border-radius:12px;background:rgb(255 255 255 / .06);overflow:hidden}
+      .bfill{display:block;height:100%;border-radius:12px;transform-origin:left;transform:scaleX(0)}
+      .bfill.m{width:100%;background:linear-gradient(90deg,#7a8aa0,var(--steel));animation:bar 1s cubic-bezier(.22,1,.36,1) 5.7s both}
+      .bfill.a{width:38%;background:var(--accent);animation:bar .9s cubic-bezier(.22,1,.36,1) 6.8s both}
+      .bval{font-size:30px;font-weight:700;text-align:right}
+      .m .blabel,.rowm .bval{color:var(--muted)}
+      .rowm .blabel,.rowm .bval{color:var(--muted)}
+      .rowa .blabel,.rowa .bval{color:var(--accent)}
+      .bval{opacity:0}
+      .valm{animation:fin .5s ease-out 6.5s both}
+      .vala{animation:fin .5s ease-out 7.5s both}
+      .reclaim{margin-top:40px;display:flex;align-items:baseline;gap:22px;opacity:0;animation:pop .7s cubic-bezier(.22,1,.36,1) 8.0s both}
+      .reclaim .num{font-size:84px;font-weight:800;letter-spacing:-.04em;color:var(--accent);line-height:.9}
+      .reclaim .txt{font-size:30px;font-weight:600;color:var(--paper)}
+      .reclaim .txt .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500}
+
+      /* ---------- SCENE 3 : positioning ---------- */
+      .s3{opacity:0;animation:fin .7s ease-out 9.8s both, fout .5s ease-in 12.3s both}
+      .wrap3{position:absolute;left:96px;top:50%;transform:translateY(-50%);width:1090px}
+      .s3 .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500;font-size:52px;letter-spacing:-.01em;opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 10.0s both}
+      .s3 .line{margin-top:20px;font-size:46px;font-weight:700;letter-spacing:-.02em;opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 10.6s both}
+      .s3 .line .a{color:var(--accent)}
+
+      /* ---------- SCENE 4 : end lockup ---------- */
+      .s4{opacity:0;animation:fin .7s ease-out 12.5s both}
+      .wrap4{position:absolute;left:96px;bottom:90px}
+      .s4 .bar{width:56px;height:4px;background:var(--accent);opacity:0;animation:fin .5s ease-out 12.7s both;margin-bottom:22px}
+      .s4 .name{font-size:44px;font-weight:800;letter-spacing:-.01em;opacity:0;animation:up .7s cubic-bezier(.22,1,.36,1) 12.8s both}
+      .s4 .role{margin-top:8px;font-size:26px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:0;animation:up .7s cubic-bezier(.22,1,.36,1) 13.0s both}
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage" data-fps="30" data-duration="14" data-width="1280" data-height="720">
+      <div class="field"></div>
+      <div class="grain"></div>
+
+      <!-- SCENE 1 -->
+      <div class="scene s1">
+        <div class="cards">
+          <div class="card c1"><span class="ic">&#128172;</span><div><div class="tx">Answering the same DMs</div><div class="tag">Every day</div></div></div>
+          <div class="card c2"><span class="ic">&#8631;</span><div><div class="tx">Following up leads by hand</div><div class="tag">Half forgotten</div></div></div>
+          <div class="card c3"><span class="ic">&#8358;</span><div><div class="tx">Chasing unpaid invoices</div><div class="tag">Again</div></div></div>
+        </div>
+        <div class="head">
+          <div class="l h1">The busywork</div>
+          <div class="l h2"><span class="a">quietly stealing</span></div>
+          <div class="l h3">your week.</div>
+        </div>
+      </div>
+
+      <!-- SCENE 2 -->
+      <div class="scene s2">
+        <div class="wrap2">
+          <div class="t">Hours a week a business spends on admin</div>
+          <div class="brow rowm">
+            <span class="blabel">By hand</span>
+            <span class="btrack"><span class="bfill m"></span></span>
+            <span class="bval valm">~16 hrs</span>
+          </div>
+          <div class="brow rowa">
+            <span class="blabel">Automated</span>
+            <span class="btrack"><span class="bfill a"></span></span>
+            <span class="bval vala">~6 hrs</span>
+          </div>
+          <div class="reclaim">
+            <span class="num">~10 hrs</span>
+            <span class="txt"><span class="lead">back every week.</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 3 -->
+      <div class="scene s3">
+        <div class="wrap3">
+          <div class="lead">This is where we come in.</div>
+          <div class="line">We put AI to work, so you <span class="a">save time and money.</span></div>
+        </div>
+      </div>
+
+      <!-- SCENE 4 -->
+      <div class="scene s4">
+        <div class="wrap4">
+          <div class="bar"></div>
+          <div class="name">Tolulope Fatoyinbo</div>
+          <div class="role">AI Automation Specialist</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
