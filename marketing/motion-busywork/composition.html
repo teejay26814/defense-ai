@@ -2,39 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Busywork - motion v2</title>
+    <title>Busywork - motion v3 (white)</title>
     <link rel="stylesheet" href="../social/fonts.css" />
     <!--
-      ~18s motion piece, 1280x720, rendered locally to MP4 by render.mjs (Chromium seeks every
-      CSS animation to each frame and screenshots; ffmpeg encodes). One global timeline: every
-      animation-delay is an absolute time in seconds. Richer v2: staggered card pops, count-up
-      numbers (animated @property integers), slide-through scene transitions, highlight sweeps,
-      first-person copy, "Let's talk." CTA. Only transform/opacity/registered-int animate.
+      ~18s motion piece, 1280x720, rendered locally to MP4 by render.mjs. White editorial
+      palette (off-white ground, deep-navy type, one blue accent) matching the posts.
+      One global timeline: every animation-delay is an absolute time in seconds. Staggered
+      card pops, count-up numbers (animated @property integer), slide-through transitions,
+      highlight sweeps, first-person copy, "Let's talk." CTA.
     -->
     <style>
       @property --cnt { syntax:'<integer>'; inherits:false; initial-value:0; }
       :root{
-        --navy:#0b1a2e; --navy2:#0f2236; --paper:#f6f9fc; --muted:#9fb0c4;
-        --accent:#58a6ff; --steel:#5a6b80; --line:rgb(255 255 255 / 0.10);
+        --bg:#f6f7f9; --card:#ffffff; --ink:#0b1a2e; --muted:#55637a;
+        --accent:#2563eb; --steel:#9aa7ba; --line:rgb(11 26 46 / 0.12);
       }
       *{margin:0;padding:0;box-sizing:border-box}
-      html,body{width:100%;height:100%;overflow:hidden;background:var(--navy)}
-      .stage{position:relative;width:1280px;height:720px;background:var(--navy);overflow:hidden;
-        font-family:Figtree,ui-sans-serif,system-ui,sans-serif;color:var(--paper)}
+      html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
+      .stage{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden;
+        font-family:Figtree,ui-sans-serif,system-ui,sans-serif;color:var(--ink)}
 
       .field{position:absolute;inset:0;opacity:0;animation:fin 1.2s ease-out .1s both;
         background-image:
-          radial-gradient(ellipse 60% 45% at 12% 6%, rgb(88 166 255 / 0.16), transparent 60%),
-          radial-gradient(ellipse 70% 55% at 90% 108%, rgb(88 166 255 / 0.07), transparent 62%),
-          radial-gradient(ellipse 100% 70% at 50% 122%, rgb(3 8 16 / 0.9), transparent 70%);}
-      .grain{position:absolute;inset:0;opacity:.04;pointer-events:none;
+          radial-gradient(ellipse 60% 45% at 10% 4%, rgb(37 99 235 / 0.08), transparent 60%),
+          radial-gradient(ellipse 70% 55% at 92% 106%, rgb(37 99 235 / 0.05), transparent 62%);}
+      .grain{position:absolute;inset:0;opacity:.028;pointer-events:none;
         background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
       .scene{position:absolute;inset:0}
 
       @keyframes fin{to{opacity:1}}
       @keyframes fout{to{opacity:0}}
       @keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-      @keyframes down{to{opacity:0;transform:translateY(-28px)}}
       @keyframes cardpop{0%{opacity:0;transform:translateX(-30px) scale(.94)}60%{opacity:1;transform:translateX(0) scale(1.02)}100%{opacity:1;transform:none}}
       @keyframes bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
       @keyframes sweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}
@@ -46,26 +44,25 @@
 
       /* ---------- SCENE 1 : cards + headline ---------- */
       .s1{opacity:1;animation:fout .55s ease-in 4.6s both}
-      .cards{position:absolute;left:96px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:22px;width:430px}
-      .card{background:var(--navy2);border:1px solid var(--line);border-radius:16px;padding:22px 26px;
-        display:flex;align-items:center;gap:18px;opacity:0;box-shadow:0 20px 40px -28px rgb(0 0 0 / .6)}
-      .card .ic{width:46px;height:46px;border-radius:12px;background:rgb(88 166 255 / .14);color:var(--accent);
+      .cards{position:absolute;left:96px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:22px;width:440px}
+      .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 26px;
+        display:flex;align-items:center;gap:18px;opacity:0;box-shadow:0 20px 44px -30px rgb(11 26 46 / .4)}
+      .card .ic{width:46px;height:46px;border-radius:12px;background:rgb(37 99 235 / .12);color:var(--accent);
         display:grid;place-items:center;font-size:22px;font-weight:800;flex:none}
-      .card .tx{font-size:25px;font-weight:600;letter-spacing:-.01em}
+      .card .tx{font-size:25px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
       .card .tag{margin-top:3px;font-size:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
       .c1{animation:cardpop .7s cubic-bezier(.22,1,.36,1) .4s both}
       .c2{animation:cardpop .7s cubic-bezier(.22,1,.36,1) .75s both}
       .c3{animation:cardpop .7s cubic-bezier(.22,1,.36,1) 1.1s both}
 
       .head{position:absolute;right:90px;top:50%;transform:translateY(-50%);width:600px}
-      .head .l{position:relative;font-family:Fraunces,serif;font-weight:600;font-size:64px;line-height:1.08;letter-spacing:-.02em;opacity:0;display:inline-block}
+      .head .l{position:relative;font-family:Fraunces,serif;font-weight:600;font-size:64px;line-height:1.08;letter-spacing:-.02em;opacity:0;display:inline-block;color:var(--ink)}
       .head .row{display:block}
       .h1{animation:up .7s cubic-bezier(.22,1,.36,1) 1.4s both}
       .h2{animation:up .7s cubic-bezier(.22,1,.36,1) 1.8s both}
       .h3{animation:up .7s cubic-bezier(.22,1,.36,1) 2.2s both}
       .head .a{position:relative;color:var(--accent);z-index:1}
-      /* highlight sweep behind the accent line */
-      .hl{position:absolute;left:-6px;right:-6px;top:12%;bottom:12%;background:rgb(88 166 255 / .16);border-radius:8px;
+      .hl{position:absolute;left:-6px;right:-6px;top:12%;bottom:12%;background:rgb(37 99 235 / .14);border-radius:8px;
         transform-origin:left;transform:scaleX(0);z-index:0;animation:sweep .6s cubic-bezier(.22,1,.36,1) 2.4s both}
 
       /* ---------- SCENE 2 : the time bars + count-ups ---------- */
@@ -74,10 +71,10 @@
       .s2 .t{font-size:23px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:36px;opacity:0;animation:up .6s ease-out 5.4s both}
       .brow{display:grid;grid-template-columns:210px 1fr 190px;align-items:center;gap:24px;margin-bottom:24px}
       .blabel{font-size:30px;font-weight:700}
-      .btrack{display:block;height:46px;border-radius:12px;background:rgb(255 255 255 / .06);overflow:hidden}
+      .btrack{display:block;height:46px;border-radius:12px;background:rgb(11 26 46 / .06);overflow:hidden}
       .bfill{display:block;height:100%;border-radius:12px;transform-origin:left;transform:scaleX(0)}
-      .bfill.m{width:100%;background:linear-gradient(90deg,#7a8aa0,var(--steel));animation:bar 1.1s cubic-bezier(.22,1,.36,1) 5.7s both}
-      .bfill.a{width:38%;background:var(--accent);box-shadow:0 0 26px 0 rgb(88 166 255 / .5);animation:bar 1.0s cubic-bezier(.22,1,.36,1) 6.9s both}
+      .bfill.m{width:100%;background:linear-gradient(90deg,#c2cbd6,var(--steel));animation:bar 1.1s cubic-bezier(.22,1,.36,1) 5.7s both}
+      .bfill.a{width:38%;background:var(--accent);box-shadow:0 6px 20px -6px rgb(37 99 235 / .5);animation:bar 1.0s cubic-bezier(.22,1,.36,1) 6.9s both}
       .bval{font-size:30px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
       .rowm .blabel,.rowm .bval{color:var(--muted)}
       .rowa .blabel,.rowa .bval{color:var(--accent)}
@@ -87,21 +84,21 @@
       .c10{counter-reset:n var(--cnt);animation:to10 .9s cubic-bezier(.3,.7,.3,1) 8.4s both}
       .reclaim{margin-top:42px;display:flex;align-items:baseline;gap:22px;opacity:0;animation:pop .7s cubic-bezier(.22,1,.36,1) 8.4s both}
       .reclaim .num{font-size:88px;font-weight:800;letter-spacing:-.04em;color:var(--accent);line-height:.9;font-variant-numeric:tabular-nums}
-      .reclaim .txt{font-size:30px;font-weight:600;color:var(--paper)}
+      .reclaim .txt{font-size:30px;font-weight:600;color:var(--ink)}
       .reclaim .txt .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500}
 
       /* ---------- SCENE 3 : positioning (first person) ---------- */
       .s3{opacity:0;animation:up .7s cubic-bezier(.22,1,.36,1) 10.5s both, fout .5s ease-in 13.6s both}
       .wrap3{position:absolute;left:96px;top:50%;transform:translateY(-50%);width:1090px}
-      .s3 .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500;font-size:54px;letter-spacing:-.01em;opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 10.7s both}
-      .s3 .line{margin-top:20px;font-size:46px;font-weight:700;letter-spacing:-.02em;opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 11.4s both}
+      .s3 .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500;font-size:54px;letter-spacing:-.01em;color:var(--ink);opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 10.7s both}
+      .s3 .line{margin-top:20px;font-size:46px;font-weight:700;letter-spacing:-.02em;color:var(--ink);opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 11.4s both}
       .s3 .line .a{color:var(--accent)}
 
       /* ---------- SCENE 4 : CTA ---------- */
       .s4{opacity:0;animation:fin .6s ease-out 14.0s both}
       .wrap4{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
       .s4 .bar{width:60px;height:4px;background:var(--accent);opacity:0;animation:fin .5s ease-out 14.2s both}
-      .s4 .cta{font-family:Fraunces,serif;font-weight:600;font-size:104px;letter-spacing:-.02em;opacity:0;animation:pop .8s cubic-bezier(.22,1,.36,1) 14.3s both}
+      .s4 .cta{font-family:Fraunces,serif;font-weight:600;font-size:104px;letter-spacing:-.02em;color:var(--ink);opacity:0;animation:pop .8s cubic-bezier(.22,1,.36,1) 14.3s both}
       .s4 .cta .a{color:var(--accent)}
       .s4 .go{display:inline-flex;align-items:center;gap:14px;font-size:28px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0;animation:up .7s ease-out 14.8s both}
       .s4 .go .arw{color:var(--accent);font-size:30px;display:inline-block;animation:arrow 1.2s ease-in-out 15.2s infinite}
