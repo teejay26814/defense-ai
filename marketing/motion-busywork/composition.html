@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Busywork - motion v3 (white)</title>
+    <title>Busywork - motion v4</title>
     <link rel="stylesheet" href="../social/fonts.css" />
     <!--
       ~18s motion piece, 1280x720, rendered locally to MP4 by render.mjs. White editorial
-      palette (off-white ground, deep-navy type, one blue accent) matching the posts.
-      One global timeline: every animation-delay is an absolute time in seconds. Staggered
-      card pops, count-up numbers (animated @property integer), slide-through transitions,
-      highlight sweeps, first-person copy, "Let's talk." CTA.
+      palette. v4: living background drift, masked text reveals (rise from behind a line),
+      floating cards with pulsing icons, count-up numbers with a landing pop, scale scene
+      transitions, and a shine sweep on the CTA. One global timeline; delays are absolute
+      seconds. Only transform / opacity / registered-int animate, so every frame is exact.
     -->
     <style>
       @property --cnt { syntax:'<integer>'; inherits:false; initial-value:0; }
@@ -22,28 +22,37 @@
       .stage{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden;
         font-family:Figtree,ui-sans-serif,system-ui,sans-serif;color:var(--ink)}
 
-      .field{position:absolute;inset:0;opacity:0;animation:fin 1.2s ease-out .1s both;
+      /* living background */
+      .aurora{position:absolute;inset:-25%;opacity:0;animation:fin 1.4s ease-out .1s both, drift 22s ease-in-out .1s infinite;
         background-image:
-          radial-gradient(ellipse 60% 45% at 10% 4%, rgb(37 99 235 / 0.08), transparent 60%),
-          radial-gradient(ellipse 70% 55% at 92% 106%, rgb(37 99 235 / 0.05), transparent 62%);}
+          radial-gradient(ellipse 42% 34% at 28% 30%, rgb(37 99 235 / 0.12), transparent 60%),
+          radial-gradient(ellipse 38% 32% at 74% 64%, rgb(37 99 235 / 0.07), transparent 60%);}
+      @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,-2.5%) scale(1.07)}}
       .grain{position:absolute;inset:0;opacity:.028;pointer-events:none;
         background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
       .scene{position:absolute;inset:0}
 
       @keyframes fin{to{opacity:1}}
       @keyframes fout{to{opacity:0}}
-      @keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+      @keyframes rise{from{transform:translateY(115%)}to{transform:translateY(0)}}
+      @keyframes upfade{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+      @keyframes sceneOut{to{opacity:0;transform:scale(.975) translateY(-14px)}}
       @keyframes cardpop{0%{opacity:0;transform:translateX(-30px) scale(.94)}60%{opacity:1;transform:translateX(0) scale(1.02)}100%{opacity:1;transform:none}}
+      @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+      @keyframes iconpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
       @keyframes bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-      @keyframes sweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-      @keyframes pop{0%{opacity:0;transform:scale(.86)}60%{opacity:1;transform:scale(1.04)}100%{opacity:1;transform:none}}
-      @keyframes to16{to{--cnt:16}}
-      @keyframes to6{to{--cnt:6}}
-      @keyframes to10{to{--cnt:10}}
+      @keyframes pop{0%{opacity:0;transform:scale(.86)}60%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:none}}
+      @keyframes numbump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+      @keyframes to16{to{--cnt:16}} @keyframes to6{to{--cnt:6}} @keyframes to10{to{--cnt:10}}
       @keyframes arrow{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
+      @keyframes shine{0%{transform:translateX(-160%) skewX(-18deg)}100%{transform:translateX(260%) skewX(-18deg)}}
 
-      /* ---------- SCENE 1 : cards + headline ---------- */
-      .s1{opacity:1;animation:fout .55s ease-in 4.6s both}
+      /* mask-reveal line */
+      .ln{display:block;overflow:hidden;padding-bottom:.14em;margin-bottom:-.10em}
+      .in{display:inline-block;transform:translateY(115%);will-change:transform}
+
+      /* ---------- SCENE 1 ---------- */
+      .s1{opacity:1;animation:sceneOut .55s ease-in 4.6s both}
       .cards{position:absolute;left:96px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:22px;width:440px}
       .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 26px;
         display:flex;align-items:center;gap:18px;opacity:0;box-shadow:0 20px 44px -30px rgb(11 26 46 / .4)}
@@ -51,62 +60,67 @@
         display:grid;place-items:center;font-size:22px;font-weight:800;flex:none}
       .card .tx{font-size:25px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
       .card .tag{margin-top:3px;font-size:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-      .c1{animation:cardpop .7s cubic-bezier(.22,1,.36,1) .4s both}
-      .c2{animation:cardpop .7s cubic-bezier(.22,1,.36,1) .75s both}
-      .c3{animation:cardpop .7s cubic-bezier(.22,1,.36,1) 1.1s both}
+      .c1{animation:cardpop .7s cubic-bezier(.22,1,.36,1) .4s both, float 3.4s ease-in-out 1.6s infinite}
+      .c2{animation:cardpop .7s cubic-bezier(.22,1,.36,1) .75s both, float 3.6s ease-in-out 2.0s infinite}
+      .c3{animation:cardpop .7s cubic-bezier(.22,1,.36,1) 1.1s both, float 3.2s ease-in-out 2.3s infinite}
+      .card .ic{animation:iconpulse 2.6s ease-in-out 1.8s infinite}
 
       .head{position:absolute;right:90px;top:50%;transform:translateY(-50%);width:600px}
-      .head .l{position:relative;font-family:Fraunces,serif;font-weight:600;font-size:64px;line-height:1.08;letter-spacing:-.02em;opacity:0;display:inline-block;color:var(--ink)}
-      .head .row{display:block}
-      .h1{animation:up .7s cubic-bezier(.22,1,.36,1) 1.4s both}
-      .h2{animation:up .7s cubic-bezier(.22,1,.36,1) 1.8s both}
-      .h3{animation:up .7s cubic-bezier(.22,1,.36,1) 2.2s both}
-      .head .a{position:relative;color:var(--accent);z-index:1}
-      .hl{position:absolute;left:-6px;right:-6px;top:12%;bottom:12%;background:rgb(37 99 235 / .14);border-radius:8px;
-        transform-origin:left;transform:scaleX(0);z-index:0;animation:sweep .6s cubic-bezier(.22,1,.36,1) 2.4s both}
+      .head .l{font-family:Fraunces,serif;font-weight:600;font-size:64px;line-height:1.07;letter-spacing:-.02em;color:var(--ink)}
+      .h1 .in{animation:rise .8s cubic-bezier(.22,1,.36,1) 1.4s both}
+      .h2 .in{animation:rise .8s cubic-bezier(.22,1,.36,1) 1.65s both}
+      .h3 .in{animation:rise .8s cubic-bezier(.22,1,.36,1) 1.9s both}
+      .head .a{color:var(--accent)}
 
-      /* ---------- SCENE 2 : the time bars + count-ups ---------- */
-      .s2{opacity:0;animation:up .7s cubic-bezier(.22,1,.36,1) 5.1s both, fout .55s ease-in 10.0s both}
+      /* ---------- SCENE 2 ---------- */
+      .s2{opacity:0;animation:upfade .7s cubic-bezier(.22,1,.36,1) 5.1s both, sceneOut .55s ease-in 10.0s both}
       .wrap2{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:920px}
-      .s2 .t{font-size:23px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:36px;opacity:0;animation:up .6s ease-out 5.4s both}
+      .s2 .t{font-size:23px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:36px;opacity:0;animation:upfade .6s ease-out 5.4s both}
       .brow{display:grid;grid-template-columns:210px 1fr 190px;align-items:center;gap:24px;margin-bottom:24px}
       .blabel{font-size:30px;font-weight:700}
       .btrack{display:block;height:46px;border-radius:12px;background:rgb(11 26 46 / .06);overflow:hidden}
       .bfill{display:block;height:100%;border-radius:12px;transform-origin:left;transform:scaleX(0)}
       .bfill.m{width:100%;background:linear-gradient(90deg,#c2cbd6,var(--steel));animation:bar 1.1s cubic-bezier(.22,1,.36,1) 5.7s both}
       .bfill.a{width:38%;background:var(--accent);box-shadow:0 6px 20px -6px rgb(37 99 235 / .5);animation:bar 1.0s cubic-bezier(.22,1,.36,1) 6.9s both}
-      .bval{font-size:30px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+      .bval{font-size:30px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums;display:inline-block;transform-origin:right center}
       .rowm .blabel,.rowm .bval{color:var(--muted)}
       .rowa .blabel,.rowa .bval{color:var(--accent)}
       .cnt::after{content:counter(n)}
       .c16{counter-reset:n var(--cnt);animation:to16 1.1s cubic-bezier(.3,.7,.3,1) 5.7s both}
       .c6{counter-reset:n var(--cnt);animation:to6 1.0s cubic-bezier(.3,.7,.3,1) 6.9s both}
       .c10{counter-reset:n var(--cnt);animation:to10 .9s cubic-bezier(.3,.7,.3,1) 8.4s both}
+      .valm{animation:numbump .5s ease-out 6.8s both}
+      .vala{animation:numbump .5s ease-out 7.9s both}
       .reclaim{margin-top:42px;display:flex;align-items:baseline;gap:22px;opacity:0;animation:pop .7s cubic-bezier(.22,1,.36,1) 8.4s both}
       .reclaim .num{font-size:88px;font-weight:800;letter-spacing:-.04em;color:var(--accent);line-height:.9;font-variant-numeric:tabular-nums}
       .reclaim .txt{font-size:30px;font-weight:600;color:var(--ink)}
       .reclaim .txt .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500}
 
-      /* ---------- SCENE 3 : positioning (first person) ---------- */
-      .s3{opacity:0;animation:up .7s cubic-bezier(.22,1,.36,1) 10.5s both, fout .5s ease-in 13.6s both}
+      /* ---------- SCENE 3 ---------- */
+      .s3{opacity:0;animation:upfade .7s cubic-bezier(.22,1,.36,1) 10.5s both, sceneOut .5s ease-in 13.6s both}
       .wrap3{position:absolute;left:96px;top:50%;transform:translateY(-50%);width:1090px}
-      .s3 .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500;font-size:54px;letter-spacing:-.01em;color:var(--ink);opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 10.7s both}
-      .s3 .line{margin-top:20px;font-size:46px;font-weight:700;letter-spacing:-.02em;color:var(--ink);opacity:0;animation:up .8s cubic-bezier(.22,1,.36,1) 11.4s both}
+      .s3 .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500;font-size:54px;letter-spacing:-.01em;color:var(--ink)}
+      .s3 .lead .in{animation:rise .85s cubic-bezier(.22,1,.36,1) 10.7s both}
+      .s3 .line{margin-top:18px;font-size:46px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+      .s3 .line .in{animation:rise .85s cubic-bezier(.22,1,.36,1) 11.35s both}
       .s3 .line .a{color:var(--accent)}
 
       /* ---------- SCENE 4 : CTA ---------- */
       .s4{opacity:0;animation:fin .6s ease-out 14.0s both}
       .wrap4{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px}
-      .s4 .bar{width:60px;height:4px;background:var(--accent);opacity:0;animation:fin .5s ease-out 14.2s both}
-      .s4 .cta{font-family:Fraunces,serif;font-weight:600;font-size:104px;letter-spacing:-.02em;color:var(--ink);opacity:0;animation:pop .8s cubic-bezier(.22,1,.36,1) 14.3s both}
+      .s4 .bar{width:60px;height:4px;background:var(--accent);opacity:0;animation:fin .5s ease-out 14.2s both, float 3s ease-in-out 15s infinite}
+      .s4 .cta{position:relative;font-family:Fraunces,serif;font-weight:600;font-size:104px;letter-spacing:-.02em;color:var(--ink);opacity:0;animation:pop .8s cubic-bezier(.22,1,.36,1) 14.3s both;overflow:hidden;padding:0 .1em}
       .s4 .cta .a{color:var(--accent)}
-      .s4 .go{display:inline-flex;align-items:center;gap:14px;font-size:28px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0;animation:up .7s ease-out 14.8s both}
-      .s4 .go .arw{color:var(--accent);font-size:30px;display:inline-block;animation:arrow 1.2s ease-in-out 15.2s infinite}
+      .s4 .cta .shine{position:absolute;top:0;bottom:0;left:0;width:36%;
+        background:linear-gradient(100deg,transparent,rgb(255 255 255 / .85),transparent);
+        transform:translateX(-160%) skewX(-18deg);animation:shine 1.1s ease-in 15.3s both;mix-blend-mode:screen}
+      .s4 .go{display:inline-flex;align-items:center;gap:14px;font-size:28px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0;animation:upfade .7s ease-out 14.9s both}
+      .s4 .go .arw{color:var(--accent);font-size:30px;display:inline-block;animation:arrow 1.2s ease-in-out 15.4s infinite}
     </style>
   </head>
   <body>
     <div class="stage" id="stage" data-fps="30" data-duration="18" data-width="1280" data-height="720">
-      <div class="field"></div>
+      <div class="aurora"></div>
       <div class="grain"></div>
 
       <!-- SCENE 1 -->
@@ -117,9 +131,9 @@
           <div class="card c3"><span class="ic">&#8358;</span><div><div class="tx">Chasing unpaid invoices</div><div class="tag">Again</div></div></div>
         </div>
         <div class="head">
-          <span class="row"><span class="l h1">The busywork</span></span>
-          <span class="row"><span class="l h2"><span class="hl"></span><span class="a">quietly stealing</span></span></span>
-          <span class="row"><span class="l h3">your week.</span></span>
+          <span class="l ln h1"><span class="in">The busywork</span></span>
+          <span class="l ln h2"><span class="in"><span class="a">quietly stealing</span></span></span>
+          <span class="l ln h3"><span class="in">your week.</span></span>
         </div>
       </div>
 
@@ -130,12 +144,12 @@
           <div class="brow rowm">
             <span class="blabel">By hand</span>
             <span class="btrack"><span class="bfill m"></span></span>
-            <span class="bval">~<span class="cnt c16"></span> hrs</span>
+            <span class="bval valm">~<span class="cnt c16"></span> hrs</span>
           </div>
           <div class="brow rowa">
             <span class="blabel">Automated</span>
             <span class="btrack"><span class="bfill a"></span></span>
-            <span class="bval">~<span class="cnt c6"></span> hrs</span>
+            <span class="bval vala">~<span class="cnt c6"></span> hrs</span>
           </div>
           <div class="reclaim">
             <span class="num">~<span class="cnt c10"></span> hrs</span>
@@ -147,16 +161,16 @@
       <!-- SCENE 3 -->
       <div class="scene s3">
         <div class="wrap3">
-          <div class="lead">This is where I come in.</div>
-          <div class="line">I put AI to work inside your business, so you <span class="a">save time and money.</span></div>
+          <span class="lead ln"><span class="in">This is where I come in.</span></span>
+          <span class="line ln"><span class="in">I put AI to work, so you <span class="a">save time and money.</span></span></span>
         </div>
       </div>
 
-      <!-- SCENE 4 : CTA -->
+      <!-- SCENE 4 -->
       <div class="scene s4">
         <div class="wrap4">
           <div class="bar"></div>
-          <div class="cta">Let&rsquo;s <span class="a">talk.</span></div>
+          <div class="cta">Let&rsquo;s <span class="a">talk.</span><span class="shine"></span></div>
           <div class="go"><span>Get your time back</span> <span class="arw">&rarr;</span></div>
         </div>
       </div>
