@@ -1,0 +1,19 @@
+/* Font pack for Academia Scribes / AI-automation video + graphics work.
+   All OFL-licensed (free for personal and commercial use). TTF works in
+   @font-face (HTML/CSS motion graphics) and directly in ffmpeg drawtext. */
+
+/* 1. BOLD / attention-grabbing */
+@font-face { font-family:"Anton"; src:url("./Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+
+/* 2. CLEAN / easy to read */
+@font-face { font-family:"Montserrat"; src:url("./Montserrat-Regular.ttf")  format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Montserrat"; src:url("./Montserrat-SemiBold.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:"Montserrat"; src:url("./Montserrat-ExtraBold.ttf")format("truetype"); font-weight:800; font-style:normal; font-display:swap; }
+
+/* 3. PERSONAL / handwritten */
+@font-face { font-family:"Caveat"; src:url("./Caveat-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"Caveat"; src:url("./Caveat-Bold.ttf")   format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
+
+/* 4. FOCUS / elegant serif (free Garamond) */
+@font-face { font-family:"EB Garamond"; src:url("./EBGaramond-Regular.ttf")  format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"EB Garamond"; src:url("./EBGaramond-SemiBold.ttf") format("truetype"); font-weight:600; font-style:normal; font-display:swap; }
