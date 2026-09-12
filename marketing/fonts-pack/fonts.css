@@ -4,6 +4,13 @@
 
 /* 1. BOLD / attention-grabbing */
 @font-face { font-family:"Anton"; src:url("./Anton-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Archivo Black"; src:url("./ArchivoBlack-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Oswald"; src:url("./Oswald-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"Oswald"; src:url("./Oswald-Bold.ttf")   format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
+
+/* Helvetica stand-in (metrically identical) */
+@font-face { font-family:"Arimo"; src:url("./Arimo-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Arimo"; src:url("./Arimo-Bold.ttf")    format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
 
 /* 2. CLEAN / easy to read */
 @font-face { font-family:"Montserrat"; src:url("./Montserrat-Regular.ttf")  format("truetype"); font-weight:400; font-style:normal; font-display:swap; }

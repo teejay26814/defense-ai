@@ -8,6 +8,9 @@ for burning text onto uploaded videos.
 | Use | Family | Files |
 | --- | --- | --- |
 | **Bold / attention-grabbing** | Anton | `Anton-Regular.ttf` |
+| **Bold / heavy sans** | Archivo Black | `ArchivoBlack-Regular.ttf` |
+| **Bold / condensed** | Oswald | `Oswald-Medium / -Bold.ttf` |
+| **Clean / Helvetica stand-in** | Arimo | `Arimo-Regular / -Bold.ttf` |
 | **Clean / easy to read** | Montserrat | `Montserrat-Regular / -SemiBold / -ExtraBold.ttf` |
 | **Personal / handwritten** | Caveat | `Caveat-Medium / -Bold.ttf` |
 | **Focus / elegant serif** | EB Garamond | `EBGaramond-Regular / -SemiBold.ttf` |
