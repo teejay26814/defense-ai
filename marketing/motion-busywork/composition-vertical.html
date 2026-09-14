@@ -49,13 +49,13 @@
 
       /* ---------- SCENE 1 : headline top, cards stacked below ---------- */
       .s1{opacity:1;animation:sceneOut .55s ease-in 10.5s both}
-      .head{position:absolute;top:250px;left:80px;right:80px;text-align:center}
+      .head{position:absolute;top:360px;left:80px;right:80px;text-align:center}
       .head .l{font-family:Fraunces,serif;font-weight:600;font-size:104px;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
       .h1 .in{animation:rise .8s cubic-bezier(.22,1,.36,1) 0.35s both}
       .h2 .in{animation:rise .8s cubic-bezier(.22,1,.36,1) 0.6s both}
       .h3 .in{animation:rise .8s cubic-bezier(.22,1,.36,1) 0.85s both}
       .head .a{color:var(--accent)}
-      .cards{position:absolute;top:900px;left:90px;right:90px;display:flex;flex-direction:column;gap:34px}
+      .cards{position:absolute;top:920px;left:90px;right:90px;display:flex;flex-direction:column;gap:34px}
       .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:38px 40px;
         display:flex;align-items:center;gap:28px;opacity:0;box-shadow:0 26px 54px -30px rgb(11 26 46 / .4)}
       .card .ic{width:74px;height:74px;border-radius:18px;background:rgb(37 99 235 / .12);color:var(--accent);
@@ -95,7 +95,9 @@
       .s3{opacity:0;animation:upfade .7s cubic-bezier(.22,1,.36,1) 20.6s both, sceneOut .5s ease-in 28.5s both}
       .wrap3{position:absolute;left:80px;right:80px;top:50%;transform:translateY(-50%);text-align:center}
       .s3 .lead{font-family:Fraunces,serif;font-style:italic;font-weight:500;font-size:76px;letter-spacing:-.01em;color:var(--ink)}
+      .s3 .lead .in{animation:rise .85s cubic-bezier(.22,1,.36,1) 20.75s both}
       .s3 .line{margin-top:36px;font-size:64px;font-weight:700;line-height:1.15;letter-spacing:-.02em;color:var(--ink)}
+      .s3 .line .in{animation:rise .85s cubic-bezier(.22,1,.36,1) 22.85s both}
       .s3 .line .a{color:var(--accent)}
 
       /* ---------- SCENE 4 : CTA ---------- */
