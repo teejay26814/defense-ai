@@ -13,20 +13,16 @@ import type { ComponentProps } from "react";
  * has to be a client component of its own. Sharing the string keeps them from drifting.
  */
 
-export type ButtonVariant = "primary" | "accent" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   // The default action. Navy is the brand surface.
   primary:
     "bg-navy-700 text-white shadow-raised hover:bg-navy-600 hover:shadow-lifted active:scale-[0.98]",
-  // Gold is reserved for the one action a screen most wants you to take. Navy text rather
-  // than white: gold is a light colour and white on it fails contrast.
-  accent:
-    "bg-gold text-navy-900 shadow-raised hover:bg-gold/90 hover:shadow-lifted active:scale-[0.98]",
   secondary:
-    "bg-white text-navy-700 border border-navy-300 shadow-hairline hover:border-navy-500 hover:bg-navy-050 active:scale-[0.98]",
-  ghost: "text-navy-700 hover:bg-navy-050 active:scale-[0.98]",
+    "bg-surface text-brand border border-navy-300 shadow-hairline hover:border-navy-500 hover:bg-navy-050 active:scale-[0.98]",
+  ghost: "text-brand hover:bg-navy-050 active:scale-[0.98]",
   danger: "bg-danger text-white shadow-raised hover:bg-danger/90 active:scale-[0.98]",
 };
 

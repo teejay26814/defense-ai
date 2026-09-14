@@ -61,7 +61,7 @@ export function Flashcard({
         </button>
       ) : (
         <div className="mt-4">
-          <div className="rounded-lg border-l-2 border-gold bg-navy-050/60 py-3 pl-4 pr-3">
+          <div className="rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-3 pl-4 pr-3">
             <p className="label-eyebrow">
               From your project
             </p>

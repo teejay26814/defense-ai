@@ -69,14 +69,16 @@ export default async function BillingPage() {
           const isCurrent = plan === key;
 
           return (
-            <Card
-              key={key}
-              elevation={key === "full" ? "elevated" : "base"}
-              className={key === "full" ? "bloom" : undefined}
-            >
+            <Card key={key} elevation={key === "full" ? "elevated" : "base"}>
               <div className="flex items-baseline justify-between gap-3">
                 <h2 className="font-display text-2xl text-ink">{limits.label}</h2>
-                {isCurrent && <Badge tone="ready">Current</Badge>}
+                {isCurrent ? (
+                  <Badge tone="ready">Current</Badge>
+                ) : (
+                  key === "full" && (
+                    <span className="label-eyebrow text-navy-500">Recommended</span>
+                  )
+                )}
               </div>
 
               <p className="figures-display mt-4 font-sans text-4xl font-semibold text-ink">

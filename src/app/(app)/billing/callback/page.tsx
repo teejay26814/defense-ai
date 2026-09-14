@@ -26,10 +26,10 @@ export default async function BillingCallbackPage() {
 
   return (
     <div className="mx-auto max-w-lg">
-      <div className="animate-scale-in rounded-feature border border-navy-100/70 bg-white p-8 text-center shadow-lifted">
+      <div className="animate-scale-in rounded-feature border border-navy-100/70 bg-surface p-8 text-center shadow-lifted">
         {paid ? (
           <>
-            <p className="label-eyebrow text-gold">
+            <p className="label-eyebrow text-navy-500">
               Payment received
             </p>
             <h1 className="mt-3 font-display text-3xl text-ink">

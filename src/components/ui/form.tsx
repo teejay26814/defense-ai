@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 import { buttonStyles, type ButtonVariant } from "@/components/ui/button";
+import { IconEye, IconEyeOff } from "@/components/icons";
 
 /**
  * Shared form primitives for the auth screens.
@@ -58,7 +60,7 @@ export function Field({
           [invalid ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") ||
           undefined
         }
-        className={`w-full rounded-control border bg-white px-3.5 py-2.5 text-ink shadow-raised
+        className={`w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink shadow-raised
           transition-[border-color,box-shadow] duration-150
           placeholder:text-ink-muted/60
           hover:border-navy-300
@@ -81,8 +83,93 @@ export function Field({
   );
 }
 
+/**
+ * A password field with a show/hide toggle and, optionally, a right-aligned slot next to
+ * the label for something like a "Forgot password?" link - the reference layout puts that
+ * link at the label's height rather than below the field, so it reads as part of the field
+ * it belongs to instead of a stray line under the form.
+ */
+export function PasswordField({
+  label,
+  name,
+  autoComplete,
+  required,
+  hint,
+  errors,
+  action,
+}: {
+  label: string;
+  name: string;
+  autoComplete?: string;
+  required?: boolean;
+  hint?: string;
+  errors?: string[];
+  action?: ReactNode;
+}) {
+  const [visible, setVisible] = useState(false);
+  const errorId = `${name}-error`;
+  const hintId = `${name}-hint`;
+  const invalid = Boolean(errors?.length);
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between gap-3">
+        <label htmlFor={name} className="block text-sm font-medium text-ink">
+          {label}
+          {!required && (
+            <span className="ml-1.5 text-xs font-normal text-ink-muted">optional</span>
+          )}
+        </label>
+        {action}
+      </div>
+
+      <div className="relative">
+        <input
+          id={name}
+          name={name}
+          type={visible ? "text" : "password"}
+          required={required}
+          autoComplete={autoComplete}
+          aria-invalid={invalid || undefined}
+          aria-describedby={
+            [invalid ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") ||
+            undefined
+          }
+          className={`w-full rounded-control border bg-surface py-2.5 pl-3.5 pr-11 text-ink shadow-raised
+            transition-[border-color,box-shadow] duration-150
+            placeholder:text-ink-muted/60
+            hover:border-navy-300
+            focus-visible:border-navy-500
+            ${invalid ? "border-danger" : "border-navy-100"}`}
+        />
+        <button
+          type="button"
+          onClick={() => setVisible((v) => !v)}
+          aria-label={visible ? "Hide password" : "Show password"}
+          className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-ink-muted
+            transition-colors duration-150 hover:text-ink"
+        >
+          {visible ? <IconEyeOff className="size-[18px]" /> : <IconEye className="size-[18px]" />}
+        </button>
+      </div>
+
+      {hint && !invalid && (
+        <p id={hintId} className="text-xs text-ink-muted">
+          {hint}
+        </p>
+      )}
+
+      {invalid && (
+        <p id={errorId} className="text-xs font-medium text-danger">
+          {errors!.join(" ")}
+        </p>
+      )}
+    </div>
+  );
+}
+
 const controlClass = (invalid: boolean) =>
-  `w-full rounded-control border bg-white px-3.5 py-2.5 text-ink shadow-raised
+  `w-full rounded-control border bg-surface px-3.5 py-2.5 text-ink shadow-raised
    transition-[border-color,box-shadow] duration-150
    placeholder:text-ink-muted/60
    hover:border-navy-300
@@ -211,11 +298,11 @@ export function FileField({
         accept={accept}
         required
         aria-invalid={invalid || undefined}
-        className={`w-full rounded-control border bg-white text-sm text-ink-muted shadow-raised
+        className={`w-full rounded-control border bg-surface text-sm text-ink-muted shadow-raised
           transition-[border-color] duration-150
           hover:border-navy-300
           file:mr-4 file:cursor-pointer file:border-0 file:bg-navy-050
-          file:px-4 file:py-2.5 file:text-sm file:font-medium file:text-navy-700
+          file:px-4 file:py-2.5 file:text-sm file:font-medium file:text-brand
           ${invalid ? "border-danger" : "border-navy-100"}`}
       />
       {hint && !invalid && <p className="text-xs text-ink-muted">{hint}</p>}

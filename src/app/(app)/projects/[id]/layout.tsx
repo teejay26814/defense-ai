@@ -44,7 +44,7 @@ export default async function ProjectLayout({
         <Link
           href="/projects"
           className="rounded text-sm text-ink-muted underline-offset-4
-            transition-colors duration-150 hover:text-navy-700 hover:underline"
+            transition-colors duration-150 hover:text-brand hover:underline"
         >
           ← All projects
         </Link>

@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 
 import { signUp } from "../actions";
-import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
+import { Field, FormMessage, PasswordField, SubmitButton } from "@/components/ui/form";
 import type { AuthFormState } from "@/lib/validation/auth";
 
 const initialState: AuthFormState = {};
@@ -40,10 +40,9 @@ export function SignupForm({ next }: { next?: string }) {
         errors={state.fieldErrors?.email}
       />
 
-      <Field
+      <PasswordField
         label="Password"
         name="password"
-        type="password"
         autoComplete="new-password"
         required
         hint="At least 8 characters."

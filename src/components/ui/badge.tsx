@@ -15,9 +15,9 @@ export type BadgeTone = "neutral" | "info" | "ready" | "pending" | "attention" |
 
 const TONES: Record<BadgeTone, string> = {
   neutral: "bg-navy-050 text-ink-muted ring-navy-100",
-  info: "bg-navy-100/60 text-navy-700 ring-navy-300/50",
+  info: "bg-navy-100/60 text-brand ring-navy-300/50",
   ready: "bg-success/10 text-success ring-success/20",
-  pending: "bg-gold/12 text-navy-700 ring-gold/30",
+  pending: "bg-navy-500/10 text-navy-500 ring-navy-500/25",
   attention: "bg-warning/10 text-warning ring-warning/20",
   failed: "bg-danger/8 text-danger ring-danger/20",
 };

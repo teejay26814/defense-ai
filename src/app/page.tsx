@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { buttonStyles } from "@/components/ui/button";
 
 import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { createClient } from "@/lib/supabase/server";
 
 const STEPS = [
@@ -36,8 +36,9 @@ export default async function Home() {
   return (
     <div className="min-h-dvh">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-        <Logo className="text-navy-700" />
+        <Logo className="text-brand" />
         <nav className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle className="text-ink-muted hover:bg-navy-050 hover:text-ink" />
           {user ? (
             <Link
               href="/dashboard"
@@ -71,14 +72,14 @@ export default async function Home() {
 
       <main>
         <section className="field-parchment surface-grain">
-          <div className="mx-auto max-w-6xl px-6 pb-14 pt-section">
+          <div className="mx-auto max-w-6xl px-6 py-section">
             {/*
               A rule and an eyebrow before the headline. It costs one line and it is most of
               what separates an editorial opening from a landing-page template: the reader is
               told what kind of thing this is before being asked to read the big type.
             */}
             <div className="animate-fade flex items-center gap-4">
-              <span aria-hidden className="h-px w-12 bg-gold" />
+              <span aria-hidden className="h-px w-12 bg-navy-500" />
               <p className="label-eyebrow">For final-year students</p>
             </div>
 
@@ -108,40 +109,6 @@ export default async function Home() {
               )}
             </div>
           </div>
-
-          {/*
-            The room, empty, the evening before. It answers the headline rather than
-            decorating it: this is what the student is walking into, and the thesis is
-            already on the lectern waiting for them.
-
-            Treated per the design guardrails - a parchment gradient washes the top edge so
-            the photograph emerges from the section rather than being pasted onto it, and a
-            navy multiply layer pulls its warmth back towards the brand. priority, because
-            it is the largest thing above the fold and a late-loading hero is a visible
-            lurch.
-          */}
-          {/*
-            The room, empty, the evening before.
-
-            The treatment was overdone at first: two parchment gradients and a navy multiply
-            turned a strong photograph into fog. What it needs is one soft join at the top
-            edge so it emerges from the section, and nothing else - the photograph already
-            carries the brand's navy and gold in its own light.
-          */}
-          <div className="relative mt-10 h-[38vw] max-h-[30rem] min-h-[15rem] w-full overflow-hidden">
-            <Image
-              src="/hero/defense-room.png"
-              alt="An empty university defense room in late afternoon light, the examiners' table and chairs waiting"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-[center_35%]"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-parchment to-transparent"
-            />
-          </div>
         </section>
 
         <section className="mx-auto max-w-6xl px-6 py-section">
@@ -155,7 +122,7 @@ export default async function Home() {
             {STEPS.map((step, i) => (
               <li key={step.title} className="rule-hairline py-8">
                 <div className="flex items-baseline gap-5">
-                  <span className="figures-data label-eyebrow shrink-0 text-gold">
+                  <span className="figures-data label-eyebrow shrink-0 text-navy-500">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0">
@@ -182,7 +149,7 @@ export default async function Home() {
       </main>
 
       <footer className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-ink-muted">
-        <Logo className="text-navy-700" markClassName="h-6 w-auto" />
+        <Logo className="text-brand" markClassName="h-6 w-auto" />
         <p>© {new Date().getFullYear()} Academia Scribes</p>
       </footer>
     </div>

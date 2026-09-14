@@ -66,7 +66,7 @@ export default async function ProjectsPage() {
               <li key={p.id}>
                 <Link
                   href={`/projects/${p.id}`}
-                  className="block h-full rounded-surface border border-navy-100/70 bg-white/70 p-5 shadow-raised
+                  className="block h-full rounded-surface border border-navy-100/70 bg-surface/70 p-5 shadow-raised
                     transition-[transform,box-shadow,border-color] duration-200
                     hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-lifted
                     active:translate-y-0"
@@ -93,7 +93,7 @@ export default async function ProjectsPage() {
                     {p.defense_date && (
                       <div>
                         <dt className="sr-only">Defense date</dt>
-                        <dd className="font-medium text-gold">
+                        <dd className="font-medium text-navy-500">
                           {new Date(p.defense_date).toLocaleDateString(undefined, {
                             day: "numeric",
                             month: "short",

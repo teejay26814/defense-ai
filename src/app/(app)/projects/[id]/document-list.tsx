@@ -5,7 +5,7 @@ const STATUS_STYLES: Record<string, string> = {
   ready: "bg-success/10 text-success",
   failed: "bg-danger/10 text-danger",
   extracting: "bg-warning/10 text-warning",
-  uploaded: "bg-navy-100 text-navy-700",
+  uploaded: "bg-navy-100 text-brand",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -41,7 +41,7 @@ export function DocumentList({
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 {d.chapter && (
-                  <span className="rounded bg-navy-050 px-1.5 py-0.5 text-xs font-medium text-navy-700">
+                  <span className="rounded bg-navy-050 px-1.5 py-0.5 text-xs font-medium text-brand">
                     Ch. {d.chapter}
                   </span>
                 )}
@@ -55,7 +55,7 @@ export function DocumentList({
                 </span>
               </div>
 
-              <p className="mt-1 truncate text-xs text-ink-muted">
+              <p className="mt-1 text-xs text-ink-muted">
                 {d.file_name} · {formatBytes(d.size_bytes)}
                 {d.word_count !== null && ` · ${d.word_count.toLocaleString()} words`}
                 {d.page_count !== null && ` · ${d.page_count} pages`}

@@ -85,7 +85,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
             {project.defense_date && (
               <div>
                 <dt className="sr-only">Defense date</dt>
-                <dd className="font-medium text-gold">
+                <dd className="font-medium text-navy-500">
                   Defending{" "}
                   {new Date(project.defense_date).toLocaleDateString(undefined, {
                     day: "numeric",
@@ -110,7 +110,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
 
       {/* What to do next - the dashboard guardrail applies here too. */}
       <section className="field-parchment surface-grain rounded-feature border border-navy-100 p-6 shadow-lifted">
-        <p className="label-eyebrow text-gold">
+        <p className="label-eyebrow text-navy-500">
           {missingChapters.length === 0 ? "All chapters in" : "Next step"}
         </p>
         <h2 className="mt-2 font-display text-xl text-ink">
@@ -134,7 +134,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-feature border border-navy-100/70 bg-white/70 p-5 shadow-raised">
+          <div className="rounded-feature border border-navy-100/70 bg-surface/70 p-5 shadow-raised">
             <h2 className="font-display text-lg text-ink">Add a document</h2>
             <p className="mt-1 mb-4 text-sm text-ink-muted">
               One chapter at a time works best.
@@ -142,7 +142,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
             <UploadForm projectId={project.id} />
           </div>
 
-          <div className="rounded-feature border border-danger/20 bg-white/60 p-5">
+          <div className="rounded-feature border border-danger/20 bg-surface/60 p-5">
             <h2 className="font-display text-lg text-ink">Delete project</h2>
             <p className="mt-1 mb-3 text-sm text-ink-muted">
               Removes the project and every document in it. This cannot be undone.

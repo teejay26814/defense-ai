@@ -57,7 +57,7 @@ export function QuizRunner({
     const pct = Math.round((right / answers.length) * 100);
 
     return (
-      <div className="animate-scale-in bloom rounded-surface border border-navy-100/70 bg-white p-8 text-center shadow-lifted">
+      <div className="animate-scale-in bloom rounded-surface border border-navy-100/70 bg-surface p-8 text-center shadow-lifted">
         <p className="font-sans text-5xl font-semibold leading-none tracking-tight text-ink">
           {right}
           <span className="text-2xl font-medium text-ink-muted">/{answers.length}</span>
@@ -143,7 +143,7 @@ export function QuizRunner({
 
       <div
         key={question.id}
-        className="animate-scale-in rounded-surface border border-navy-100/70 bg-white p-6 shadow-lifted"
+        className="animate-scale-in rounded-surface border border-navy-100/70 bg-surface p-6 shadow-lifted"
       >
         <div className="mb-3 flex flex-wrap items-center gap-2">
           {question.chapter && <Badge tone="info">Chapter {question.chapter}</Badge>}
@@ -196,7 +196,7 @@ export function QuizRunner({
               {chosenIsCorrect ? "Correct." : "Not quite."}
             </p>
 
-            <div className="mt-3 rounded-lg border-l-2 border-gold bg-navy-050/60 py-3 pl-4 pr-3">
+            <div className="mt-3 rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-3 pl-4 pr-3">
               <p className="label-eyebrow">
                 From your project
               </p>

@@ -23,17 +23,49 @@
   --color-navy-800: #02193c;
   --color-navy-900: #010f26;
 
+  /*
+   * Brand text. navy-700 above is the logo's exact, fixed colour and must never move - but
+   * that also makes it the wrong token for readable text, since dark mode needs something
+   * lighter there and navy-700 cannot be both a fixed swatch and a theme-aware one. Anywhere
+   * navy-700 was standing in for "branded, readable text or link" (as opposed to matching
+   * the logo itself) uses this instead.
+   */
+  --color-brand: #052659;
+
   /* --- Neutrals. Warm off-white: paper, not screen-white. --- */
   --color-parchment: #fdfbf7;
   --color-ink: #141821;
   --color-ink-muted: #5a6377;
 
-  /* --- Accent. Not from the logo - see palette.md before relying on it. --- */
-  --color-gold: #c9a227;
+  /*
+   * Theme surfaces. Everything else in this file is a brand colour used the same way in
+   * both themes; these two actually flip - the page background and the card/panel
+   * background. Components reach for these (bg-canvas, bg-surface) instead of bg-white
+   * directly, so a dark theme is a token swap below, not a per-component rewrite. Borders
+   * and subtle tints keep using navy-050/navy-100 as they always did - those two get
+   * redefined for dark mode as well, further down, which covers them for free.
+   */
+  --color-canvas: #f2f6fb;
+  --color-surface: #ffffff;
 
   /*
-   * Typography. CLAUDE.md requires headings and body to use different faces, so this is a
-   * display serif paired with a clean sans.
+   * field-parchment's highlight glows (below). A light-coloured sheen at 0.7 opacity reads
+   * as a subtle cool highlight against a light parchment background; against the dark
+   * parchment dark mode uses, the same glow stopped being subtle and started looking like a
+   * literal light left on over the content. These two get redefined for dark mode so the
+   * effect stays a highlight instead of a wash.
+   */
+  --field-parchment-glow-1: rgb(220 231 244 / 0.7);
+  --field-parchment-glow-2: rgb(17 85 168 / 0.06);
+
+  /* A faint ruled grid, for the one background that wants to feel drafted rather than flat. */
+  --grid-line: rgb(5 38 89 / 0.06);
+
+  /*
+   * Typography. CLAUDE.md requires headings and body to use different faces. Both are sans
+   * here, but a bold, geometric display face against a lighter, neutral body face stays
+   * visibly distinct - the point of the rule is that headings and body cannot look like an
+   * accidental single voice, not that one of the two must be a serif.
    *
    * Both faces load in layout.tsx via next/font, which downloads and self-hosts them at
    * build time - no request to Google at runtime, no third-party origin in the critical
@@ -46,7 +78,7 @@
    *
    * The system stacks remain as fallbacks so text stays readable if a font file fails.
    */
-  --font-display: var(--font-display-face), ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-display: var(--font-display-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-sans: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   /*
@@ -142,6 +174,98 @@
   --spacing-section-lg: 7.5rem;
 }
 
+:root {
+  color-scheme: light;
+}
+
+/*
+ * Dark theme.
+ *
+ * Three states: an explicit choice stamps data-theme="dark" or data-theme="light" on <html>
+ * (see theme-toggle.tsx); the default "system" setting stamps nothing, so only
+ * prefers-color-scheme decides. The light values above stay the :root defaults; this block
+ * only redefines what actually needs to invert - canvas, surface, the two text colours,
+ * brand (see its own comment above - navy-700 stands in for it in light mode but cannot
+ * follow it into dark), and the two palest navy tints that dozens of components already use
+ * for subtle fills and hovers (bg-navy-050, bg-navy-100/NN). Redefining those here, rather
+ * than renaming every call site, is what keeps this a token change instead of a rewrite.
+ *
+ * navy-300/500/600/700/800/900 are untouched in both blocks: they carry brand identity and
+ * already have enough contrast to read on both a white and a near-black canvas. navy-700
+ * especially must not move - it is the logo's measured colour, in either theme.
+ *
+ * Shadows are navy-tinted for a light canvas; that tint disappears against a dark one, so
+ * dark mode swaps them for a black contact shadow plus a faint light hairline, which is
+ * what suggests a raised edge when the light source itself is gone.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --color-ink: #eef2f9;
+    --color-ink-muted: #91a1bd;
+    --color-parchment: #0d1830;
+
+    --color-navy-050: #0d1c3a;
+    --color-navy-100: #17294d;
+    --color-brand: #a9c8ea;
+
+    --color-canvas: #060e1f;
+    --color-surface: #0f1f3d;
+
+    --field-parchment-glow-1: rgb(17 85 168 / 0.22);
+    --field-parchment-glow-2: rgb(255 255 255 / 0.04);
+    --grid-line: rgb(255 255 255 / 0.05);
+
+    --shadow-hairline: 0 0 0 1px rgb(255 255 255 / 0.07);
+    --shadow-raised:
+      0 0 0 1px rgb(255 255 255 / 0.06),
+      0 1px 2px -1px rgb(0 0 0 / 0.4),
+      0 4px 12px -4px rgb(0 0 0 / 0.35);
+    --shadow-lifted:
+      0 0 0 1px rgb(255 255 255 / 0.07),
+      0 2px 4px -2px rgb(0 0 0 / 0.45),
+      0 12px 28px -8px rgb(0 0 0 / 0.5);
+    --shadow-overlay:
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 4px 8px -4px rgb(0 0 0 / 0.5),
+      0 28px 56px -12px rgb(0 0 0 / 0.6);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-ink: #eef2f9;
+  --color-ink-muted: #91a1bd;
+  --color-parchment: #0d1830;
+
+  --color-navy-050: #0d1c3a;
+  --color-navy-100: #17294d;
+  --color-brand: #a9c8ea;
+
+  --color-canvas: #060e1f;
+  --color-surface: #0f1f3d;
+
+  --field-parchment-glow-1: rgb(17 85 168 / 0.22);
+  --field-parchment-glow-2: rgb(255 255 255 / 0.04);
+  --grid-line: rgb(255 255 255 / 0.05);
+
+  --shadow-hairline: 0 0 0 1px rgb(255 255 255 / 0.07);
+  --shadow-raised:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 1px 2px -1px rgb(0 0 0 / 0.4),
+    0 4px 12px -4px rgb(0 0 0 / 0.35);
+  --shadow-lifted:
+    0 0 0 1px rgb(255 255 255 / 0.07),
+    0 2px 4px -2px rgb(0 0 0 / 0.45),
+    0 12px 28px -8px rgb(0 0 0 / 0.5);
+  --shadow-overlay:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 4px 8px -4px rgb(0 0 0 / 0.5),
+    0 28px 56px -12px rgb(0 0 0 / 0.6);
+}
+
 /*
  * Grain. A single SVG noise filter as a data URI, kept very faint. Applied via the
  * .surface-grain utility over gradient areas so large colour fields do not band.
@@ -166,15 +290,44 @@
   background-color: var(--color-navy-800);
   background-image:
     radial-gradient(ellipse 80% 60% at 15% 0%, rgb(17 85 168 / 0.35), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 90% 15%, rgb(201 162 39 / 0.12), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 15%, rgb(143 180 220 / 0.14), transparent 55%),
     radial-gradient(ellipse 100% 80% at 50% 110%, rgb(1 15 38 / 0.85), transparent 70%);
 }
 
 @utility field-parchment {
   background-color: var(--color-parchment);
   background-image:
-    radial-gradient(ellipse 60% 50% at 0% 0%, rgb(220 231 244 / 0.7), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 100% 10%, rgb(201 162 39 / 0.07), transparent 55%);
+    radial-gradient(ellipse 60% 50% at 0% 0%, var(--field-parchment-glow-1), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 10%, var(--field-parchment-glow-2), transparent 55%);
+}
+
+/*
+ * A faint ruled grid, masked to a soft spotlight so it reads as a drafting-table texture
+ * behind the content rather than graph paper covering the whole panel.
+ *
+ * Drawn on its own ::before rather than the element's own background: a mask-image applied
+ * directly to a content-carrying element masks that element's entire rendering, children
+ * included - which faded out the actual form inputs and button near the mask's edges the
+ * first time this was tried. Same technique as .bloom: paint it behind, on an isolated
+ * stacking context, so the mask only ever touches the decoration.
+ */
+@utility field-grid {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 70% 55% at 50% 35%, black 40%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 35%, black 40%, transparent 90%);
+  }
 }
 
 /*
@@ -296,7 +449,7 @@
 }
 
 /*
- * A soft gold bloom behind a surface, for the one panel on a screen that matters most.
+ * A soft navy bloom behind a surface, for the one panel on a screen that matters most.
  * Sits behind its own content via a negative z-index on an isolated stacking context.
  */
 @utility bloom {
@@ -318,7 +471,7 @@
     pointer-events: none;
     background-image: radial-gradient(
       ellipse at 50% 0%,
-      rgb(201 162 39 / 0.2),
+      rgb(17 85 168 / 0.16),
       transparent 72%
     );
     animation: drift 14s ease-in-out infinite;
@@ -431,13 +584,8 @@
   h2,
   h3 {
     font-family: var(--font-display);
+    font-weight: 700;
     text-wrap: balance;
-    /*
-     * Fraunces is a variable font with an optical-size axis. Letting it track the rendered
-     * size is most of why a serif looks typeset rather than scaled: the large cuts thin
-     * their strokes and tighten their spacing the way a metal face would.
-     */
-    font-optical-sizing: auto;
   }
 
   /* Tracking tightens as size grows, which is how display type stays a single object. */
@@ -451,7 +599,7 @@
    * behind.
    */
   :focus-visible {
-    outline: 2px solid var(--color-gold);
+    outline: 2px solid var(--color-navy-500);
     outline-offset: 2px;
     border-radius: 2px;
   }

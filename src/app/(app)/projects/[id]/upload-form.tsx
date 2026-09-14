@@ -37,7 +37,13 @@ export function UploadForm({ projectId }: { projectId: string }) {
       {state.error && <FormMessage tone="error">{state.error}</FormMessage>}
       {state.notice && <FormMessage tone="notice">{state.notice}</FormMessage>}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      {/*
+        Always one column, never sm:grid-cols-2 - this form only ever renders inside the
+        22rem sidebar card on the project overview page, which is narrower than the sm
+        breakpoint reacts to. A two-column split there squeezed the chapter select to
+        under 150px and clipped its own option text mid-word.
+      */}
+      <div className="grid gap-4">
         <SelectField
           label="Chapter"
           name="chapter"

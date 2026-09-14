@@ -77,7 +77,7 @@ export function ProjectNav({
                   after:content-[''] after:ease-[cubic-bezier(0.22,1,0.36,1)]
                   ${
                     active
-                      ? "text-ink after:scale-x-100 after:bg-gold"
+                      ? "text-ink after:scale-x-100 after:bg-navy-500"
                       : "text-ink-muted hover:text-ink after:scale-x-0 after:bg-navy-300 hover:after:scale-x-100"
                   }`}
               >

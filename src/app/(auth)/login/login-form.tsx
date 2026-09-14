@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 
 import { signIn } from "../actions";
-import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
+import { Field, FormMessage, PasswordField, SubmitButton } from "@/components/ui/form";
 import type { AuthFormState } from "@/lib/validation/auth";
 
 const initialState: AuthFormState = {};
@@ -26,13 +27,21 @@ export function LoginForm({ next }: { next?: string }) {
         errors={state.fieldErrors?.email}
       />
 
-      <Field
+      <PasswordField
         label="Password"
         name="password"
-        type="password"
         autoComplete="current-password"
         required
         errors={state.fieldErrors?.password}
+        action={
+          <Link
+            href="/forgot-password"
+            className="rounded text-xs font-medium text-navy-500 underline-offset-4
+              transition-colors duration-150 hover:text-brand hover:underline"
+          >
+            Forgot password?
+          </Link>
+        }
       />
 
       <SubmitButton>Sign in</SubmitButton>

@@ -36,7 +36,7 @@ function Pending() {
   if (!pending) return null;
 
   return (
-    <div className="animate-fade rounded-feature border border-navy-100/70 bg-white/70 p-6 shadow-raised">
+    <div className="animate-fade rounded-feature border border-navy-100/70 bg-surface/70 p-6 shadow-raised">
       <AnswerSkeleton message="Reading your chapters…" />
     </div>
   );
@@ -62,7 +62,7 @@ export function AskForm({ projectId }: { projectId: string }) {
             defaultValue={state.question}
             placeholder="What would your panel ask you about this?"
             aria-invalid={Boolean(state.fieldErrors?.question) || undefined}
-            className={`w-full resize-y rounded-control border bg-white px-3.5 py-2.5 text-ink shadow-raised
+            className={`w-full resize-y rounded-control border bg-surface px-3.5 py-2.5 text-ink shadow-raised
               transition-[border-color,box-shadow] duration-150
               placeholder:text-ink-muted/60
               hover:border-navy-300 focus-visible:border-navy-500
@@ -94,7 +94,7 @@ export function AskForm({ projectId }: { projectId: string }) {
                   <input type="hidden" name="question" value={q} />
                   <button
                     type="submit"
-                    className="rounded-full border border-navy-100/70 bg-white/70 px-3 py-1.5 text-left text-xs text-ink
+                    className="rounded-full border border-navy-100/70 bg-surface/70 px-3 py-1.5 text-left text-xs text-ink
                       transition-[background-color,border-color,transform] duration-150
                       hover:border-navy-300 hover:bg-navy-050
                       active:translate-y-px"
@@ -118,7 +118,7 @@ export function AskForm({ projectId }: { projectId: string }) {
             widget's output rather than something written for them.
           */}
           <div>
-            <p className="label-eyebrow text-gold">Answer</p>
+            <p className="label-eyebrow text-navy-500">Answer</p>
             <div className="measure mt-4 whitespace-pre-wrap font-display text-lg leading-[1.7] text-ink">
               {state.answer}
             </div>
@@ -137,7 +137,7 @@ export function AskForm({ projectId }: { projectId: string }) {
                       ${s.cited ? "" : "opacity-55"}`}
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="figures-data rounded bg-navy-050 px-1.5 py-0.5 text-2xs font-semibold text-navy-700">
+                      <span className="figures-data rounded bg-navy-050 px-1.5 py-0.5 text-2xs font-semibold text-brand">
                         [{i + 1}]
                       </span>
                       <span className="font-medium text-ink">
@@ -145,7 +145,7 @@ export function AskForm({ projectId }: { projectId: string }) {
                         {s.label ? ` - ${s.label}` : ""}
                       </span>
                       {s.cited && (
-                        <span className="rounded bg-gold/15 px-1.5 py-0.5 text-xs font-medium text-warning">
+                        <span className="rounded bg-warning/15 px-1.5 py-0.5 text-xs font-medium text-warning">
                           cited
                         </span>
                       )}

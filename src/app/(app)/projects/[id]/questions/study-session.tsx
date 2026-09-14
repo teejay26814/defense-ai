@@ -89,7 +89,7 @@ export function StudySession({
     const solid = rated.filter((r) => r === 3).length;
 
     return (
-      <div className="animate-scale-in bloom rounded-feature border border-navy-100/70 bg-white p-8 text-center shadow-lifted">
+      <div className="animate-scale-in bloom rounded-feature border border-navy-100/70 bg-surface p-8 text-center shadow-lifted">
         <p className="font-sans text-4xl font-semibold leading-none text-ink">{rated.length}</p>
         <p className="mt-2 font-display text-xl text-ink">
           {rated.length === 1 ? "card reviewed" : "cards reviewed"}
@@ -136,7 +136,7 @@ export function StudySession({
           type="button"
           onClick={onExit}
           className="rounded text-sm text-ink-muted underline-offset-4
-            transition-colors duration-150 hover:text-navy-700 hover:underline"
+            transition-colors duration-150 hover:text-brand hover:underline"
         >
           Leave session
         </button>
@@ -151,7 +151,7 @@ export function StudySession({
 
       <div
         key={current.id}
-        className="animate-scale-in rounded-feature border border-navy-100/70 bg-white p-6 shadow-lifted sm:p-8"
+        className="animate-scale-in rounded-feature border border-navy-100/70 bg-surface p-6 shadow-lifted sm:p-8"
       >
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {current.chapter && <Badge tone="info">Chapter {current.chapter}</Badge>}
@@ -176,7 +176,7 @@ export function StudySession({
           </div>
         ) : (
           <div className="mt-6">
-            <div className="animate-rise rounded-lg border-l-2 border-gold bg-navy-050/60 py-4 pl-4 pr-3">
+            <div className="animate-rise rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-4 pl-4 pr-3">
               <p className="label-eyebrow">
                 From your project
               </p>

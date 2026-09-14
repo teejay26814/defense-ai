@@ -32,7 +32,7 @@ export function Card({
   return (
     <div
       className={[
-        "rounded-surface border border-navy-100/70 bg-white p-6",
+        "rounded-surface border border-navy-100/70 bg-surface p-6",
         ELEVATION[elevation],
         interactive
           ? "press hover:-translate-y-0.5 hover:border-navy-300 hover:shadow-lifted"

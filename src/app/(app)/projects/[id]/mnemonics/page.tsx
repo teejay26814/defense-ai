@@ -83,7 +83,7 @@ export default async function MnemonicsPage({
               </div>
 
               {/* The hook, given the weight it needs to actually stick. */}
-              <div className="bloom rounded-lg border-l-2 border-gold bg-navy-050/60 py-4 pl-4 pr-3">
+              <div className="bloom rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-4 pl-4 pr-3">
                 <p className="label-eyebrow">
                   Remember it as
                 </p>
@@ -99,7 +99,7 @@ export default async function MnemonicsPage({
               <ol className="mt-4 space-y-2">
                 {m.items.map((item, i) => (
                   <li key={i} className="flex gap-3 text-sm leading-relaxed">
-                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-navy-050 text-xs font-semibold text-navy-700">
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-navy-050 text-xs font-semibold text-brand">
                       {i + 1}
                     </span>
                     <span className="text-ink">{item}</span>

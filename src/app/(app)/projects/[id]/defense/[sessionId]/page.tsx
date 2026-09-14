@@ -54,8 +54,8 @@ export default async function SittingPage({
 
     return (
       <div className="space-y-8">
-        <div className="animate-scale-in bloom rounded-feature border border-navy-100/70 bg-white p-8 text-center shadow-lifted">
-          <p className="label-eyebrow text-gold">
+        <div className="animate-scale-in bloom rounded-feature border border-navy-100/70 bg-surface p-8 text-center shadow-lifted">
+          <p className="label-eyebrow text-navy-500">
             Readiness
           </p>
           <p className="mt-3 font-sans text-6xl font-semibold leading-none tracking-tight text-ink">
@@ -93,7 +93,7 @@ export default async function SittingPage({
                 .map((a) => (
                   <li
                     key={a.id}
-                    className="rounded-surface border border-navy-100/70 bg-white p-5 shadow-raised"
+                    className="rounded-surface border border-navy-100/70 bg-surface p-5 shadow-raised"
                   >
                     <div className="mb-2 flex flex-wrap items-center gap-2">
                       <Badge tone={a.score >= 70 ? "pending" : "attention"}>
@@ -107,7 +107,7 @@ export default async function SittingPage({
                       <ul className="mt-3 space-y-1.5">
                         {a.missed.map((m, i) => (
                           <li key={i} className="flex gap-2 text-sm text-ink-muted">
-                            <span aria-hidden className="mt-1.5 size-1 shrink-0 rounded-full bg-gold" />
+                            <span aria-hidden className="mt-1.5 size-1 shrink-0 rounded-full bg-navy-500" />
                             <span>{m}</span>
                           </li>
                         ))}
@@ -125,7 +125,7 @@ export default async function SittingPage({
             {answers.map((a) => (
               <li
                 key={a.id}
-                className="rounded-surface border border-navy-100/70 bg-white p-5 shadow-raised"
+                className="rounded-surface border border-navy-100/70 bg-surface p-5 shadow-raised"
               >
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <Badge
@@ -143,7 +143,7 @@ export default async function SittingPage({
                   {a.answer.trim() || <span className="text-ink-muted">Nothing given.</span>}
                 </p>
 
-                <div className="mt-3 rounded-lg border-l-2 border-gold bg-navy-050/60 py-3 pl-4 pr-3">
+                <div className="mt-3 rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-3 pl-4 pr-3">
                   <p className="label-eyebrow">
                     Your project says
                   </p>
