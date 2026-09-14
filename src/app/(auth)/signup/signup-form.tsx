@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { signUp } from "../actions";
+import { IconChevronRight } from "@/components/icons";
 import { Field, FormMessage, PasswordField, SubmitButton } from "@/components/ui/form";
 import type { AuthFormState } from "@/lib/validation/auth";
 
@@ -49,20 +50,26 @@ export function SignupForm({ next }: { next?: string }) {
         errors={state.fieldErrors?.password}
       />
 
-      <Field
-        label="Institution"
-        name="institution"
-        autoComplete="organization"
-        errors={state.fieldErrors?.institution}
+      <PasswordField
+        label="Confirm password"
+        name="confirmPassword"
+        autoComplete="new-password"
+        required
+        errors={state.fieldErrors?.confirmPassword}
       />
 
-      <Field
-        label="Department"
-        name="department"
-        errors={state.fieldErrors?.department}
-      />
+      {/*
+        Institution and department dropped from signup on purpose - they are asked again,
+        per project, on the "Add your project" form (project-form.tsx), which is the more
+        useful place for them anyway: a student can attend more than one institution across
+        different projects, and a value fixed at signup would just go stale. Fewer fields
+        here means less friction between "I want to try this" and an actual account.
+      */}
 
-      <SubmitButton>Create account</SubmitButton>
+      <SubmitButton>
+        Create account
+        <IconChevronRight className="size-4" />
+      </SubmitButton>
     </form>
   );
 }

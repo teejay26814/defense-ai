@@ -48,6 +48,7 @@ export async function signUp(
     fullName: formData.get("fullName"),
     email: formData.get("email"),
     password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
     institution: formData.get("institution") || undefined,
     department: formData.get("department") || undefined,
   });

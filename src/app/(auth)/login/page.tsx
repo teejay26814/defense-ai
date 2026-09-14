@@ -13,13 +13,18 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <>
       <AuthTabs active="signin" />
 
-      <header className="mb-8">
+      <header className="mb-6 sm:mb-8">
         <p className="label-eyebrow text-navy-500">Welcome back</p>
-        <h1 className="mt-2 font-display text-4xl text-ink">
+        {/*
+          text-[1.75rem] on mobile, not text-4xl throughout - at this weight, a flat text-4xl
+          (50px) pushed the form below the fold on a phone screen. Desktop keeps the full
+          size, since there the two-panel layout has the room for it.
+        */}
+        <h1 className="mt-2 font-display text-[1.75rem] leading-[1.15] text-ink sm:text-4xl">
           Continue where your prep left off.
         </h1>
         <p className="mt-3 text-ink-muted">
-          Sign in to open your projects and pick up your preparation.
+          Sign in to access your projects, study tools, and defense preparation.
         </p>
       </header>
 

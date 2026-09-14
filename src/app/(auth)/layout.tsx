@@ -74,8 +74,8 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         <p className="label-eyebrow text-white/35">Prepare deeply · defend confidently</p>
       </aside>
 
-      <main className="field-grid relative flex min-h-dvh flex-col justify-center px-6 py-12 sm:px-10">
-        <Link href="/" className="relative mb-10 w-fit text-brand lg:hidden">
+      <main className="field-grid relative flex min-h-dvh flex-col justify-start px-6 py-8 sm:px-10 sm:py-12 lg:justify-center">
+        <Link href="/" className="relative mb-6 w-fit text-brand sm:mb-10 lg:hidden">
           <Logo />
         </Link>
         {/*

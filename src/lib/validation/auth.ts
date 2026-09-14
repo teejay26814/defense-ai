@@ -23,17 +23,25 @@ const password = z
   .min(8, "Use at least 8 characters.")
   .max(72, "Use 72 characters or fewer.");
 
-export const signUpSchema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(2, "Enter your full name.")
-    .max(120, "That name is too long."),
-  email,
-  password,
-  institution: z.string().trim().max(160, "That is too long.").optional(),
-  department: z.string().trim().max(160, "That is too long.").optional(),
-});
+export const signUpSchema = z
+  .object({
+    fullName: z
+      .string()
+      .trim()
+      .min(2, "Enter your full name.")
+      .max(120, "That name is too long."),
+    email,
+    password,
+    confirmPassword: z.string(),
+    institution: z.string().trim().max(160, "That is too long.").optional(),
+    department: z.string().trim().max(160, "That is too long.").optional(),
+  })
+  // Same pattern as resetPasswordSchema below: checked here, not only in the browser, and
+  // attached to confirmPassword so the error lands on the field the student is looking at.
+  .refine((v) => v.password === v.confirmPassword, {
+    message: "Those two passwords do not match.",
+    path: ["confirmPassword"],
+  });
 
 export const signInSchema = z.object({
   email,

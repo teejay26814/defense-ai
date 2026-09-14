@@ -23,15 +23,15 @@ export function AuthTabs({ active }: { active: "signin" | "signup" }) {
             key={tab.key}
             href={tab.href}
             aria-current={isActive ? "page" : undefined}
-            className={`relative flex-1 pb-3.5 text-center text-sm font-medium
+            className={`relative flex-1 pb-3.5 text-center text-sm
               transition-colors duration-200
               after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full
               after:origin-left after:transition-transform after:duration-300
               after:content-[''] after:ease-[cubic-bezier(0.22,1,0.36,1)]
               ${
                 isActive
-                  ? "text-ink after:scale-x-100 after:bg-navy-500"
-                  : "text-ink-muted hover:text-ink after:scale-x-0 after:bg-navy-300 hover:after:scale-x-100"
+                  ? "font-semibold text-ink after:scale-x-100 after:bg-navy-500"
+                  : "font-medium text-ink-muted hover:text-ink after:scale-x-0 after:bg-navy-300 hover:after:scale-x-100"
               }`}
           >
             {tab.label}

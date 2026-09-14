@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 
 import { signIn } from "../actions";
+import { IconChevronRight } from "@/components/icons";
 import { Field, FormMessage, PasswordField, SubmitButton } from "@/components/ui/form";
 import type { AuthFormState } from "@/lib/validation/auth";
 
@@ -44,7 +45,10 @@ export function LoginForm({ next }: { next?: string }) {
         }
       />
 
-      <SubmitButton>Sign in</SubmitButton>
+      <SubmitButton>
+        Sign in
+        <IconChevronRight className="size-4" />
+      </SubmitButton>
     </form>
   );
 }
