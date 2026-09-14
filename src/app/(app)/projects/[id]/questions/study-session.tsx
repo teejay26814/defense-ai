@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { recordConfidence } from "./actions";
+import { FlipCard } from "./flip-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { CONFIDENCE_LABELS, DIFFICULTY_LABELS, type Question } from "@/lib/types";
@@ -149,43 +150,45 @@ export function StudySession({
         />
       </div>
 
-      <div
-        key={current.id}
-        className="animate-scale-in rounded-feature border border-navy-100/70 bg-surface p-6 shadow-lifted sm:p-8"
-      >
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          {current.chapter && <Badge tone="info">Chapter {current.chapter}</Badge>}
-          <Badge tone="neutral">{DIFFICULTY_LABELS[current.difficulty] ?? "Explain"}</Badge>
-        </div>
+      <div key={current.id} className="animate-scale-in">
+        <FlipCard
+          revealed={revealed}
+          onReveal={() => setRevealed(true)}
+          front={
+            <>
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {current.chapter && <Badge tone="info">Chapter {current.chapter}</Badge>}
+                <Badge tone="neutral">{DIFFICULTY_LABELS[current.difficulty] ?? "Explain"}</Badge>
+              </div>
 
-        <p className="font-display text-xl leading-snug text-ink sm:text-2xl">
-          {current.question}
-        </p>
-
-        {!revealed ? (
-          <div className="mt-8">
-            <p className="mb-4 text-sm text-ink-muted">
-              Say your answer out loud first. That is what the room will ask of you.
-            </p>
-            <button type="button" onClick={() => setRevealed(true)} className={buttonStyles()}>
-              Show what my project says
-            </button>
-            <p className="mt-3 text-xs text-ink-muted">
-              or press <kbd className="rounded bg-navy-050 px-1.5 py-0.5 font-sans">space</kbd>
-            </p>
-          </div>
-        ) : (
-          <div className="mt-6">
-            <div className="animate-rise rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-4 pl-4 pr-3">
-              <p className="label-eyebrow">
-                From your project
+              <p className="font-display text-xl leading-snug text-ink sm:text-2xl">
+                {current.question}
               </p>
-              <p className="mt-2 whitespace-pre-line leading-relaxed text-ink">
+
+              <div className="mt-auto pt-8">
+                <p className="text-sm text-ink-muted">
+                  Say your answer out loud first. That is what the room will ask of you.
+                </p>
+                <p className="mt-4 text-xs font-medium text-navy-500">
+                  Tap the card to reveal · or press{" "}
+                  <kbd className="rounded bg-navy-050 px-1.5 py-0.5 font-sans text-ink-muted">space</kbd>
+                </p>
+              </div>
+            </>
+          }
+          back={
+            <>
+              <p className="label-eyebrow text-navy-500">From your project</p>
+              <p className="mt-3 whitespace-pre-line leading-relaxed text-ink">
                 {current.model_answer}
               </p>
-            </div>
+            </>
+          }
+        />
 
-            <p className="mb-2 mt-6 text-sm text-ink-muted">
+        {revealed && (
+          <div className="animate-rise mt-6">
+            <p className="mb-2 text-sm text-ink-muted">
               Could you have said that in front of a panel?
             </p>
             <div className="flex flex-wrap gap-2">

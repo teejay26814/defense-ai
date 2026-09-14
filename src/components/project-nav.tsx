@@ -31,7 +31,7 @@ export function ProjectNav({
   const tabs: Tab[] = [
     { href: base, label: "Overview", needsIndex: false },
     { href: `${base}/ask`, label: "Ask", needsIndex: true },
-    { href: `${base}/questions`, label: "Practice", needsIndex: true },
+    { href: `${base}/questions`, label: "Flashcards", needsIndex: true },
     { href: `${base}/quiz`, label: "Quiz", needsIndex: true },
     { href: `${base}/mnemonics`, label: "Memory aids", needsIndex: true },
     { href: `${base}/defense`, label: "Mock defense", needsIndex: true },

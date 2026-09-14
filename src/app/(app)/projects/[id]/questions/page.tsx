@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { createClient } from "@/lib/supabase/server";
 import type { Question } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Practice questions" };
+export const metadata: Metadata = { title: "Flashcards" };
 
 /**
  * Practice questions for one project.
@@ -65,10 +65,10 @@ export default async function QuestionsPage({
   return (
     <div className="space-y-8">
       <header>
-        <h2 className="font-display text-3xl text-ink">Practice questions</h2>
+        <h2 className="font-display text-3xl text-ink">Flashcards</h2>
         <p className="measure mt-3 text-ink-muted">
           Questions a panel would actually ask, written from your own chapters. Try to
-          answer out loud before you reveal what your project says.
+          answer out loud, then flip the card to see what your project says.
         </p>
       </header>
 
