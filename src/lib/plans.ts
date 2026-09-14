@@ -80,10 +80,17 @@ export const PLANS: Record<Plan, PlanLimits> = {
  *
  * These are placeholders until ai_usage has enough history to give a real cost per student.
  * Setting them from a guess would be pricing with nothing behind it.
+ *
+ * Priced deliberately low - impulse-buy territory for a final-year student, not a decision
+ * they have to think over. The real risk this creates: both paid plans grant unlimited
+ * metered usage for their whole window (see PLANS above - answer/questions/mnemonics/defense
+ * are all null, meaning uncapped), so a heavy user at these prices could plausibly cost more
+ * in AI calls than they paid. Worth capping paid-plan usage or revisiting price once
+ * ai_usage has real numbers behind it - not a problem to solve blind right now.
  */
 export const PRICES_KOBO: Record<Exclude<Plan, "free">, number> = {
-  proposal: 350_000, // ₦3,500
-  full: 600_000, // ₦6,000
+  proposal: 100_000, // ₦1,000
+  full: 200_000, // ₦2,000
 };
 
 /** Which AI operations are metered. Embedding is not: it is cheap and it is the on-ramp. */
