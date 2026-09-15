@@ -23,11 +23,24 @@ export default async function QuestionsPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project, error: projectError } = await supabase
-    .from("projects")
-    .select("id, title")
-    .eq("id", id)
-    .maybeSingle();
+  // All three key off the route's id directly, not off each other, so they run together.
+  const [
+    { data: project, error: projectError },
+    { data: questionRows },
+    { data: indexedRows },
+  ] = await Promise.all([
+    supabase.from("projects").select("id, title").eq("id", id).maybeSingle(),
+    supabase
+      .from("questions")
+      .select("*")
+      .eq("project_id", id)
+      .order("confidence", { ascending: true, nullsFirst: true })
+      .order("last_seen_at", { ascending: true, nullsFirst: true })
+      .order("created_at", { ascending: true }),
+    // Which chapters actually have indexed text, so the scope selector can default to
+    // something that will work rather than to "final" on a project with one chapter.
+    supabase.from("chunks").select("chapter").eq("project_id", id).eq("embedded", true),
+  ]);
 
   // A genuine query failure and "not your project" both end as a 404 for the student, but
   // only one of them is a bug, so the error is logged before they become indistinguishable.
@@ -37,23 +50,7 @@ export default async function QuestionsPage({
   // which is exactly right - a 404 leaks nothing about what other people have.
   if (!project) notFound();
 
-  const { data: questionRows } = await supabase
-    .from("questions")
-    .select("*")
-    .eq("project_id", id)
-    .order("confidence", { ascending: true, nullsFirst: true })
-    .order("last_seen_at", { ascending: true, nullsFirst: true })
-    .order("created_at", { ascending: true });
-
   const questions = (questionRows ?? []) as Question[];
-
-  // Which chapters actually have indexed text, so the scope selector can default to
-  // something that will work rather than to "final" on a project with one chapter.
-  const { data: indexedRows } = await supabase
-    .from("chunks")
-    .select("chapter")
-    .eq("project_id", id)
-    .eq("embedded", true);
 
   const indexedChapters = new Set(
     (indexedRows ?? []).map((r) => r.chapter as number | null).filter((c): c is number => c !== null),

@@ -5,9 +5,9 @@ import type { Metadata } from "next";
 import { buttonStyles } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { CHAPTERS, DEGREE_LABELS, type DocumentSummary, type Project } from "@/lib/types";
+import { DeleteProjectButton } from "./delete-project-button";
 import { DocumentList } from "./document-list";
 import { UploadForm } from "./upload-form";
-import { deleteProject } from "../actions";
 
 export async function generateMetadata({
   params,
@@ -26,27 +26,26 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle<Project>();
+  // Both queries key off the route's id directly, not off each other's result, so they run
+  // together - the not-found check happens once both are back.
+  const [{ data: project }, { data: docs }] = await Promise.all([
+    supabase.from("projects").select("*").eq("id", id).maybeSingle<Project>(),
+    // Selected as one literal, not a concatenation: the Supabase client parses this string
+    // at the type level, and a joined expression collapses the row type to an error type.
+    // `content` is deliberately excluded - it is large and unused in this view.
+    supabase
+      .from("documents")
+      .select(
+        "id, project_id, user_id, label, chapter, file_name, storage_path, mime_type, size_bytes, status, error_message, word_count, page_count, created_at, updated_at",
+      )
+      .eq("project_id", id)
+      .order("chapter", { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: true }),
+  ]);
 
   // RLS makes another student's project indistinguishable from one that does not exist,
   // which is exactly right - a 404 leaks nothing about what other people have.
   if (!project) notFound();
-
-  // Selected as one literal, not a concatenation: the Supabase client parses this string
-  // at the type level, and a joined expression collapses the row type to an error type.
-  // `content` is deliberately excluded - it is large and unused in this view.
-  const { data: docs } = await supabase
-    .from("documents")
-    .select(
-      "id, project_id, user_id, label, chapter, file_name, storage_path, mime_type, size_bytes, status, error_message, word_count, page_count, created_at, updated_at",
-    )
-    .eq("project_id", id)
-    .order("chapter", { ascending: true, nullsFirst: false })
-    .order("created_at", { ascending: true });
 
   const documents = (docs ?? []) as DocumentSummary[];
   const ready = documents.filter((d) => d.status === "ready");
@@ -147,17 +146,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[id]"
             <p className="mt-1 mb-3 text-sm text-ink-muted">
               Removes the project and every document in it. This cannot be undone.
             </p>
-            <form action={deleteProject}>
-              <input type="hidden" name="projectId" value={project.id} />
-              <button
-                type="submit"
-                className="rounded-lg border border-danger/40 px-3 py-1.5 text-sm font-medium text-danger
-                  transition-[background-color,border-color] duration-150
-                  hover:border-danger hover:bg-danger/8 active:bg-danger/15"
-              >
-                Delete this project
-              </button>
-            </form>
+            <DeleteProjectButton projectId={project.id} projectTitle={project.title} />
           </div>
         </aside>
       </div>

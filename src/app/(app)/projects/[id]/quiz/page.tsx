@@ -17,24 +17,21 @@ export default async function QuizPage({ params }: PageProps<"/projects/[id]/qui
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project, error: projectError } = await supabase
-    .from("projects")
-    .select("id, title")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: project, error: projectError }, { data: rows }] = await Promise.all([
+    supabase.from("projects").select("id, title").eq("id", id).maybeSingle(),
+    // Only questions that actually have choices. Anything generated before quiz mode
+    // existed has none, and is still perfectly usable as a flashcard.
+    supabase
+      .from("questions")
+      .select("*")
+      .eq("project_id", id)
+      .not("options", "is", null)
+      .order("confidence", { ascending: true, nullsFirst: true })
+      .order("last_seen_at", { ascending: true, nullsFirst: true }),
+  ]);
 
   if (projectError) console.error("[quiz] project lookup failed", projectError);
   if (!project) notFound();
-
-  // Only questions that actually have choices. Anything generated before quiz mode existed
-  // has none, and is still perfectly usable as a flashcard.
-  const { data: rows } = await supabase
-    .from("questions")
-    .select("*")
-    .eq("project_id", id)
-    .not("options", "is", null)
-    .order("confidence", { ascending: true, nullsFirst: true })
-    .order("last_seen_at", { ascending: true, nullsFirst: true });
 
   // Ordered weakest first by the query: unrated questions, then the ones marked shaky, then
   // by how long since they were last seen. Deliberately not shuffled - the point of a

@@ -24,28 +24,23 @@ export default async function DefensePage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project } = await supabase
-    .from("projects")
-    .select("id")
-    .eq("id", id)
-    .maybeSingle();
+  // All three key off the route's id directly, so they run together.
+  const [{ data: project }, { data: sessionRows }, { count: questionCount }] =
+    await Promise.all([
+      supabase.from("projects").select("id").eq("id", id).maybeSingle(),
+      supabase
+        .from("defense_sessions")
+        .select("*")
+        .eq("project_id", id)
+        .order("started_at", { ascending: false }),
+      supabase.from("questions").select("id", { count: "exact", head: true }).eq("project_id", id),
+    ]);
 
   if (!project) notFound();
-
-  const { data: sessionRows } = await supabase
-    .from("defense_sessions")
-    .select("*")
-    .eq("project_id", id)
-    .order("started_at", { ascending: false });
 
   const sessions = (sessionRows ?? []) as DefenseSession[];
   const complete = sessions.filter((s) => s.status === "complete" && s.readiness !== null);
   const open = sessions.find((s) => s.status === "in_progress");
-
-  const { count: questionCount } = await supabase
-    .from("questions")
-    .select("id", { count: "exact", head: true })
-    .eq("project_id", id);
 
   const best = complete.length > 0 ? Math.max(...complete.map((s) => s.readiness!)) : null;
 

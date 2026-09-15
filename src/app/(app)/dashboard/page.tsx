@@ -44,16 +44,15 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", user!.id)
-    .maybeSingle();
-
-  const { data } = await supabase
-    .from("projects")
-    .select("*, documents(id, chapter, status, word_count)")
-    .order("created_at", { ascending: false });
+  // Neither query depends on the other's result - both only need the session already
+  // established above - so they run together rather than as a waterfall.
+  const [{ data: profile }, { data }] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
+    supabase
+      .from("projects")
+      .select("*, documents(id, chapter, status, word_count)")
+      .order("created_at", { ascending: false }),
+  ]);
 
   const projects = (data ?? []) as ProjectWithDocs[];
   const firstName = profile?.full_name?.trim().split(/\s+/)[0];

@@ -22,21 +22,21 @@ export default async function ProjectLayout({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project } = await supabase
-    .from("projects")
-    .select("id, title")
-    .eq("id", id)
-    .maybeSingle();
+  // Neither query needs the other's result - both only need the route's id - so they run
+  // together and the not-found check happens after, rather than gating the second query on
+  // the first for no reason.
+  const [{ data: project }, { count }] = await Promise.all([
+    supabase.from("projects").select("id, title").eq("id", id).maybeSingle(),
+    // head:true returns the count without the rows, which is all this needs.
+    supabase
+      .from("chunks")
+      .select("id", { count: "exact", head: true })
+      .eq("project_id", id)
+      .eq("embedded", true),
+  ]);
 
   // RLS makes another student's project indistinguishable from one that does not exist.
   if (!project) notFound();
-
-  // head:true returns the count without the rows, which is all this needs.
-  const { count } = await supabase
-    .from("chunks")
-    .select("id", { count: "exact", head: true })
-    .eq("project_id", id)
-    .eq("embedded", true);
 
   return (
     <div className="space-y-6">

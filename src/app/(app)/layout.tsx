@@ -43,11 +43,22 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", user.id)
-    .maybeSingle();
+  // This layout wraps every authenticated page, so any round-trip here is paid on every
+  // navigation. Neither query below depends on the other's result - both only need the
+  // session getUser() already established - so they run together rather than as a
+  // waterfall. That was previously two sequential awaits for no reason.
+  const [{ data: profile }, { data: current }] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+    // The same "current project" as the dashboard: most recently created. Sidebar
+    // study-mode links jump straight there, which is the whole point of putting them
+    // somewhere that is never more than one click away.
+    supabase
+      .from("projects")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const displayName = profile?.full_name?.trim().split(/\s+/)[0];
   const initials =
@@ -57,16 +68,6 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       .slice(0, 2)
       .join("")
       .toUpperCase() || "?";
-
-  // The same "current project" as the dashboard: most recently created. Sidebar study-mode
-  // links jump straight there, which is the whole point of putting them somewhere that is
-  // never more than one click away.
-  const { data: current } = await supabase
-    .from("projects")
-    .select("id")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
 
   let hasIndexedText = false;
   if (current) {

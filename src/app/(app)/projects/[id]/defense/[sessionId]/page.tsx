@@ -30,21 +30,21 @@ export default async function SittingPage({
   const { id, sessionId } = await params;
   const supabase = await createClient();
 
-  const { data: sessionRow } = await supabase
-    .from("defense_sessions")
-    .select("*")
-    .eq("id", sessionId)
-    .maybeSingle();
+  // Both key off sessionId directly (not off each other's result - the second doesn't need
+  // the first row back to know which session it's asking about), so they run together. The
+  // third query further down (question queue) genuinely depends on session.scope and is
+  // only needed on the in-progress branch, so it stays where it is.
+  const [{ data: sessionRow }, { data: answerRows }] = await Promise.all([
+    supabase.from("defense_sessions").select("*").eq("id", sessionId).maybeSingle(),
+    supabase
+      .from("defense_answers")
+      .select("*")
+      .eq("session_id", sessionId)
+      .order("answered_at", { ascending: true }),
+  ]);
 
   if (!sessionRow) notFound();
   const session = sessionRow as DefenseSession;
-
-  const { data: answerRows } = await supabase
-    .from("defense_answers")
-    .select("*")
-    .eq("session_id", sessionId)
-    .order("answered_at", { ascending: true });
-
   const answers = (answerRows ?? []) as DefenseAnswer[];
 
   // ---- finished ----------------------------------------------------------

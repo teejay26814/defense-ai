@@ -12,21 +12,18 @@ export default async function AskPage({ params }: PageProps<"/projects/[id]/ask"
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle<Project>();
+  const [{ data: project }, { count: searchable }] = await Promise.all([
+    supabase.from("projects").select("*").eq("id", id).maybeSingle<Project>(),
+    // Only embedded chunks are retrievable, so this count is what the student can actually
+    // ask against - not how much they have uploaded.
+    supabase
+      .from("chunks")
+      .select("id", { count: "exact", head: true })
+      .eq("project_id", id)
+      .eq("embedded", true),
+  ]);
 
   if (!project) notFound();
-
-  // Only embedded chunks are retrievable, so this count is what the student can actually
-  // ask against - not how much they have uploaded.
-  const { count: searchable } = await supabase
-    .from("chunks")
-    .select("id", { count: "exact", head: true })
-    .eq("project_id", id)
-    .eq("embedded", true);
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">

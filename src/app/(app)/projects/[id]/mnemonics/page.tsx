@@ -23,21 +23,18 @@ export default async function MnemonicsPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: project, error: projectError } = await supabase
-    .from("projects")
-    .select("id")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: project, error: projectError }, { data: rows }] = await Promise.all([
+    supabase.from("projects").select("id").eq("id", id).maybeSingle(),
+    supabase
+      .from("mnemonics")
+      .select("*")
+      .eq("project_id", id)
+      .order("chapter", { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: true }),
+  ]);
 
   if (projectError) console.error("[mnemonics] project lookup failed", projectError);
   if (!project) notFound();
-
-  const { data: rows } = await supabase
-    .from("mnemonics")
-    .select("*")
-    .eq("project_id", id)
-    .order("chapter", { ascending: true, nullsFirst: false })
-    .order("created_at", { ascending: true });
 
   const mnemonics = (rows ?? []) as Mnemonic[];
 
