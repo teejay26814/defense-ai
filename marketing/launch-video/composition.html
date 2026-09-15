@@ -7,430 +7,205 @@
 <style>
 /* ============================================================================
    Academia Scribes launch film — landscape 16:9.
-   Screens are rebuilt from the real app components (globals.css @theme tokens,
-   Fraunces + Figtree, the real logo mark) and filled with the real project in
-   the account. One deterministic timeline: only transform / opacity animate,
-   every delay absolute, so Chromium can seek each frame and screenshot it.
+   Real, captured app screens (logged into the live app) framed in a browser
+   window and panned on a single deterministic timeline. Hook + CTA are brand
+   title cards. Only transform / opacity animate; every delay absolute, so
+   Chromium seeks each frame and screenshots it.
    ============================================================================ */
 :root{
-  --navy-050:#f2f6fb; --navy-100:#dce7f4; --navy-300:#8fb4dc; --navy-500:#1155a8;
-  --navy-600:#0a3a7d; --navy-700:#052659; --navy-800:#02193c; --navy-900:#010f26;
-  --parchment:#fdfbf7; --ink:#141821; --ink-muted:#5a6377; --gold:#c9a227;
-  --success:#1e7a5a; --warning:#b5761e; --danger:#a62b2b;
+  --navy-050:#f2f6fb;--navy-100:#dce7f4;--navy-300:#8fb4dc;--navy-500:#1155a8;
+  --navy-600:#0a3a7d;--navy-700:#052659;--navy-800:#02193c;--navy-900:#010f26;
+  --parchment:#fdfbf7;--ink:#141821;--ink-muted:#5a6377;--gold:#c9a227;
   --sans:"Figtree",ui-sans-serif,system-ui,sans-serif;
   --disp:"Fraunces",ui-serif,Georgia,serif;
-  --raised:0 0 0 1px rgb(5 38 89/.05),0 1px 2px -1px rgb(5 38 89/.1),0 4px 12px -4px rgb(5 38 89/.08);
-  --lifted:0 0 0 1px rgb(5 38 89/.055),0 2px 4px -2px rgb(5 38 89/.1),0 12px 28px -8px rgb(5 38 89/.12);
-  --overlay:0 0 0 1px rgb(5 38 89/.07),0 4px 8px -4px rgb(5 38 89/.12),0 28px 56px -12px rgb(5 38 89/.2);
+  --overlay:0 0 0 1px rgb(5 38 89/.07),0 4px 8px -4px rgb(5 38 89/.12),0 40px 70px -18px rgb(1 15 38/.45);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:#02121f}
-#stage{
-  position:relative;width:1280px;height:720px;overflow:hidden;
-  font-family:var(--sans);color:var(--ink);
+#stage{position:relative;width:1280px;height:720px;overflow:hidden;font-family:var(--sans);color:var(--ink);
   background:var(--parchment);
-  background-image:
-    radial-gradient(ellipse 60% 50% at 0% 0%, rgb(220 231 244/.7), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 100% 10%, rgb(201 162 39/.07), transparent 55%);
-}
-/* faint grain over the whole stage */
-#stage::after{content:"";position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.03;
+  background-image:radial-gradient(ellipse 70% 60% at 8% 0%,rgb(220 231 244/.8),transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 8%,rgb(143 180 220/.14),transparent 55%),
+    radial-gradient(ellipse 90% 70% at 60% 120%,rgb(220 231 244/.5),transparent 65%);}
+#stage::after{content:"";position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.028;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
 .scene{position:absolute;inset:0;opacity:0}
-.eyebrow{font-size:11px;line-height:1.45;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-muted)}
-.disp{font-family:var(--disp);font-optical-sizing:auto;letter-spacing:-.022em}
+.eyebrow{font-size:12px;line-height:1.4;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--ink-muted)}
 
-/* ---- caption line shared by product scenes ---- */
-.caption{position:absolute;left:64px;bottom:54px;z-index:40;max-width:520px}
-.caption .k{color:var(--gold)}
-.caption h3{font-family:var(--disp);font-weight:600;font-size:34px;line-height:1.12;letter-spacing:-.02em;color:var(--navy-800)}
-.caption p{margin-top:10px;font-size:16px;line-height:1.5;color:var(--ink-muted)}
+/* caption column (left) for product scenes */
+.cap{position:absolute;left:56px;top:0;height:100%;width:330px;display:flex;flex-direction:column;justify-content:center}
+.cap .k{color:var(--navy-500)}
+.cap h3{font-family:var(--disp);font-optical-sizing:auto;font-weight:600;font-size:38px;line-height:1.08;letter-spacing:-.025em;color:var(--navy-800);margin-top:12px}
+.cap p{margin-top:14px;font-size:16px;line-height:1.55;color:var(--ink-muted);max-width:300px}
 
-/* ============ browser frame (the "real screen") ============ */
-.browser{position:absolute;border-radius:16px;background:#fff;overflow:hidden;
-  box-shadow:var(--overlay);border:1px solid var(--navy-100)}
-.chrome{height:38px;background:#f3f0ea;border-bottom:1px solid var(--navy-100);
-  display:flex;align-items:center;gap:8px;padding:0 14px}
-.dot{width:11px;height:11px;border-radius:50%}
+/* browser frame (right) */
+.frame{position:absolute;left:432px;top:64px;width:792px;height:592px;border-radius:14px;overflow:hidden;
+  background:#fff;box-shadow:var(--overlay);border:1px solid var(--navy-100)}
+.chrome{height:34px;background:#ece7df;border-bottom:1px solid rgb(5 38 89/.08);display:flex;align-items:center;gap:7px;padding:0 13px}
+.dot{width:10px;height:10px;border-radius:50%}
 .dot.r{background:#e5675f}.dot.y{background:#e6b34d}.dot.g{background:#5fb87a}
-.omni{margin-left:14px;height:22px;flex:1;max-width:420px;border-radius:11px;background:#fff;
-  border:1px solid var(--navy-100);display:flex;align-items:center;padding:0 12px;
-  font-size:11px;color:var(--ink-muted);gap:7px}
-.omni svg{width:11px;height:11px;opacity:.6}
-.viewport{position:relative;height:calc(100% - 38px);overflow:hidden;background:var(--parchment);
-  background-image:radial-gradient(ellipse 60% 50% at 0% 0%, rgb(220 231 244/.6), transparent 60%);}
+.omni{margin-left:12px;height:20px;flex:1;max-width:360px;border-radius:10px;background:#fff;border:1px solid rgb(5 38 89/.1);
+  display:flex;align-items:center;padding:0 11px;font-size:10.5px;color:var(--ink-muted);gap:6px}
+.omni svg{width:10px;height:10px;opacity:.55}
+.vp{position:relative;height:calc(100% - 34px);overflow:hidden;background:#0a1a2f}
+.shot{position:absolute;top:0;left:0;width:100%;height:auto;display:block;will-change:transform}
 
-/* app top bar inside the viewport */
-.appbar{display:flex;align-items:center;justify-content:space-between;gap:24px;
-  padding:14px 26px;border-bottom:1px solid rgb(220 231 244/.7);
-  background:rgb(253 251 247/.8)}
-.brand{display:inline-flex;align-items:center;gap:10px;color:var(--navy-700)}
-.brand svg{height:24px;width:auto}
-.brand .wm{font-family:var(--disp);font-size:17px;line-height:1.02;letter-spacing:-.01em}
-.brand .wm b{display:block;font-weight:600}.brand .wm span{display:block;font-weight:300}
-.navlinks{display:flex;gap:6px;font-size:13px;color:var(--ink-muted);font-weight:500}
-.navlinks a{padding:6px 11px;border-radius:8px}
-.navlinks a.on{color:var(--ink);background:var(--navy-050)}
-.who{font-size:13px;color:var(--ink-muted)}
-
-.page{padding:30px 40px}
-
-/* ---- eyebrow/gold ---- */
-.gold{color:var(--gold)}
-
-/* ============ S0 hook / S6 CTA — navy field ============ */
+/* ================= brand title cards (hook / cta) ================= */
 .field{position:absolute;inset:0;background:var(--navy-800);
-  background-image:
-    radial-gradient(ellipse 80% 60% at 15% 0%, rgb(17 85 168/.35), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 90% 15%, rgb(201 162 39/.12), transparent 55%),
-    radial-gradient(ellipse 100% 80% at 50% 110%, rgb(1 15 38/.85), transparent 70%);
+  background-image:radial-gradient(ellipse 80% 60% at 15% 0%,rgb(17 85 168/.35),transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 15%,rgb(143 180 220/.16),transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 110%,rgb(1 15 38/.85),transparent 70%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff}
-.field .rules{position:absolute;right:-40px;top:0;height:100%;width:420px;opacity:.22;
+.field .rules{position:absolute;right:-40px;top:0;height:100%;width:420px;opacity:.2;
   background-image:repeating-linear-gradient(to bottom,rgb(255 255 255/.85) 0 1px,transparent 1px 13px);
   -webkit-mask-image:linear-gradient(to left,black 6%,transparent 90%);mask-image:linear-gradient(to left,black 6%,transparent 90%)}
-.hookmark{color:#fff}
-.hookmark svg{height:64px;width:auto}
-.field h1{font-family:var(--disp);font-optical-sizing:auto;font-weight:600;
-  font-size:62px;line-height:1.05;letter-spacing:-.03em;max-width:900px}
-.field .sub{margin-top:22px;font-size:19px;color:rgb(255 255 255/.72);letter-spacing:.01em}
-.field .url{margin-top:26px;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.hookmark{color:#fff}.hookmark svg{height:60px;width:auto}
+.field h1{font-family:var(--disp);font-optical-sizing:auto;font-weight:600;font-size:60px;line-height:1.05;letter-spacing:-.03em;max-width:920px}
+.field .sub{margin-top:22px;font-size:19px;color:rgb(255 255 255/.72)}
+.field .url{margin-top:26px;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#dce7f4;font-weight:600}
 
-/* ================= reveal helpers (transform+opacity only) ============ */
-@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+/* ===== reveal + pan keyframes (transform/opacity only) ===== */
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes riseS{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
-@keyframes slideUp{from{opacity:0;transform:translateY(60px) scale(.985)}to{opacity:1;transform:none}}
-@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@keyframes drawA{from{stroke-dashoffset:520}to{stroke-dashoffset:0}}
+@keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(46px) scale(.99)}to{opacity:1;transform:none}}
 
-/* count-up integer for readiness */
-@property --cnt{syntax:'<integer>';initial-value:0;inherits:false}
-.count::after{content:counter(n);counter-reset:n var(--cnt)}
+/* per-scene vertical pans (px computed from 792-wide frame, 558-tall viewport) */
+@keyframes pan1{from{transform:translateY(0)}to{transform:translateY(-322px)}}
+@keyframes pan2{from{transform:translateY(0)}to{transform:translateY(-192px)}}
+@keyframes pan4{from{transform:translateY(0)}to{transform:translateY(-263px)}}
+@keyframes pan5{from{transform:translateY(0)}to{transform:translateY(-175px)}}
 
-/* ===================== SCENE TIMING (total 32s) =====================
-   Each scene fades in over ~0.6s, holds, fades out over ~0.4s, driven by a
-   single 32s keyframe track so the whole film is one seekable clock. */
-.scene{animation-duration:32s;animation-timing-function:linear;animation-fill-mode:both}
-.s0{animation-name:sc0}.s1{animation-name:sc1}.s2{animation-name:sc2}
-.s3{animation-name:sc3}.s4{animation-name:sc4}.s5{animation-name:sc5}.s6{animation-name:sc6}
-@keyframes sc0{0%{opacity:0}1.6%{opacity:1}10.9%{opacity:1}12.5%{opacity:0}100%{opacity:0}}
-@keyframes sc1{0%,12.5%{opacity:0}14.4%{opacity:1}26.6%{opacity:1}28.1%{opacity:0}100%{opacity:0}}
-@keyframes sc2{0%,28.1%{opacity:0}29.7%{opacity:1}39.1%{opacity:1}40.6%{opacity:0}100%{opacity:0}}
-@keyframes sc3{0%,40.6%{opacity:0}42.5%{opacity:1}56.2%{opacity:1}57.8%{opacity:0}100%{opacity:0}}
-@keyframes sc4{0%,57.8%{opacity:0}59.7%{opacity:1}71.9%{opacity:1}73.4%{opacity:0}100%{opacity:0}}
-@keyframes sc5{0%,73.4%{opacity:0}75.3%{opacity:1}89.1%{opacity:1}90.6%{opacity:0}100%{opacity:0}}
-@keyframes sc6{0%,90.6%{opacity:0}92.5%{opacity:1}100%{opacity:1}}
+/* ============ SCENE OPACITY TRACKS (total 35s) ============ */
+.scene{animation-duration:35s;animation-timing-function:linear;animation-fill-mode:both}
+.s0{animation-name:sc0}.s1{animation-name:sc1}.s2{animation-name:sc2}.s3{animation-name:sc3}
+.s4{animation-name:sc4}.s5{animation-name:sc5}.s6{animation-name:sc6}.s7{animation-name:sc7}
+@keyframes sc0{0%{opacity:0}1.43%{opacity:1}9.71%{opacity:1}10.86%{opacity:0}100%{opacity:0}}
+@keyframes sc1{0%,10.86%{opacity:0}12.29%{opacity:1}24.57%{opacity:1}25.71%{opacity:0}100%{opacity:0}}
+@keyframes sc2{0%,25.71%{opacity:0}27.14%{opacity:1}38.29%{opacity:1}39.43%{opacity:0}100%{opacity:0}}
+@keyframes sc3{0%,39.43%{opacity:0}40.86%{opacity:1}50.29%{opacity:1}51.43%{opacity:0}100%{opacity:0}}
+@keyframes sc4{0%,51.43%{opacity:0}52.86%{opacity:1}64.57%{opacity:1}65.71%{opacity:0}100%{opacity:0}}
+@keyframes sc5{0%,65.71%{opacity:0}67.14%{opacity:1}78.86%{opacity:1}80%{opacity:0}100%{opacity:0}}
+@keyframes sc6{0%,80%{opacity:0}81.43%{opacity:1}90.86%{opacity:1}91.43%{opacity:0}100%{opacity:0}}
+@keyframes sc7{0%,91.43%{opacity:0}92.86%{opacity:1}100%{opacity:1}}
 
-/* ---- S0 inner ---- */
+/* S0 hook inner */
 .s0 .hookmark{animation:pop .9s cubic-bezier(.22,1,.36,1) .2s both}
-.s0 h1{animation:rise 1s cubic-bezier(.22,1,.36,1) .8s both}
+.s0 h1{animation:rise 1s cubic-bezier(.22,1,.36,1) .75s both}
 .s0 .sub{animation:rise .9s cubic-bezier(.22,1,.36,1) 1.5s both}
 
-/* ---- S1 dashboard ---- */
-.s1 .browser{animation:slideUp .9s cubic-bezier(.22,1,.36,1) 4.15s both}
-.s1 .focal{animation:pop .7s cubic-bezier(.22,1,.36,1) 5.0s both}
-.s1 .focal .eyebrow{animation:riseS .5s ease 5.35s both}
-.s1 .focal h2{animation:riseS .6s cubic-bezier(.22,1,.36,1) 5.55s both}
-.s1 .focal p{animation:riseS .6s ease 5.85s both}
-.s1 .focal .btn{animation:riseS .6s ease 6.1s both}
-.s1 .plist li{animation:riseS .5s cubic-bezier(.22,1,.36,1) both}
-.s1 .plist li:nth-child(1){animation-delay:6.4s}
-.s1 .plist li:nth-child(2){animation-delay:6.55s}
-.s1 .plist li:nth-child(3){animation-delay:6.7s}
-.s1 .plist li:nth-child(4){animation-delay:6.85s}
-.s1 .caption{animation:rise .7s cubic-bezier(.22,1,.36,1) 6.4s both}
+/* product scenes: frame entrance, caption rise, pan */
+.s1 .frame{animation:slideUp .85s cubic-bezier(.22,1,.36,1) 3.95s both}
+.s1 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 4.35s both}
+.s1 .shot{animation:pan1 4.0s ease-in-out 4.5s both}
 
-/* ---- S2 chapters ---- */
-.s2 .browser{animation:fade .5s ease 9.05s both}
-.s2 .kbcard{animation:pop .7s cubic-bezier(.22,1,.36,1) 9.3s both}
-.s2 .chrow{animation:riseS .5s cubic-bezier(.22,1,.36,1) both}
-.s2 .chrow:nth-child(1){animation-delay:9.7s}
-.s2 .chrow:nth-child(2){animation-delay:9.9s}
-.s2 .chrow:nth-child(3){animation-delay:10.1s}
-.s2 .chrow:nth-child(4){animation-delay:10.3s}
-.s2 .chrow:nth-child(5){animation-delay:10.5s}
-.s2 .chrow .tick{animation:pop .45s cubic-bezier(.22,1,.36,1) both}
-.s2 .chrow:nth-child(1) .tick{animation-delay:10.0s}
-.s2 .chrow:nth-child(2) .tick{animation-delay:10.2s}
-.s2 .chrow:nth-child(3) .tick{animation-delay:10.4s}
-.s2 .chrow:nth-child(4) .tick{animation-delay:10.6s}
-.s2 .chrow:nth-child(5) .tick{animation-delay:10.8s}
-.s2 .caption{animation:rise .7s cubic-bezier(.22,1,.36,1) 10.2s both}
+.s2 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 9.15s both}
+.s2 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 9.5s both}
+.s2 .shot{animation:pan2 3.4s ease-in-out 9.7s both}
 
-/* ---- S3 ask ---- */
-.s3 .browser{animation:fade .5s ease 13.05s both}
-.s3 .askq{animation:pop .6s cubic-bezier(.22,1,.36,1) 13.3s both}
-.s3 .askbtn{animation:riseS .5s ease 13.7s both}
-.s3 .skel{animation:fade .4s ease 14.0s both, fade .35s ease 15.3s reverse both}
-.s3 .answer{animation:rise .8s cubic-bezier(.22,1,.36,1) 15.5s both}
-.s3 .srchead{animation:riseS .5s ease 16.1s both}
-.s3 .srcitem{animation:riseS .5s cubic-bezier(.22,1,.36,1) both}
-.s3 .srcitem:nth-child(1){animation-delay:16.35s}
-.s3 .srcitem:nth-child(2){animation-delay:16.55s}
-.s3 .caption{animation:rise .7s cubic-bezier(.22,1,.36,1) 15.6s both}
+.s3 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 13.95s both}
+.s3 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 14.3s both}
 
-/* skeleton shimmer bars */
-.skel .bar{height:14px;border-radius:6px;background:linear-gradient(90deg,var(--navy-050),var(--navy-100),var(--navy-050));background-size:200% 100%;margin-bottom:12px}
+.s4 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 18.15s both}
+.s4 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 18.5s both}
+.s4 .shot{animation:pan4 3.6s ease-in-out 19.0s both}
 
-/* ---- S4 quiz ---- */
-.s4 .browser{animation:fade .5s ease 18.55s both}
-.s4 .quizcard{animation:pop .6s cubic-bezier(.22,1,.36,1) 18.85s both}
-.s4 .progfill{transform-origin:left;transform:scaleX(.2);animation:growX .8s cubic-bezier(.22,1,.36,1) 19.0s both}
-.s4 .opt{animation:riseS .45s cubic-bezier(.22,1,.36,1) both}
-.s4 .opt:nth-child(1){animation-delay:19.2s}
-.s4 .opt:nth-child(2){animation-delay:19.35s}
-.s4 .opt:nth-child(3){animation-delay:19.5s}
-.s4 .opt:nth-child(4){animation-delay:19.65s}
-/* right answer + verdict + source appear together after a beat */
-.s4 .opt.correct{animation:riseS .45s cubic-bezier(.22,1,.36,1) 19.5s both, flash .5s ease 20.6s both}
-.s4 .verdict{animation:riseS .5s cubic-bezier(.22,1,.36,1) 20.7s both}
-.s4 .qsrc{animation:rise .6s cubic-bezier(.22,1,.36,1) 20.95s both}
-.s4 .caption{animation:rise .7s cubic-bezier(.22,1,.36,1) 20.7s both}
-@keyframes flash{0%{box-shadow:0 0 0 0 rgb(30 122 90/0)}40%{box-shadow:0 0 0 4px rgb(30 122 90/.18)}100%{box-shadow:0 0 0 0 rgb(30 122 90/0)}}
+.s5 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 23.15s both}
+.s5 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 23.5s both}
+.s5 .shot{animation:pan5 3.6s ease-in-out 24.0s both}
 
-/* ---- S5 defense + readiness ---- */
-.s5 .browser{animation:fade .5s ease 23.55s both}
-.s5 .sitting{animation:pop .6s cubic-bezier(.22,1,.36,1) 23.85s both}
-/* sitting fades out, readiness card fades in */
-.s5 .sitting{animation:pop .6s cubic-bezier(.22,1,.36,1) 23.85s both, fade .5s ease 25.9s reverse both}
-.s5 .ready{animation:pop .8s cubic-bezier(.22,1,.36,1) 26.2s both}
-.s5 .ready .num{animation:fade .5s ease 26.4s both}
-.s5 .ready .num .count{animation:cnt 2s linear 26.4s both}
-.s5 .ready .meter .fill{transform-origin:left;transform:scaleX(0);animation:grow76 2s cubic-bezier(.22,1,.36,1) 26.4s both}
-.s5 .ready .band{animation:riseS .6s ease 27.6s both}
-.s5 .ready .note{animation:riseS .6s ease 27.85s both}
-.s5 .caption{animation:rise .7s cubic-bezier(.22,1,.36,1) 26.6s both}
-@keyframes cnt{from{--cnt:0}to{--cnt:76}}
-@keyframes grow76{from{transform:scaleX(0)}to{transform:scaleX(.76)}}
+.s6 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 28.15s both}
+.s6 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 28.5s both}
 
-/* ---- S6 CTA ---- */
-.s6 .hookmark{animation:pop .8s cubic-bezier(.22,1,.36,1) 29.1s both}
-.s6 h1{animation:rise .9s cubic-bezier(.22,1,.36,1) 29.5s both}
-.s6 .sub{animation:rise .8s ease 29.9s both}
-.s6 .url{animation:rise .8s ease 30.3s both}
+/* S7 cta */
+.s7 .hookmark{animation:pop .8s cubic-bezier(.22,1,.36,1) 32.1s both}
+.s7 h1{animation:rise .9s cubic-bezier(.22,1,.36,1) 32.5s both}
+.s7 .sub{animation:rise .8s ease 32.9s both}
+.s7 .url{animation:rise .8s ease 33.3s both}
+
+/* reusable chrome markup helper */
+.chrome .omni svg{}
 </style>
 </head>
 <body>
-<div id="stage" data-fps="30" data-duration="32">
+<div id="stage" data-fps="30" data-duration="35">
 
-  <!-- ============ S0 — HOOK ============ -->
-  <section class="scene s0">
-    <div class="field">
-      <div class="rules"></div>
-      <div class="hookmark"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg></div>
-      <h1 style="margin-top:30px">If your defense was tomorrow,<br>would you be ready?</h1>
-      <p class="sub">Academia Scribes — your project, turned into a coach.</p>
-    </div>
-  </section>
+  <!-- S0 HOOK -->
+  <section class="scene s0"><div class="field"><div class="rules"></div>
+    <div class="hookmark"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg></div>
+    <h1 style="margin-top:30px">If your defense was tomorrow,<br>would you be ready?</h1>
+    <p class="sub">Academia Scribes — your project, turned into a coach.</p>
+  </div></section>
 
-  <!-- ============ S1 — DASHBOARD ============ -->
+  <!-- S1 DASHBOARD -->
   <section class="scene s1">
-    <div class="browser" style="left:120px;top:64px;width:1040px;height:600px">
-      <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/dashboard</div>
-      </div>
-      <div class="viewport">
-        <div class="appbar">
-          <div class="brand"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg><span class="wm"><b>Academia</b><span>Scribes</span></span></div>
-          <div class="navlinks"><a class="on">Dashboard</a><a>Projects</a><a>Plans</a></div>
-          <div class="who">Tolulope Fatoyinbo</div>
-        </div>
-        <div class="page">
-          <p class="eyebrow">Monday, 15 September</p>
-          <h1 class="disp" style="font-weight:600;font-size:40px;margin-top:8px;color:var(--ink)">Welcome back, Victoria.</h1>
-
-          <div class="focal" style="margin-top:24px;border-radius:24px;padding:34px 36px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--overlay);
-              background:var(--navy-800);background-image:radial-gradient(ellipse 80% 60% at 15% 0%,rgb(17 85 168/.35),transparent 60%),radial-gradient(ellipse 70% 50% at 90% 15%,rgb(201 162 39/.12),transparent 55%),radial-gradient(ellipse 100% 80% at 50% 110%,rgb(1 15 38/.85),transparent 70%)">
-            <div style="position:absolute;right:-30px;top:0;height:100%;width:280px;opacity:.28;background-image:repeating-linear-gradient(to bottom,rgb(255 255 255/.85) 0 1px,transparent 1px 12px);-webkit-mask-image:linear-gradient(to left,black 10%,transparent 92%);mask-image:linear-gradient(to left,black 10%,transparent 92%)"></div>
-            <p class="eyebrow gold" style="position:relative">All chapters in</p>
-            <h2 class="disp" style="font-weight:600;font-size:32px;line-height:1.1;margin-top:12px;position:relative">Your project is fully uploaded</h2>
-            <p style="margin-top:14px;font-size:16px;line-height:1.55;color:rgb(255 255 255/.72);max-width:560px;position:relative">18,244 words are ready. Ask your project anything.</p>
-            <span class="btn" style="display:inline-block;margin-top:26px;background:var(--gold);color:var(--navy-900);font-weight:600;font-size:15px;padding:13px 22px;border-radius:8px;box-shadow:var(--raised);position:relative">Ask my project</span>
-          </div>
-
-          <p class="eyebrow" style="margin-top:28px;margin-bottom:6px">Your projects</p>
-          <ul class="plist" style="list-style:none;border-top:1px solid var(--navy-100)">
-            <li style="border-bottom:1px solid rgb(5 38 89/.08);padding:16px 0;display:flex;align-items:baseline;gap:18px">
-              <span style="flex:1"><span class="disp" style="display:block;font-size:19px;color:var(--ink)">Knowledge of Neonatal Jaundice and Its Risk Factors Among Antenatal Women, Oluyoro Hospital, Ibadan</span>
-                <span style="display:block;margin-top:3px;font-size:13px;color:var(--ink-muted)">5 documents · Nursing · Lead City University</span></span>
-              <span style="color:var(--navy-300)">&rarr;</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="caption"><p class="eyebrow k">Your work, at the centre</p><h3>Upload your project once.</h3><p>Chapters One to Five become a private, searchable knowledge base — yours alone.</p></div>
+    <div class="cap"><p class="eyebrow k">Your defense command centre</p>
+      <h3>Everything in one place.</h3>
+      <p>One dashboard that always answers the only question that matters: what do I do next?</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/dashboard</div></div>
+      <div class="vp"><img class="shot" src="captures/01-dashboard.png" alt=""></div></div>
   </section>
 
-  <!-- ============ S2 — CHAPTERS / KNOWLEDGE BASE ============ -->
+  <!-- S2 PROJECT / KNOWLEDGE BASE -->
   <section class="scene s2">
-    <div class="browser" style="left:120px;top:64px;width:1040px;height:600px">
-      <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/dashboard</div>
-      </div>
-      <div class="viewport">
-        <div class="page" style="padding:44px 60px">
-          <div class="kbcard" style="max-width:760px;margin:0 auto;background:#fff;border:1px solid rgb(220 231 244/.7);border-radius:14px;padding:32px 34px;box-shadow:var(--lifted)">
-            <h3 class="disp" style="font-size:23px;font-weight:600;color:var(--ink)">Your chapters</h3>
-            <p style="margin-top:4px;margin-bottom:16px;font-size:14px;color:var(--ink-muted)">5 of 5 indexed · 18,244 words</p>
-            <ul style="list-style:none">
-              <li class="chrow" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--navy-100)">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--success)"></span>
-                <span style="flex:1"><b style="display:block;font-size:15px;font-weight:600;color:var(--ink)">Introduction</b><span style="font-size:12px;color:var(--ink-muted)">Chapter One</span></span>
-                <span class="tick" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--success)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Indexed</span>
-              </li>
-              <li class="chrow" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--navy-100)">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--success)"></span>
-                <span style="flex:1"><b style="display:block;font-size:15px;font-weight:600;color:var(--ink)">Literature Review</b><span style="font-size:12px;color:var(--ink-muted)">Chapter Two</span></span>
-                <span class="tick" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--success)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Indexed</span>
-              </li>
-              <li class="chrow" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--navy-100)">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--success)"></span>
-                <span style="flex:1"><b style="display:block;font-size:15px;font-weight:600;color:var(--ink)">Methodology</b><span style="font-size:12px;color:var(--ink-muted)">Chapter Three</span></span>
-                <span class="tick" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--success)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Indexed</span>
-              </li>
-              <li class="chrow" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--navy-100)">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--success)"></span>
-                <span style="flex:1"><b style="display:block;font-size:15px;font-weight:600;color:var(--ink)">Results &amp; Discussion</b><span style="font-size:12px;color:var(--ink-muted)">Chapter Four</span></span>
-                <span class="tick" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--success)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Indexed</span>
-              </li>
-              <li class="chrow" style="display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--navy-100)">
-                <span style="width:8px;height:8px;border-radius:50%;background:var(--success)"></span>
-                <span style="flex:1"><b style="display:block;font-size:15px;font-weight:600;color:var(--ink)">Conclusion &amp; Recommendations</b><span style="font-size:12px;color:var(--ink-muted)">Chapter Five</span></span>
-                <span class="tick" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--success)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Indexed</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="caption"><p class="eyebrow k">Grounded, not generic</p><h3>Every chapter, read and indexed.</h3><p>The AI only ever answers from what you actually wrote.</p></div>
+    <div class="cap"><p class="eyebrow k">Upload once</p>
+      <h3>Your chapters become a knowledge base.</h3>
+      <p>Five chapters in, read and indexed — 17,244 words the AI can draw from.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects</div></div>
+      <div class="vp"><img class="shot" src="captures/03-project.png" alt=""></div></div>
   </section>
 
-  <!-- ============ S3 — ASK MY PROJECT ============ -->
+  <!-- S3 ASK -->
   <section class="scene s3">
-    <div class="browser" style="left:120px;top:64px;width:1040px;height:600px">
-      <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/ask</div>
-      </div>
-      <div class="viewport">
-        <div class="page" style="padding:32px 70px">
-          <div style="max-width:720px;margin:0 auto">
-            <h2 class="disp" style="font-size:28px;font-weight:600;color:var(--ink)">Ask my project</h2>
-            <p style="margin-top:8px;font-size:15px;color:var(--ink-muted)">Every answer comes from your own chapters, with the section it came from.</p>
-
-            <div class="askq" style="margin-top:20px;border:1px solid var(--navy-100);border-radius:10px;background:#fff;box-shadow:var(--raised);padding:14px 16px;font-size:16px;color:var(--ink)">What are the limitations of my study?</div>
-            <span class="askbtn" style="display:inline-block;margin-top:12px;background:var(--navy-700);color:#fff;font-weight:600;font-size:14px;padding:10px 18px;border-radius:8px;box-shadow:var(--raised)">Ask my project</span>
-
-            <div class="skel" style="margin-top:22px;border:1px solid rgb(220 231 244/.7);border-radius:16px;background:rgb(255 255 255/.7);padding:22px;box-shadow:var(--raised)">
-              <p style="font-size:13px;color:var(--ink-muted);margin-bottom:14px">Reading your chapters…</p>
-              <div class="bar" style="width:96%"></div><div class="bar" style="width:88%"></div><div class="bar" style="width:70%"></div>
-            </div>
-
-            <article class="answer" style="margin-top:22px">
-              <p class="eyebrow gold">Answer</p>
-              <div class="disp" style="margin-top:14px;font-size:19px;line-height:1.7;color:var(--ink);max-width:640px">The main limitations were finance constraints, a busy schedule, an unreliable power supply and limited time. Some respondents did not complete the questionnaires properly, a few were uncooperative, and there were language barriers. The study was also confined to Oluyoro Catholic Hospital, so the findings may not generalise to other settings.</div>
-              <h4 class="srchead eyebrow" style="margin-top:22px;border-top:1px solid var(--navy-100);padding-top:16px">From your project</h4>
-              <ul style="list-style:none;margin-top:4px">
-                <li class="srcitem" style="border-bottom:1px solid rgb(5 38 89/.08);padding:14px 0;font-size:14px">
-                  <span style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:var(--navy-050);color:var(--navy-700);font-weight:700;font-size:11px;padding:2px 7px;border-radius:5px">[1]</span><b style="color:var(--ink)">Chapter 5 — Conclusion &amp; Recommendations</b><span style="background:rgb(201 162 39/.15);color:var(--warning);font-weight:600;font-size:11px;padding:2px 7px;border-radius:5px">cited</span></span>
-                  <p style="margin-top:8px;color:var(--ink-muted)">…the limitations of this study included finance constraint, busy schedule, shortage of power supply, limited time…</p>
-                </li>
-                <li class="srcitem" style="border-bottom:1px solid rgb(5 38 89/.08);padding:14px 0;font-size:14px">
-                  <span style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:var(--navy-050);color:var(--navy-700);font-weight:700;font-size:11px;padding:2px 7px;border-radius:5px">[2]</span><b style="color:var(--ink)">Chapter 3 — Methodology</b></span>
-                  <p style="margin-top:8px;color:var(--ink-muted)">…the study was limited to women attending the antenatal clinic at Oluyoro Hospital during the period of data collection…</p>
-                </li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="caption"><p class="eyebrow k">Ask my project</p><h3>Answers in your own words — with the page they came from.</h3></div>
+    <div class="cap"><p class="eyebrow k">Ask my project</p>
+      <h3>Ask it anything.</h3>
+      <p>Every answer comes from your own chapters, with the section it came from.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/ask</div></div>
+      <div class="vp"><img class="shot" src="captures/04-ask-typed.png" alt="" style="top:16px"></div></div>
   </section>
 
-  <!-- ============ S4 — QUIZ ============ -->
+  <!-- S4 FLASHCARDS -->
   <section class="scene s4">
-    <div class="browser" style="left:120px;top:64px;width:1040px;height:600px">
-      <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/quiz</div>
-      </div>
-      <div class="viewport">
-        <div class="page" style="padding:30px 70px">
-          <div style="max-width:700px;margin:0 auto">
-            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--ink-muted);margin-bottom:10px"><span>Question 4 of 6</span><span>3 correct</span></div>
-            <div style="height:6px;border-radius:99px;background:var(--navy-300);overflow:hidden;margin-bottom:22px"><div class="progfill" style="height:100%;width:100%;border-radius:99px;background:var(--navy-700)"></div></div>
-
-            <div class="quizcard" style="background:#fff;border:1px solid rgb(220 231 244/.7);border-radius:14px;padding:26px 28px;box-shadow:var(--lifted)">
-              <span style="display:inline-flex;align-items:center;background:rgb(201 162 39/.12);color:var(--navy-700);font-weight:600;font-size:12px;padding:2px 10px;border-radius:99px;box-shadow:inset 0 0 0 1px rgb(201 162 39/.3)">Defend</span>
-              <p class="disp" style="font-size:20px;line-height:1.4;color:var(--ink);margin-top:12px">Your results showed 61.97% of participants believed it is safe to wait 3–4 days before seeking care for a jaundiced baby. Why is that concerning?</p>
-              <ul style="list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:10px">
-                <li class="opt" style="border:1px solid var(--navy-100);border-radius:8px;padding:12px 14px;font-size:14px;opacity:.6"><b style="color:var(--ink-muted);margin-right:8px">A</b><span style="color:var(--ink)">It means most mothers had already seen a doctor.</span></li>
-                <li class="opt correct" style="border:1px solid var(--success);background:rgb(30 122 90/.08);border-radius:8px;padding:12px 14px;font-size:14px"><b style="color:var(--ink-muted);margin-right:8px">B</b><span style="color:var(--ink)">Delay lets bilirubin rise to levels that risk kernicterus — permanent brain damage.</span></li>
-                <li class="opt" style="border:1px solid var(--navy-100);border-radius:8px;padding:12px 14px;font-size:14px;opacity:.6"><b style="color:var(--ink-muted);margin-right:8px">C</b><span style="color:var(--ink)">Jaundice always resolves on its own within a week.</span></li>
-                <li class="opt" style="border:1px solid var(--navy-100);border-radius:8px;padding:12px 14px;font-size:14px;opacity:.6"><b style="color:var(--ink-muted);margin-right:8px">D</b><span style="color:var(--ink)">It shows the sample was too small to matter.</span></li>
-              </ul>
-              <p class="verdict" style="margin-top:18px;font-size:14px;font-weight:600;color:var(--success)">Correct.</p>
-              <div class="qsrc" style="margin-top:12px;border-left:2px solid var(--gold);background:rgb(242 246 251/.6);border-radius:8px;padding:12px 14px">
-                <p class="eyebrow">From your project</p>
-                <p style="margin-top:6px;font-size:14px;line-height:1.5;color:var(--ink)">Untreated hyperbilirubinaemia can progress to kernicterus as bilirubin crosses the blood–brain barrier, so timely treatment in the first week of life is critical.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="caption"><p class="eyebrow k">Practise like the panel</p><h3>Flashcards and quizzes, drawn from what you wrote.</h3></div>
+    <div class="cap"><p class="eyebrow k">Practice like the panel</p>
+      <h3>Questions a panel would actually ask.</h3>
+      <p>Answer from memory, then reveal what your project says. Rate yourself honestly.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/flashcards</div></div>
+      <div class="vp"><img class="shot" src="captures/05-flashcard-revealed.png" alt=""></div></div>
   </section>
 
-  <!-- ============ S5 — MOCK DEFENSE + READINESS ============ -->
+  <!-- S5 QUIZ -->
   <section class="scene s5">
-    <div class="browser" style="left:120px;top:64px;width:1040px;height:600px">
-      <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/defense</div>
-      </div>
-      <div class="viewport">
-        <div class="page" style="padding:30px 70px;position:relative;height:100%">
-          <!-- sitting -->
-          <div class="sitting" style="max-width:680px;margin:0 auto;position:absolute;left:0;right:0">
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink-muted);margin:0 70px 10px"><span>Question 3 of 8</span><span style="background:var(--navy-050);padding:2px 10px;border-radius:99px;font-weight:500">Explain</span></div>
-            <div style="height:6px;border-radius:99px;background:var(--navy-300);overflow:hidden;margin:0 70px 20px"><div style="height:100%;width:33%;border-radius:99px;background:var(--navy-700)"></div></div>
-            <div style="margin:0 70px;background:#fff;border:1px solid rgb(220 231 244/.7);border-radius:24px;padding:30px 32px;box-shadow:var(--lifted)">
-              <span style="display:inline-flex;background:rgb(220 231 244/.6);color:var(--navy-700);font-weight:600;font-size:12px;padding:2px 10px;border-radius:99px;box-shadow:inset 0 0 0 1px rgb(143 180 220/.5)">Chapter 3</span>
-              <p class="disp" style="font-size:24px;line-height:1.35;color:var(--ink);margin-top:14px">Why did you choose a descriptive cross-sectional survey design for this study?</p>
-              <div style="margin-top:20px;border:1px solid rgb(220 231 244/.7);border-radius:8px;background:#fff;box-shadow:var(--raised);padding:14px 16px;min-height:96px;font-size:15px;color:var(--ink);line-height:1.6">It let me measure knowledge, perceived risk factors and information sources among the antenatal women at one point in time, which is exactly what the objectives needed.<span style="display:inline-block;width:2px;height:18px;background:var(--navy-500);vertical-align:-3px;margin-left:2px"></span></div>
-              <div style="margin-top:16px;display:flex;align-items:center;gap:12px"><span style="background:var(--navy-700);color:#fff;font-weight:600;font-size:14px;padding:10px 18px;border-radius:8px;box-shadow:var(--raised)">Submit answer</span><span style="font-size:12px;color:var(--ink-muted)">You cannot come back to this one.</span></div>
-            </div>
-          </div>
-
-          <!-- readiness result -->
-          <div class="ready" style="max-width:560px;margin:0 auto;position:absolute;left:0;right:0;top:8px">
-            <div style="background:#fff;border:1px solid rgb(220 231 244/.7);border-radius:24px;padding:38px 34px;text-align:center;box-shadow:var(--lifted)">
-              <p class="eyebrow gold">Readiness</p>
-              <p class="num" style="margin-top:12px;font-size:78px;font-weight:600;line-height:1;letter-spacing:-.03em;color:var(--ink)"><span class="count"></span><span style="font-size:26px;font-weight:500;color:var(--ink-muted);vertical-align:top;margin-left:2px">%</span></p>
-              <div class="meter" style="margin:22px 40px 0;height:10px;border-radius:99px;background:var(--navy-100);overflow:hidden;box-shadow:inset 0 1px 2px rgb(5 38 89/.12)"><div class="fill" style="height:100%;width:100%;border-radius:99px;background:var(--gold)"></div></div>
-              <p class="band disp" style="margin-top:22px;font-size:26px;font-weight:600;color:var(--ink)">Nearly there</p>
-              <p class="note" style="margin-top:8px;font-size:14px;line-height:1.55;color:var(--ink-muted);max-width:420px;margin-left:auto;margin-right:auto">Solid across most of it. Tighten the ones you were vague on. Weighted by difficulty, so defending a choice counts for more than recalling a fact.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="caption"><p class="eyebrow k">The north star</p><h3>Sit a mock defense. Get a real readiness score.</h3></div>
+    <div class="cap"><p class="eyebrow k">Test what you know</p>
+      <h3>Multiple choice, from your own work.</h3>
+      <p>Every option is something your project could have said — and the answer shows the passage it came from.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/quiz</div></div>
+      <div class="vp"><img class="shot" src="captures/06-quiz-answered.png" alt=""></div></div>
   </section>
 
-  <!-- ============ S6 — CTA ============ -->
+  <!-- S6 MOCK DEFENSE -->
   <section class="scene s6">
-    <div class="field">
-      <div class="rules"></div>
-      <div class="hookmark"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg></div>
-      <h1 style="margin-top:28px;font-size:66px">Defense, ready.</h1>
-      <p class="sub">Understand it. Remember it. Practise it. Defend it.</p>
-      <p class="url">academia-scribes.netlify.app</p>
-    </div>
+    <div class="cap"><p class="eyebrow k">The north star</p>
+      <h3>Sit a mock defense.</h3>
+      <p>Answer as you would in the room. Each answer is marked against what your project actually says.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>academia-scribes.netlify.app/projects/defense</div></div>
+      <div class="vp"><img class="shot" src="captures/08-defense-sitting.png" alt="" style="top:12px"></div></div>
   </section>
+
+  <!-- S7 CTA -->
+  <section class="scene s7"><div class="field"><div class="rules"></div>
+    <div class="hookmark"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg></div>
+    <h1 style="margin-top:28px;font-size:64px">Defense, ready.</h1>
+    <p class="sub">Understand it. Remember it. Practice it. Defend it.</p>
+    <p class="url">academia-scribes.netlify.app</p>
+  </div></section>
 
 </div>
 </body>
