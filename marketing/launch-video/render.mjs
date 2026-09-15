@@ -30,7 +30,8 @@ const run = async () => {
   mkdirSync(framesDir, { recursive: true });
 
   const browser = await chromium.launch({ executablePath: chromiumExe(), args: ['--no-sandbox', '--force-color-profile=srgb', '--hide-scrollbars'] });
-  const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
+  const scale = +(process.env.SCALE || 1.5);
+  const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: scale });
   await page.goto(pathToFileURL(join(here, comp)).href, { waitUntil: 'networkidle' });
   await page.evaluate(async () => { await document.fonts.ready; });
 
@@ -44,9 +45,9 @@ const run = async () => {
     await page.evaluate((ms) => {
       for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = ms; } catch (e) {} }
     }, t);
-    await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
-    await stage.screenshot({ path: join(framesDir, `f_${String(i).padStart(5, '0')}.png`) });
-    if (i % 60 === 0) console.log(`  ${i}/${total}`);
+    await page.evaluate(() => new Promise(r => requestAnimationFrame(r)));
+    await stage.screenshot({ path: join(framesDir, `f_${String(i).padStart(5, '0')}.png`), animations: 'disabled' });
+    if (i % 30 === 0) { process.stdout.write(`  ${i}/${total}\n`); }
   }
   await browser.close();
 
