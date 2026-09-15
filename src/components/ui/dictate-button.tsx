@@ -20,7 +20,17 @@ import { IconMic } from "@/components/icons";
  * deltas - interim included, which is corrected on every event, not appended. baseTextRef
  * holds what was already in the box before this listening session started, so turning the
  * mic on twice appends to what is there rather than overwriting the answer typed before it.
+ *
+ * Stopping is not instant. `recognition.stop()` asks the engine to wind down, but it can
+ * keep finalising whatever audio was already in flight for a moment before it actually
+ * fires `onend` - and `listening` only used to flip off inside that callback, so the button
+ * sat there saying "Listening… tap to stop" for a beat after being tapped, reading as
+ * unresponsive rather than working. A third state (`stopping`) closes that gap: the tap is
+ * acknowledged immediately with its own label, honestly, rather than either lying about
+ * having already stopped or leaving the button looking like the click did nothing.
  */
+type MicState = "idle" | "listening" | "stopping";
+
 export function DictateButton({
   targetRef,
   className,
@@ -33,7 +43,7 @@ export function DictateButton({
   // window unconditionally: this component is only ever loaded via next/dynamic with
   // ssr:false (see sitting.tsx), so it never runs anywhere but a real browser.
   const [supported] = useState(() => !!(window.SpeechRecognition ?? window.webkitSpeechRecognition));
-  const [listening, setListening] = useState(false);
+  const [micState, setMicState] = useState<MicState>("idle");
   const [deniedMic, setDeniedMic] = useState(false);
   const recognitionRef = useRef<InstanceType<SpeechRecognitionCtor> | null>(null);
   const baseTextRef = useRef("");
@@ -71,10 +81,10 @@ export function DictateButton({
       if (event.error === "not-allowed" || event.error === "service-not-allowed") {
         setDeniedMic(true);
       }
-      setListening(false);
+      setMicState("idle");
     };
 
-    recognition.onend = () => setListening(false);
+    recognition.onend = () => setMicState("idle");
 
     recognitionRef.current = recognition;
     return () => recognition.stop();
@@ -84,9 +94,11 @@ export function DictateButton({
 
   const toggle = () => {
     const recognition = recognitionRef.current;
-    if (!recognition) return;
+    if (!recognition || micState === "stopping") return;
 
-    if (listening) {
+    if (micState === "listening") {
+      // Acknowledged now, not once onend eventually fires - see the note above.
+      setMicState("stopping");
       recognition.stop();
       return;
     }
@@ -95,32 +107,40 @@ export function DictateButton({
     const current = targetRef.current?.value ?? "";
     baseTextRef.current = current ? `${current} ` : "";
     recognition.start();
-    setListening(true);
+    setMicState("listening");
   };
+
+  const listening = micState === "listening";
+  const stopping = micState === "stopping";
 
   return (
     <div className={`inline-flex items-center gap-2 ${className ?? ""}`}>
       <button
         type="button"
         onClick={toggle}
+        disabled={stopping}
         aria-pressed={listening}
+        aria-busy={stopping}
         className={`press inline-flex items-center gap-2 rounded-control border px-3 py-1.5 text-sm font-medium
-          transition-[background-color,border-color,color] duration-150
+          transition-[background-color,border-color,color,opacity] duration-150
+          disabled:cursor-not-allowed
           ${
-            listening
+            listening || stopping
               ? "border-danger/40 bg-danger/8 text-danger hover:bg-danger/15"
               : "border-navy-300 bg-surface text-brand shadow-hairline hover:border-navy-500 hover:bg-navy-050"
           }`}
       >
-        {listening ? (
+        {listening || stopping ? (
           <span className="relative flex size-2.5">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-danger opacity-75" />
-            <span className="relative inline-flex size-2.5 rounded-full bg-danger" />
+            {listening && (
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-danger opacity-75" />
+            )}
+            <span className={`relative inline-flex size-2.5 rounded-full bg-danger ${stopping ? "opacity-50" : ""}`} />
           </span>
         ) : (
           <IconMic className="size-4" />
         )}
-        {listening ? "Listening… tap to stop" : "Dictate"}
+        {stopping ? "Stopping…" : listening ? "Listening… tap to stop" : "Dictate"}
       </button>
       {deniedMic && (
         <p className="text-xs text-danger">Microphone access was denied.</p>
