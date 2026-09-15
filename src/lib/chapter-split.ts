@@ -45,6 +45,14 @@ import "server-only";
  *   PDF's text layer follows visual line breaks rather than logical ones. A lone "CHAPTER"
  *   line immediately followed by a lone number word is now treated as one heading, anchored
  *   at the "CHAPTER" line.
+ *
+ * Neither explained the next real miss: the document itself had "CHAPER FIVE" - a typo,
+ * missing the T, in the student's own file. No amount of layout tolerance catches a
+ * misspelling, so the word "chapter" is now matched within one typo (one inserted, deleted,
+ * or substituted letter) rather than only literally - enough to survive a slipped keystroke
+ * without also matching unrelated words, since a genuine seven-letter collision one edit
+ * away from "chapter" immediately followed by "one" through "five" is not a realistic false
+ * positive.
  */
 
 export type ChapterSplit = {
@@ -69,11 +77,12 @@ const CHAPTER_WORDS: Record<string, number> = {
 // Up to a handful of non-letter characters (a page number, a bullet, stray whitespace) may
 // share the line before the word "chapter" itself - a running header or page footer merged
 // onto the same line by extraction, not part of the heading.
-const HEADING = /^[^a-z]{0,10}chapter\s+(one|two|three|four|five|[1-5])\b\s*[:.\-–]?\s*(.*)$/i;
+const LEADING_NOISE = /^[^a-z]{0,10}/i;
+const HEADING_WORDS = /^([a-z]+)\s+(one|two|three|four|five|[1-5])\b\s*[:.\-–]?\s*(.*)$/i;
 
 // A heading whose number was pushed to its own line by a centred layout: "CHAPTER" alone,
 // then just the number word on the next non-blank line.
-const LONE_CHAPTER_LINE = /^[^a-z]{0,10}chapter\s*[:.\-–]?$/i;
+const LONE_WORD_LINE = /^([a-z]+)\s*[:.\-–]?$/i;
 const LONE_NUMBER_LINE = /^(one|two|three|four|five|[1-5])\b\s*[:.\-–]?\s*(.*)$/i;
 
 // A real chapter of a final-year project runs to many pages. Anything shorter than this
@@ -87,32 +96,28 @@ export function splitByChapter(text: string): ChapterSplit[] | null {
   // entry and the real section start for the same chapter both land here; picking the
   // right one happens below.
   const occurrences = new Map<number, number[]>();
+  const record = (chapter: number, lineIndex: number) => {
+    const list = occurrences.get(chapter) ?? [];
+    list.push(lineIndex);
+    occurrences.set(chapter, list);
+  };
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
 
-    const match = HEADING.exec(line);
-    if (match) {
-      const chapter = CHAPTER_WORDS[match[1].toLowerCase()];
-      if (chapter !== undefined) {
-        const list = occurrences.get(chapter) ?? [];
-        list.push(i);
-        occurrences.set(chapter, list);
-      }
+    const chapterFromLine = matchHeadingLine(line);
+    if (chapterFromLine !== null) {
+      record(chapterFromLine, i);
       continue;
     }
 
-    if (LONE_CHAPTER_LINE.test(line)) {
+    if (matchLoneChapterLine(line)) {
       const next = nextNonBlank(lines, i + 1);
       if (next) {
         const numberMatch = LONE_NUMBER_LINE.exec(next.text);
         const chapter = numberMatch ? CHAPTER_WORDS[numberMatch[1].toLowerCase()] : undefined;
-        if (chapter !== undefined) {
-          const list = occurrences.get(chapter) ?? [];
-          list.push(i);
-          occurrences.set(chapter, list);
-        }
+        if (chapter !== undefined) record(chapter, i);
       }
     }
   }
@@ -159,6 +164,62 @@ export function splitByChapter(text: string): ChapterSplit[] | null {
 
 function last<T>(arr: T[]): T {
   return arr[arr.length - 1];
+}
+
+// Chapter number if `line` opens with "chapter" (within one typo) followed by a number
+// word, after stripping any leading page-number/header noise - null otherwise.
+function matchHeadingLine(line: string): number | null {
+  const rest = line.slice(LEADING_NOISE.exec(line)?.[0].length ?? 0);
+  const match = HEADING_WORDS.exec(rest);
+  if (!match || !isChapterWord(match[1])) return null;
+  return CHAPTER_WORDS[match[2].toLowerCase()];
+}
+
+// True if `line` is nothing but "chapter" (within one typo), possibly with leading noise
+// and trailing punctuation - the first half of a heading split across two lines.
+function matchLoneChapterLine(line: string): boolean {
+  const rest = line.slice(LEADING_NOISE.exec(line)?.[0].length ?? 0);
+  const match = LONE_WORD_LINE.exec(rest);
+  return !!match && isChapterWord(match[1]);
+}
+
+const CHAPTER_TARGET = "chapter";
+
+function isChapterWord(word: string): boolean {
+  const w = word.toLowerCase();
+  if (w === CHAPTER_TARGET) return true;
+  if (Math.abs(w.length - CHAPTER_TARGET.length) > 1) return false;
+  return editDistanceAtMostOne(w, CHAPTER_TARGET);
+}
+
+// True if `a` and `b` differ by at most one inserted, deleted, or substituted character.
+// A real chapter heading survives a single slipped keystroke ("CHAPER FIVE") without also
+// matching some unrelated word that happens to be one edit away from "chapter".
+function editDistanceAtMostOne(a: string, b: string): boolean {
+  if (a === b) return true;
+  const [shorter, longer] = a.length <= b.length ? [a, b] : [b, a];
+  if (longer.length - shorter.length > 1) return false;
+
+  let i = 0;
+  let j = 0;
+  let usedEdit = false;
+  const sameLength = shorter.length === longer.length;
+  while (i < shorter.length && j < longer.length) {
+    if (shorter[i] === longer[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (usedEdit) return false;
+    usedEdit = true;
+    if (sameLength) {
+      i++;
+      j++;
+    } else {
+      j++;
+    }
+  }
+  return true;
 }
 
 // The first non-blank line at or after `from`, skipped over when a heading's number has
