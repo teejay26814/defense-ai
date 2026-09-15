@@ -26,6 +26,11 @@ const PUBLIC_ROUTES = [
   // silently never activate. It is not unprotected: it authenticates by verifying an HMAC
   // signature over the raw body, which is a stronger check than a session cookie.
   "/api/webhooks",
+  // Netlify Background Functions, called server-to-server from a server action with no
+  // student session to send - the same shape as the webhook above, and guarded the same
+  // way, with its own HMAC signature (src/lib/internal-signing.ts) verified inside the
+  // function itself rather than by a cookie this caller does not have.
+  "/.netlify/functions",
 ];
 
 /**
