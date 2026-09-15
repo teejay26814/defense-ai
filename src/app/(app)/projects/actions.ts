@@ -4,9 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { splitByChapter, wordCount } from "@/lib/chapter-split";
 import { extractText, ExtractionError } from "@/lib/extract";
 import { indexDocument } from "@/lib/indexing";
-import { STORAGE_BUCKET } from "@/lib/types";
+import { CHAPTERS, STORAGE_BUCKET } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 import {
   documentMetaSchema,
@@ -233,35 +234,135 @@ export async function uploadDocument(
   let indexNote = "";
   try {
     const result = await extractText(buffer, file.type, cleanName);
-    await supabase
-      .from("documents")
-      .update({
-        status: "ready",
-        content: result.text,
-        word_count: result.wordCount,
-        page_count: result.pageCount,
-        error_message: null,
-      })
-      .eq("id", doc.id)
-      .eq("user_id", user.id);
 
-    // Indexing is deliberately in its own try. Extraction is what makes the document
-    // usable at all; search is an enhancement on top. A retrieval outage should not make
-    // a successful upload look like a failure, so a failure here is reported as a caveat
-    // and the chunks can be rebuilt later with "Try again".
-    try {
-      const indexed = await indexDocument(supabase, {
-        documentId: doc.id,
-        projectId,
-        userId: user.id,
-        text: result.text,
-      });
-      indexNote = indexed.skipped
-        ? ` ${indexed.chunkCount} sections saved - ${indexed.skipped}.`
-        : ` ${indexed.embeddedCount} of ${indexed.chunkCount} sections are searchable.`;
-    } catch (err) {
-      console.error("[uploadDocument] indexing failed", err);
-      indexNote = " It could not be made searchable yet - use “Try again” on the document.";
+    // No chapter was picked, which is the signal a student uses to say "this is more than
+    // one chapter" - so look for real chapter breaks before treating it as one document.
+    // If nothing confident is found, split is null and everything below behaves exactly as
+    // it did before this existed: one row, the whole text, chapter left blank.
+    const split = meta.data.chapter === undefined ? splitByChapter(result.text) : null;
+
+    if (!split) {
+      await supabase
+        .from("documents")
+        .update({
+          status: "ready",
+          content: result.text,
+          word_count: result.wordCount,
+          page_count: result.pageCount,
+          error_message: null,
+        })
+        .eq("id", doc.id)
+        .eq("user_id", user.id);
+
+      try {
+        const indexed = await indexDocument(supabase, {
+          documentId: doc.id,
+          projectId,
+          userId: user.id,
+          text: result.text,
+        });
+        indexNote = indexed.skipped
+          ? ` ${indexed.chunkCount} sections saved - ${indexed.skipped}.`
+          : ` ${indexed.embeddedCount} of ${indexed.chunkCount} sections are searchable.`;
+      } catch (err) {
+        console.error("[uploadDocument] indexing failed", err);
+        indexNote = " It could not be made searchable yet - use “Try again” on the document.";
+      }
+    } else {
+      // A confident split. The already-inserted row becomes chapter one rather than being
+      // discarded, and one more row is created per remaining chapter found - each gets its
+      // own real copy of the uploaded bytes in storage, not a shared reference, so deleting
+      // or retrying any single chapter later never touches the others.
+      //
+      // Page count is left null on every split-derived row: extractText's page count
+      // describes the whole uploaded file, and attributing all of it to just one chapter's
+      // slice would be a made-up number, not an estimate.
+      const chapterLabel = (n: number) => CHAPTERS.find((c) => c.value === n)?.label ?? `Chapter ${n}`;
+      let embeddedTotal = 0;
+      let chunkTotal = 0;
+      let anySkipped = false;
+      let failures = 0;
+
+      for (let i = 0; i < split.length; i++) {
+        const part = split[i];
+        const isFirst = i === 0;
+
+        try {
+          let documentId: string;
+
+          if (isFirst) {
+            documentId = doc.id;
+            await supabase
+              .from("documents")
+              .update({
+                status: "ready",
+                chapter: part.chapter,
+                label: `${meta.data.label} - ${chapterLabel(part.chapter)}`,
+                content: part.text,
+                word_count: wordCount(part.text),
+                page_count: null,
+                error_message: null,
+              })
+              .eq("id", doc.id)
+              .eq("user_id", user.id);
+          } else {
+            const partPath = `${user.id}/${projectId}/${crypto.randomUUID()}.${ext}`;
+            const { error: partUploadError } = await supabase.storage
+              .from(STORAGE_BUCKET)
+              .upload(partPath, buffer, {
+                contentType: file.type || "application/octet-stream",
+                upsert: false,
+              });
+            if (partUploadError) throw partUploadError;
+
+            const { data: partDoc, error: partInsertError } = await supabase
+              .from("documents")
+              .insert({
+                project_id: projectId,
+                user_id: user.id,
+                label: `${meta.data.label} - ${chapterLabel(part.chapter)}`,
+                chapter: part.chapter,
+                file_name: cleanName,
+                storage_path: partPath,
+                mime_type: file.type || "application/octet-stream",
+                size_bytes: file.size,
+                status: "ready",
+                content: part.text,
+                word_count: wordCount(part.text),
+                page_count: null,
+              })
+              .select("id")
+              .single();
+
+            if (partInsertError || !partDoc) {
+              await supabase.storage.from(STORAGE_BUCKET).remove([partPath]);
+              throw partInsertError ?? new Error("insert failed");
+            }
+            documentId = partDoc.id;
+          }
+
+          const indexed = await indexDocument(supabase, {
+            documentId,
+            projectId,
+            userId: user.id,
+            text: part.text,
+          });
+          chunkTotal += indexed.chunkCount;
+          embeddedTotal += indexed.embeddedCount;
+          if (indexed.skipped) anySkipped = true;
+        } catch (err) {
+          console.error(`[uploadDocument] chapter ${part.chapter} failed`, err);
+          failures++;
+        }
+      }
+
+      const ok = split.length - failures;
+      indexNote =
+        ` Split into ${ok} chapter${ok === 1 ? "" : "s"}` +
+        (failures > 0 ? `, ${failures} could not be saved` : "") +
+        (anySkipped
+          ? ` - ${chunkTotal} sections saved, some not yet searchable.`
+          : ` - ${embeddedTotal} of ${chunkTotal} sections are searchable.`);
     }
   } catch (err) {
     const message =
@@ -321,7 +422,7 @@ export async function retryExtraction(formData: FormData) {
 
   const { data: doc } = await supabase
     .from("documents")
-    .select("id, project_id, storage_path, mime_type, file_name")
+    .select("id, project_id, storage_path, mime_type, file_name, chapter")
     .eq("id", id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -350,13 +451,25 @@ export async function retryExtraction(formData: FormData) {
 
   try {
     const result = await extractText(await blob.arrayBuffer(), doc.mime_type, doc.file_name);
+
+    // If this row belongs to a chapter, try to re-isolate just that chapter's text from
+    // the freshly re-extracted whole file, the same way the original upload did. A row
+    // created from a single-chapter upload will not find a confident split here either
+    // (there is only one chapter's worth of text to search), so this falls back to the
+    // full re-extracted text exactly as it always did.
+    const isolated =
+      doc.chapter !== null
+        ? splitByChapter(result.text)?.find((s) => s.chapter === doc.chapter)
+        : null;
+    const text = isolated?.text ?? result.text;
+
     await supabase
       .from("documents")
       .update({
         status: "ready",
-        content: result.text,
-        word_count: result.wordCount,
-        page_count: result.pageCount,
+        content: text,
+        word_count: isolated ? wordCount(text) : result.wordCount,
+        page_count: isolated ? null : result.pageCount,
         error_message: null,
       })
       .eq("id", id)
@@ -370,7 +483,7 @@ export async function retryExtraction(formData: FormData) {
         documentId: id,
         projectId: doc.project_id,
         userId: user.id,
-        text: result.text,
+        text,
       });
     } catch (indexErr) {
       console.error("[retryExtraction] indexing failed", indexErr);
