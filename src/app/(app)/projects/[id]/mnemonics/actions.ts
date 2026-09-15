@@ -1,12 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { requestMnemonics } from "@/lib/n8n";
-import { withUsage } from "@/lib/usage";
+import { fireBackgroundJob } from "@/lib/background-job";
 import { assertWithinPlan, PlanLimitError } from "@/lib/plans";
 import { toFieldErrors } from "@/lib/validation/auth";
 
@@ -14,6 +12,8 @@ export type MnemonicsState = {
   error?: string;
   notice?: string;
   fieldErrors?: Record<string, string[]>;
+  /** Set once a background job has been started, so the form can poll it. */
+  jobId?: string;
 };
 
 const schema = z.object({ projectId: z.string().uuid() });
@@ -90,71 +90,44 @@ export async function generateMnemonics(
   // the opening chunks rather than sampling evenly across the whole project.
   const sampled = all.slice(0, MAX_CHUNKS);
 
-  let generated;
-  try {
-    const result = await withUsage(
-      supabase,
-      {
-        userId: user.id,
-        projectId,
-        operation: "mnemonics",
-        chunksSent: sampled.length,
-      },
-      () =>
-        requestMnemonics({
-          projectId,
-          userId: user.id,
-          chunks: sampled.map((c) => ({
-            id: c.id as string,
-            chapter: c.chapter as number | null,
-            label: c.label as string | null,
-            content: c.content as string,
-          })),
-        }),
-      (r) => r.mnemonics?.length ?? 0,
-    );
-    generated = result.mnemonics;
-  } catch (err) {
-    console.error("[generateMnemonics] generation failed", err);
-    return { error: "The memory aids could not be generated. Please try again." };
-  }
-
-  if (!generated?.length) {
-    return {
-      error:
-        "No clear lists were found in your chapters yet. Memory aids work best on numbered " +
-        "objectives, research questions, or limitations.",
-    };
-  }
-
-  await supabase.from("mnemonics").delete().eq("project_id", projectId);
-
-  const toInsert = generated.map((m) => {
-    const sources = m.sourceIndexes
-      .map((i) => sampled[i])
-      .filter((c): c is (typeof sampled)[number] => Boolean(c));
-    const chapters = new Set(sources.map((c) => c.chapter));
-
-    return {
-      project_id: projectId,
+  const { data: job, error: jobError } = await supabase
+    .from("generation_jobs")
+    .insert({
       user_id: user.id,
-      chapter: chapters.size === 1 ? ([...chapters][0] as number | null) : null,
-      title: m.title,
-      items: m.items,
-      aid: m.aid,
-      explanation: m.explanation,
-    };
-  });
+      project_id: projectId,
+      operation: "mnemonics",
+    })
+    .select("id")
+    .single();
 
-  const { error: insertError } = await supabase.from("mnemonics").insert(toInsert);
-
-  if (insertError) {
-    console.error("[generateMnemonics] insert failed", insertError);
-    return { error: "The memory aids could not be saved. Please try again." };
+  if (jobError || !job) {
+    console.error("[generateMnemonics] job creation failed", jobError);
+    return { error: "Could not start generation. Please try again." };
   }
 
-  revalidatePath(`/projects/${projectId}/mnemonics`);
+  try {
+    await fireBackgroundJob("generate-mnemonics", {
+      jobId: job.id as string,
+      projectId,
+      userId: user.id,
+      chunks: sampled.map((c) => ({
+        id: c.id as string,
+        chapter: c.chapter as number | null,
+        label: c.label as string | null,
+        content: c.content as string,
+      })),
+    });
+  } catch (err) {
+    console.error("[generateMnemonics] background hand-off failed", err);
+    await supabase
+      .from("generation_jobs")
+      .update({ status: "failed", error: "Could not start generation." })
+      .eq("id", job.id as string);
+    return { error: "Could not start generation. Please try again." };
+  }
+
   return {
-    notice: `${toInsert.length} memory aid${toInsert.length === 1 ? "" : "s"} ready.`,
+    jobId: job.id as string,
+    notice: "Looking for the lists in your chapters - this can take up to a minute.",
   };
 }

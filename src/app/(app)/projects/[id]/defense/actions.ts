@@ -5,8 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { requestEvaluation } from "@/lib/n8n";
-import { withUsage } from "@/lib/usage";
+import { fireBackgroundJob } from "@/lib/background-job";
 import { DEFENSE_SCOPES } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 
@@ -14,6 +13,8 @@ export type DefenseState = {
   error?: string;
   notice?: string;
   fieldErrors?: Record<string, string[]>;
+  /** Set once a background job has been started, so the sitting can poll it. */
+  jobId?: string;
 };
 
 const startSchema = z.object({
@@ -89,9 +90,17 @@ const answerSchema = z.object({
 /**
  * Mark one answer and store it.
  *
- * The reference answer is read here, under the student's session, and passed to n8n with
- * the question. n8n is given nothing else: no chunks, no project. An examiner that can see
- * the whole project starts marking the project, which is the one thing this must not do.
+ * The reference answer is read here, under the student's session, and handed to a Netlify
+ * Background Function along with the question - nothing else: no chunks, no project. An
+ * examiner that can see the whole project starts marking the project, which is the one
+ * thing this must not do.
+ *
+ * Marking does not happen in this request. It is a real model call and can run past
+ * Netlify's 10-second limit on a synchronous function - confirmed live: a marking attempt
+ * left no record in ai_usage at all, the same signature as the questions bug before it,
+ * because the process that would have logged the failure was the one being killed. This
+ * action does the fast, RLS-checked part and hands the marking off; the sitting polls
+ * `getGenerationJobStatus` and moves to the next question once the answer is saved.
  */
 export async function submitAnswer(
   _prev: DefenseState,
@@ -137,46 +146,42 @@ export async function submitAnswer(
     return { error: "Marking is not connected yet." };
   }
 
-  let mark;
+  const { data: job, error: jobError } = await supabase
+    .from("generation_jobs")
+    .insert({
+      user_id: user.id,
+      project_id: projectId,
+      operation: "evaluate",
+    })
+    .select("id")
+    .single();
+
+  if (jobError || !job) {
+    console.error("[submitAnswer] job creation failed", jobError);
+    return { error: "Could not start marking. Please try again." };
+  }
+
   try {
-    mark = await withUsage(
-      supabase,
-      { userId: user.id, projectId, operation: "answer", chunksSent: 1 },
-      () =>
-        requestEvaluation({
-          projectId,
-          userId: user.id,
-          question: question.question as string,
-          answer,
-          modelAnswer: question.model_answer as string,
-        }),
-    );
+    await fireBackgroundJob("evaluate-answer", {
+      jobId: job.id as string,
+      sessionId,
+      projectId,
+      userId: user.id,
+      questionId,
+      question: question.question as string,
+      answer,
+      modelAnswer: question.model_answer as string,
+    });
   } catch (err) {
-    console.error("[submitAnswer] evaluation failed", err);
-    return { error: "That answer could not be marked. Please try again." };
+    console.error("[submitAnswer] background hand-off failed", err);
+    await supabase
+      .from("generation_jobs")
+      .update({ status: "failed", error: "Could not start marking." })
+      .eq("id", job.id as string);
+    return { error: "Could not start marking. Please try again." };
   }
 
-  const { error: insertError } = await supabase.from("defense_answers").insert({
-    session_id: sessionId,
-    project_id: projectId,
-    user_id: user.id,
-    question_id: questionId,
-    question: question.question as string,
-    answer,
-    model_answer: question.model_answer as string,
-    score: mark.score,
-    covered: mark.covered,
-    missed: mark.missed,
-    feedback: mark.feedback,
-  });
-
-  if (insertError) {
-    console.error("[submitAnswer] insert failed", insertError);
-    return { error: "That answer could not be saved. Please try again." };
-  }
-
-  revalidatePath(`/projects/${projectId}/defense/${sessionId}`);
-  return { notice: "Marked." };
+  return { jobId: job.id as string, notice: "Marking…" };
 }
 
 const finishSchema = z.object({

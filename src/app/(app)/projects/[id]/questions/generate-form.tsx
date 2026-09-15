@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 
-import { generateQuestions, getGenerationJobStatus, type QuestionsState } from "./actions";
+import { generateQuestions, type QuestionsState } from "./actions";
 import { FormMessage, SelectField, SubmitButton } from "@/components/ui/form";
+import { getGenerationJobStatus } from "@/lib/generation-jobs";
 import { DEFENSE_SCOPES } from "@/lib/types";
 
 const initialState: QuestionsState = {};

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { signInternal } from "@/lib/internal-signing";
+import { fireBackgroundJob } from "@/lib/background-job";
 import { assertWithinPlan, PlanLimitError } from "@/lib/plans";
 import { DEFENSE_SCOPES } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
@@ -92,13 +92,6 @@ export async function generateQuestions(
     };
   }
 
-  const internalSecret = process.env.INTERNAL_JOB_SECRET;
-  const siteUrl = process.env.URL ?? process.env.NEXT_PUBLIC_SITE_URL;
-  if (!internalSecret || !siteUrl) {
-    console.error("[generateQuestions] INTERNAL_JOB_SECRET or site URL not configured");
-    return { error: "Question generation is not configured on this deployment yet." };
-  }
-
   const chapters = DEFENSE_SCOPES.find((s) => s.value === scope)!.chapters;
 
   // Only embedded chunks: a chunk that never made it into the index is one the rest of the
@@ -148,37 +141,20 @@ export async function generateQuestions(
     return { error: "Could not start generation. Please try again." };
   }
 
-  const body = JSON.stringify({
-    jobId: job.id as string,
-    projectId,
-    userId: user.id,
-    scope,
-    count,
-    chunks: sampled.map((c) => ({
-      id: c.id as string,
-      chapter: c.chapter as number | null,
-      label: c.label as string | null,
-      content: c.content as string,
-    })),
-  });
-  const timestamp = String(Date.now());
-
   try {
-    const res = await fetch(new URL("/.netlify/functions/generate-questions", siteUrl), {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-academia-signature": signInternal(internalSecret, timestamp, body),
-        "x-academia-timestamp": timestamp,
-      },
-      body,
+    await fireBackgroundJob("generate-questions", {
+      jobId: job.id as string,
+      projectId,
+      userId: user.id,
+      scope,
+      count,
+      chunks: sampled.map((c) => ({
+        id: c.id as string,
+        chapter: c.chapter as number | null,
+        label: c.label as string | null,
+        content: c.content as string,
+      })),
     });
-
-    // A background function acknowledges with 202 in milliseconds - anything else means
-    // the hand-off itself failed, before the slow part even started.
-    if (res.status !== 202) {
-      throw new Error(`background function responded ${res.status}`);
-    }
   } catch (err) {
     console.error("[generateQuestions] background hand-off failed", err);
     await supabase
@@ -191,40 +167,6 @@ export async function generateQuestions(
   return {
     jobId: job.id as string,
     notice: "Generating your questions - this can take up to a minute.",
-  };
-}
-
-const jobStatusSchema = z.object({ jobId: z.string().uuid() });
-
-export type GenerationJobStatus = {
-  status: "pending" | "succeeded" | "failed";
-  resultCount: number | null;
-  error: string | null;
-};
-
-/** Polled by the form while a background job runs. RLS scopes this to the student's own job. */
-export async function getGenerationJobStatus(
-  jobId: string,
-): Promise<GenerationJobStatus | null> {
-  const parsed = jobStatusSchema.safeParse({ jobId });
-  if (!parsed.success) return null;
-
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("generation_jobs")
-    .select("status, result_count, error")
-    .eq("id", parsed.data.jobId)
-    .maybeSingle();
-
-  if (!data) return null;
-
-  // Not revalidated here: the client stops polling and calls router.refresh() itself once
-  // it sees "succeeded", which re-fetches the question list along with everything else on
-  // the page in one navigation rather than two.
-  return {
-    status: data.status as GenerationJobStatus["status"],
-    resultCount: data.result_count as number | null,
-    error: data.error as string | null,
   };
 }
 
