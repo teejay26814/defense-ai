@@ -139,7 +139,7 @@ export function StudySession({
           className="rounded text-sm text-ink-muted underline-offset-4
             transition-colors duration-150 hover:text-brand hover:underline"
         >
-          Leave session
+          Browse all as a list
         </button>
       </div>
 
