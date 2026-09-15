@@ -20,3 +20,9 @@
 [build.environment]
   # Next 16 requires Node 20 or newer. Pinned so a builder default cannot move underneath us.
   NODE_VERSION = "22"
+
+[functions]
+  # Custom functions alongside the zero-config Next.js Runtime - used for work that
+  # genuinely cannot finish inside the 10-second limit Netlify puts on a normal request,
+  # such as generating a set of defense questions. See netlify/functions/generate-questions.mts.
+  directory = "netlify/functions"

@@ -5,16 +5,17 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { requestQuestions } from "@/lib/n8n";
-import { withUsage } from "@/lib/usage";
+import { signInternal } from "@/lib/internal-signing";
 import { assertWithinPlan, PlanLimitError } from "@/lib/plans";
-import { DEFENSE_SCOPES, type DefenseScope } from "@/lib/types";
+import { DEFENSE_SCOPES } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 
 export type QuestionsState = {
   error?: string;
   notice?: string;
   fieldErrors?: Record<string, string[]>;
+  /** Set once a background job has been started, so the form can poll it. */
+  jobId?: string;
 };
 
 const generateSchema = z.object({
@@ -31,12 +32,20 @@ const generateSchema = z.object({
 const MAX_CHUNKS = 40;
 
 /**
- * Generate defense questions from the student's own chapters.
+ * Start generating defense questions from the student's own chapters.
  *
  * Chunks are read straight from Postgres under the student's session rather than through
  * the vector index. That is deliberate: retrieval finds passages *similar to a question*,
  * but here there is no question yet - we want coverage. Reading rows directly also keeps
  * Pinecone, and its cost, out of this path entirely.
+ *
+ * The actual call to n8n does not happen here. A real question set takes 30-90 seconds,
+ * and Netlify kills a normal request at 10 - long enough that every live attempt was
+ * getting cut off mid-generation, with nothing saved and no record of what happened,
+ * because the process logging the failure was the one being killed. This action does the
+ * fast, RLS-checked part (auth, plan limit, reading chunks) and hands off the slow part to
+ * a Netlify Background Function, which gets up to 15 minutes. The form polls
+ * `getGenerationJobStatus` for the result.
  */
 export async function generateQuestions(
   _prev: QuestionsState,
@@ -83,6 +92,13 @@ export async function generateQuestions(
     };
   }
 
+  const internalSecret = process.env.INTERNAL_JOB_SECRET;
+  const siteUrl = process.env.URL ?? process.env.NEXT_PUBLIC_SITE_URL;
+  if (!internalSecret || !siteUrl) {
+    console.error("[generateQuestions] INTERNAL_JOB_SECRET or site URL not configured");
+    return { error: "Question generation is not configured on this deployment yet." };
+  }
+
   const chapters = DEFENSE_SCOPES.find((s) => s.value === scope)!.chapters;
 
   // Only embedded chunks: a chunk that never made it into the index is one the rest of the
@@ -116,77 +132,99 @@ export async function generateQuestions(
   const step = Math.max(1, Math.ceil(all.length / MAX_CHUNKS));
   const sampled = all.filter((_, i) => i % step === 0).slice(0, MAX_CHUNKS);
 
-  let generated;
-  try {
-    const result = await withUsage(
-      supabase,
-      {
-        userId: user.id,
-        projectId,
-        operation: "questions",
-        chunksSent: sampled.length,
-      },
-      () =>
-        requestQuestions({
-          projectId,
-          userId: user.id,
-          scope: scope as DefenseScope,
-          count,
-          chunks: sampled.map((c) => ({
-            id: c.id as string,
-            chapter: c.chapter as number | null,
-            label: c.label as string | null,
-            content: c.content as string,
-          })),
-        }),
-      (r) => r.questions?.length ?? 0,
-    );
-    generated = result.questions;
-  } catch (err) {
-    console.error("[generateQuestions] generation failed", err);
-    return { error: "The questions could not be generated. Please try again." };
-  }
-
-  if (!generated?.length) {
-    return { error: "No questions came back. Please try again." };
-  }
-
-  const toInsert = generated.map((q) => {
-    const sources = q.sourceIndexes
-      .map((i) => sampled[i])
-      .filter((c): c is (typeof sampled)[number] => Boolean(c));
-
-    // A question is tagged with a chapter only when every source agrees on one. Anything
-    // spanning chapters stays null rather than being filed under whichever came first.
-    const chapterSet = new Set(sources.map((c) => c.chapter));
-
-    return {
-      project_id: projectId,
-      // user_id is set by the questions_inherit_project() trigger from the parent project,
-      // but RLS still checks it on insert, so it is sent too.
+  const { data: job, error: jobError } = await supabase
+    .from("generation_jobs")
+    .insert({
       user_id: user.id,
-      chapter: chapterSet.size === 1 ? ([...chapterSet][0] as number | null) : null,
-      question: q.question,
-      model_answer: q.answer,
-      source_chunk_ids: sources.map((c) => c.id as string),
-      difficulty: q.difficulty,
-      // The database constraint requires both or neither, which is also what quiz mode
-      // needs: a question with options but no correct index is an unanswerable screen.
-      options: q.options && q.correct !== null ? q.options : null,
-      correct_option: q.options && q.correct !== null ? q.correct : null,
-    };
-  });
+      project_id: projectId,
+      operation: "questions",
+      params: { scope, count },
+    })
+    .select("id")
+    .single();
 
-  const { error: insertError } = await supabase.from("questions").insert(toInsert);
-
-  if (insertError) {
-    console.error("[generateQuestions] insert failed", insertError);
-    return { error: "The questions could not be saved. Please try again." };
+  if (jobError || !job) {
+    console.error("[generateQuestions] job creation failed", jobError);
+    return { error: "Could not start generation. Please try again." };
   }
 
-  revalidatePath(`/projects/${projectId}/questions`);
+  const body = JSON.stringify({
+    jobId: job.id as string,
+    projectId,
+    userId: user.id,
+    scope,
+    count,
+    chunks: sampled.map((c) => ({
+      id: c.id as string,
+      chapter: c.chapter as number | null,
+      label: c.label as string | null,
+      content: c.content as string,
+    })),
+  });
+  const timestamp = String(Date.now());
+
+  try {
+    const res = await fetch(new URL("/.netlify/functions/generate-questions", siteUrl), {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-academia-signature": signInternal(internalSecret, timestamp, body),
+        "x-academia-timestamp": timestamp,
+      },
+      body,
+    });
+
+    // A background function acknowledges with 202 in milliseconds - anything else means
+    // the hand-off itself failed, before the slow part even started.
+    if (res.status !== 202) {
+      throw new Error(`background function responded ${res.status}`);
+    }
+  } catch (err) {
+    console.error("[generateQuestions] background hand-off failed", err);
+    await supabase
+      .from("generation_jobs")
+      .update({ status: "failed", error: "Could not start generation." })
+      .eq("id", job.id as string);
+    return { error: "Could not start generation. Please try again." };
+  }
+
   return {
-    notice: `${toInsert.length} question${toInsert.length === 1 ? "" : "s"} ready.`,
+    jobId: job.id as string,
+    notice: "Generating your questions - this can take up to a minute.",
+  };
+}
+
+const jobStatusSchema = z.object({ jobId: z.string().uuid() });
+
+export type GenerationJobStatus = {
+  status: "pending" | "succeeded" | "failed";
+  resultCount: number | null;
+  error: string | null;
+};
+
+/** Polled by the form while a background job runs. RLS scopes this to the student's own job. */
+export async function getGenerationJobStatus(
+  jobId: string,
+): Promise<GenerationJobStatus | null> {
+  const parsed = jobStatusSchema.safeParse({ jobId });
+  if (!parsed.success) return null;
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("generation_jobs")
+    .select("status, result_count, error")
+    .eq("id", parsed.data.jobId)
+    .maybeSingle();
+
+  if (!data) return null;
+
+  // Not revalidated here: the client stops polling and calls router.refresh() itself once
+  // it sees "succeeded", which re-fetches the question list along with everything else on
+  // the page in one navigation rather than two.
+  return {
+    status: data.status as GenerationJobStatus["status"],
+    resultCount: data.result_count as number | null,
+    error: data.error as string | null,
   };
 }
 
