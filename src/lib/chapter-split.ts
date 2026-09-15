@@ -34,6 +34,17 @@ import "server-only";
  * this commits to anything. Short of that, or if the length check fails, this returns null
  * and the caller treats the upload as one ordinary document - exactly what happened before
  * this existed.
+ *
+ * Two more extraction quirks showed up once this ran against a real chapter five that a
+ * strict same-line match still missed, even with the TOC fix in place:
+ *
+ * - A running header or page number sharing the line with the heading ("48 CHAPTER FIVE"),
+ *   which broke a match anchored to the very start of the line. The anchor now tolerates a
+ *   short run of non-letter characters before "chapter".
+ * - A centred heading whose number lands on its own line below "CHAPTER" - common when a
+ *   PDF's text layer follows visual line breaks rather than logical ones. A lone "CHAPTER"
+ *   line immediately followed by a lone number word is now treated as one heading, anchored
+ *   at the "CHAPTER" line.
  */
 
 export type ChapterSplit = {
@@ -55,7 +66,15 @@ const CHAPTER_WORDS: Record<string, number> = {
   "5": 5,
 };
 
-const HEADING = /^chapter\s+(one|two|three|four|five|[1-5])\b\s*[:.\-–]?\s*(.*)$/i;
+// Up to a handful of non-letter characters (a page number, a bullet, stray whitespace) may
+// share the line before the word "chapter" itself - a running header or page footer merged
+// onto the same line by extraction, not part of the heading.
+const HEADING = /^[^a-z]{0,10}chapter\s+(one|two|three|four|five|[1-5])\b\s*[:.\-–]?\s*(.*)$/i;
+
+// A heading whose number was pushed to its own line by a centred layout: "CHAPTER" alone,
+// then just the number word on the next non-blank line.
+const LONE_CHAPTER_LINE = /^[^a-z]{0,10}chapter\s*[:.\-–]?$/i;
+const LONE_NUMBER_LINE = /^(one|two|three|four|five|[1-5])\b\s*[:.\-–]?\s*(.*)$/i;
 
 // A real chapter of a final-year project runs to many pages. Anything shorter than this
 // once split is treated as evidence of a bad boundary, not a short chapter.
@@ -74,14 +93,28 @@ export function splitByChapter(text: string): ChapterSplit[] | null {
     if (!line) continue;
 
     const match = HEADING.exec(line);
-    if (!match) continue;
+    if (match) {
+      const chapter = CHAPTER_WORDS[match[1].toLowerCase()];
+      if (chapter !== undefined) {
+        const list = occurrences.get(chapter) ?? [];
+        list.push(i);
+        occurrences.set(chapter, list);
+      }
+      continue;
+    }
 
-    const chapter = CHAPTER_WORDS[match[1].toLowerCase()];
-    if (chapter === undefined) continue;
-
-    const list = occurrences.get(chapter) ?? [];
-    list.push(i);
-    occurrences.set(chapter, list);
+    if (LONE_CHAPTER_LINE.test(line)) {
+      const next = nextNonBlank(lines, i + 1);
+      if (next) {
+        const numberMatch = LONE_NUMBER_LINE.exec(next.text);
+        const chapter = numberMatch ? CHAPTER_WORDS[numberMatch[1].toLowerCase()] : undefined;
+        if (chapter !== undefined) {
+          const list = occurrences.get(chapter) ?? [];
+          list.push(i);
+          occurrences.set(chapter, list);
+        }
+      }
+    }
   }
 
   const numbers = [...occurrences.keys()].sort((a, b) => a - b);
@@ -126,6 +159,17 @@ export function splitByChapter(text: string): ChapterSplit[] | null {
 
 function last<T>(arr: T[]): T {
   return arr[arr.length - 1];
+}
+
+// The first non-blank line at or after `from`, skipped over when a heading's number has
+// been pushed onto its own line. Stops after a few blank lines so an unrelated later
+// paragraph is never mistaken for the missing other half of a heading.
+function nextNonBlank(lines: string[], from: number): { text: string } | null {
+  for (let i = from; i < lines.length && i < from + 3; i++) {
+    const trimmed = lines[i].trim();
+    if (trimmed) return { text: trimmed };
+  }
+  return null;
 }
 
 export function wordCount(text: string): number {
