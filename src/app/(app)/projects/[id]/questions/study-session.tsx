@@ -6,6 +6,7 @@ import { recordConfidence } from "./actions";
 import { FlipCard } from "./flip-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
+import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 import { CONFIDENCE_LABELS, DIFFICULTY_LABELS, type Question } from "@/lib/types";
 
 /**
@@ -15,7 +16,15 @@ import { CONFIDENCE_LABELS, DIFFICULTY_LABELS, type Question } from "@/lib/types
  * card at a time, answer hidden until asked for, and the rating only offered after it has
  * been seen.
  *
- * Keyboard first: space reveals, 1/2/3 rates and advances. A student running through twenty
+ * Moving forward does not require rating a card. The three rating buttons still advance
+ * when pressed - that stays the natural path, and is what the readiness score is built
+ * from - but a plain "Next" arrow sits beside them for a student who just wants to keep
+ * moving, and a "Previous" arrow goes back to re-read a card already seen. Revealed state
+ * is tracked per question, not as one shared flag, precisely so stepping back shows the
+ * answer again immediately rather than making them reveal it a second time.
+ *
+ * Keyboard first: space reveals, the arrow keys step forward and back the same way the
+ * on-screen arrows do, and 1/2/3 rates and advances. A student running through twenty
  * questions should never have to reach for the mouse, and that shortcut is most of what
  * makes this feel like a study tool rather than a web page.
  *
@@ -33,12 +42,26 @@ export function StudySession({
 }) {
   const [queue, setQueue] = useState<Question[]>(questions);
   const [position, setPosition] = useState(0);
-  const [revealed, setRevealed] = useState(false);
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const [requeued, setRequeued] = useState<Question[]>([]);
 
   const current = queue[position];
   const done = position >= queue.length;
+  const revealed = current ? revealedIds.has(current.id) : false;
+
+  const reveal = useCallback(() => {
+    if (!current) return;
+    setRevealedIds((prev) => new Set(prev).add(current.id));
+  }, [current]);
+
+  const goNext = useCallback(() => {
+    setPosition((p) => Math.min(p + 1, queue.length));
+  }, [queue.length]);
+
+  const goPrev = useCallback(() => {
+    setPosition((p) => Math.max(p - 1, 0));
+  }, []);
 
   const rate = useCallback(
     (level: number) => {
@@ -56,10 +79,9 @@ export function StudySession({
 
       if (level === 1) setRequeued((prev) => [...prev, current]);
 
-      setRevealed(false);
-      setPosition((p) => p + 1);
+      goNext();
     },
-    [current, revealed, projectId],
+    [current, revealed, projectId, goNext],
   );
 
   useEffect(() => {
@@ -71,7 +93,18 @@ export function StudySession({
 
       if (event.key === " " || event.key === "Enter") {
         event.preventDefault();
-        if (!revealed) setRevealed(true);
+        if (!revealed) reveal();
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        if (!revealed) reveal();
+        else goNext();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goPrev();
         return;
       }
       if (revealed && ["1", "2", "3"].includes(event.key)) {
@@ -82,7 +115,7 @@ export function StudySession({
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [revealed, rate]);
+  }, [revealed, reveal, goNext, goPrev, rate]);
 
   if (done) {
     const rated = Object.values(ratings);
@@ -108,7 +141,10 @@ export function StudySession({
                 setQueue(requeued);
                 setRequeued([]);
                 setPosition(0);
-                setRevealed(false);
+                // A fresh Set, not just cleared for these ids - a card being redone should
+                // ask for real recall again, not show the answer immediately because it was
+                // already opened once during the first pass.
+                setRevealedIds(new Set());
               }}
               className={buttonStyles()}
             >
@@ -153,7 +189,7 @@ export function StudySession({
       <div key={current.id} className="animate-scale-in">
         <FlipCard
           revealed={revealed}
-          onReveal={() => setRevealed(true)}
+          onReveal={reveal}
           front={
             <>
               <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -171,7 +207,9 @@ export function StudySession({
                 </p>
                 <p className="mt-4 text-xs font-medium text-navy-500">
                   Tap the card to reveal · or press{" "}
-                  <kbd className="rounded bg-navy-050 px-1.5 py-0.5 font-sans text-ink-muted">space</kbd>
+                  <kbd className="rounded bg-navy-050 px-1.5 py-0.5 font-sans text-ink-muted">space</kbd>{" "}
+                  or{" "}
+                  <kbd className="rounded bg-navy-050 px-1.5 py-0.5 font-sans text-ink-muted">→</kbd>
                 </p>
               </div>
             </>
@@ -211,6 +249,31 @@ export function StudySession({
             </p>
           </div>
         )}
+
+        {/*
+          Rating advances too, but not every card needs judging on the spot - this is the
+          plain way through, for anyone who would rather just keep moving.
+        */}
+        <div className="mt-6 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={goPrev}
+            disabled={position === 0}
+            className={buttonStyles({ variant: "ghost", size: "sm" })}
+          >
+            <IconChevronLeft className="size-4" />
+            Previous
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            disabled={!revealed}
+            className={buttonStyles({ variant: "secondary", size: "sm" })}
+          >
+            Next
+            <IconChevronRight className="size-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

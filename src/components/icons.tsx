@@ -113,6 +113,14 @@ export function IconChevronRight(props: IconProps) {
   );
 }
 
+export function IconChevronLeft(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12.5 4.5 7 10l5.5 5.5" />
+    </svg>
+  );
+}
+
 export function IconDots(props: IconProps) {
   return (
     <svg {...base} fill="currentColor" stroke="none" {...props}>
