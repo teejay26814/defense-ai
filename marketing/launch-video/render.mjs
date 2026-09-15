@@ -46,7 +46,7 @@ const run = async () => {
       for (const a of document.getAnimations()) { try { a.pause(); a.currentTime = ms; } catch (e) {} }
     }, t);
     await page.evaluate(() => new Promise(r => requestAnimationFrame(r)));
-    await stage.screenshot({ path: join(framesDir, `f_${String(i).padStart(5, '0')}.png`), animations: 'disabled' });
+    await stage.screenshot({ path: join(framesDir, `f_${String(i).padStart(5, '0')}.png`) });
     if (i % 30 === 0) { process.stdout.write(`  ${i}/${total}\n`); }
   }
   await browser.close();
