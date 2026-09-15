@@ -1,0 +1,9 @@
+node_modules
+frames/
+probe/
+captures/
+# derived / muxed outputs — regenerate from composition + captures
+*_final.mp4
+*_compat.mp4
+*_reel.mp4
+*.gif
