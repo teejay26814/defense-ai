@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import dynamic from "next/dynamic";
+import { useActionState, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
 import { finishDefense, submitAnswer, type DefenseState } from "../actions";
@@ -8,6 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form";
 import { DIFFICULTY_LABELS, type Question } from "@/lib/types";
+
+// ssr:false rather than a plain import: this reads window.SpeechRecognition during its
+// first render, and only ever loading it client-side means that render is always a real
+// browser - no capability check needs to wait for an effect, and there is no server-vs-
+// client markup to disagree about in the first place.
+const DictateButton = dynamic(
+  () => import("@/components/ui/dictate-button").then((m) => m.DictateButton),
+  { ssr: false },
+);
 
 const initialState: DefenseState = {};
 
@@ -57,6 +67,7 @@ export function Sitting({
   const current = queue[0];
   const done = !current;
   const position = alreadyAnswered;
+  const answerRef = useRef<HTMLTextAreaElement>(null);
 
   if (done) {
     return (
@@ -125,11 +136,18 @@ export function Sitting({
           <input type="hidden" name="projectId" value={projectId} />
           <input type="hidden" name="questionId" value={current.id} />
 
-          <label htmlFor="answer" className="sr-only">
-            Your answer
-          </label>
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <label htmlFor="answer" className="sr-only">
+              Your answer
+            </label>
+            <span className="text-xs text-ink-muted">
+              Type, or dictate it the way you would say it in the room.
+            </span>
+            <DictateButton targetRef={answerRef} />
+          </div>
           <textarea
             id="answer"
+            ref={answerRef}
             name="answer"
             rows={7}
             autoFocus

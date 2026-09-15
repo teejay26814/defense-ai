@@ -121,6 +121,17 @@ export function IconChevronLeft(props: IconProps) {
   );
 }
 
+export function IconMic(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="7.25" y="2.5" width="5.5" height="9.5" rx="2.75" />
+      <path d="M4.5 9.5a5.5 5.5 0 0 0 11 0" />
+      <path d="M10 15v2.5" />
+      <path d="M7 17.5h6" />
+    </svg>
+  );
+}
+
 export function IconDots(props: IconProps) {
   return (
     <svg {...base} fill="currentColor" stroke="none" {...props}>
