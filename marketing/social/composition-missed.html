@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Missed calls are lost money</title>
+    <link rel="stylesheet" href="./fonts.css" />
+
+    <!--
+      Single 4:5 infographic (1080x1350), rendered locally to PNG.
+      Same white editorial system as the manual-work post: deep-navy type, one blue
+      accent, Fraunces serif headline over Figtree. Story: businesses lose money to
+      missed touchpoints, then the fix (answer / book / follow up automatically).
+      Navy + white + one blue accent only. No em dashes. Fonts embedded from ./fonts.
+    -->
+    <style>
+      :root {
+        --paper: #f6f7f9;
+        --card: #ffffff;
+        --navy: #0b1a2e;
+        --slate: #55637a;
+        --steel: #9aa7ba;
+        --faint: #8a97a7;
+        --accent: #2563eb;
+        --rule: rgb(11 26 46 / 0.12);
+        --w: 1080px;
+        --h: 1350px;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { background: #e7e9ee; display: flex; justify-content: center; padding: 40px; }
+
+      .card {
+        position: relative; width: var(--w); height: var(--h); overflow: hidden;
+        background: var(--paper); color: var(--navy);
+        font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
+        padding: 72px 74px 60px; display: flex; flex-direction: column;
+      }
+
+      .accentbar { width: 54px; height: 4px; background: var(--accent); margin-bottom: 20px; }
+      .header { display: flex; align-items: center; justify-content: space-between; }
+      .eyebrow { font-size: 20px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--slate); }
+      .tag { font-size: 20px; font-weight: 700; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; }
+
+      .hero {
+        font-family: Fraunces, ui-serif, Georgia, serif; font-weight: 600;
+        font-size: 52px; line-height: 1.08; letter-spacing: -0.01em;
+        margin-top: 30px; text-wrap: balance;
+      }
+      .hero .em { color: var(--accent); }
+
+      .sub { margin-top: 18px; font-size: 23px; line-height: 1.4; color: var(--slate); font-weight: 500; max-width: 78%; }
+
+      /* leak rows */
+      .list { margin-top: 40px; }
+      .row { display: flex; align-items: center; gap: 22px; padding: 26px 2px; border-top: 1px solid var(--rule); }
+      .row:first-child { border-top: none; }
+      .ic { flex: none; width: 46px; height: 46px; border-radius: 12px; background: rgb(37 99 235 / 0.08);
+            display: flex; align-items: center; justify-content: center; }
+      .ic svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .row .body { flex: 1; }
+      .row .moment { font-size: 25px; font-weight: 700; letter-spacing: -0.01em; color: var(--navy); }
+      .row .lost { font-size: 20px; font-weight: 500; color: var(--slate); margin-top: 2px; }
+      .row .out { flex: none; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--steel);
+                  display: flex; align-items: center; gap: 7px; }
+      .row .out svg { width: 15px; height: 15px; stroke: var(--steel); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+      .midline { margin-top: 40px; font-family: Fraunces, ui-serif, Georgia, serif; font-style: italic;
+                 font-weight: 500; font-size: 27px; line-height: 1.35; color: var(--navy); }
+
+      /* fix card */
+      .fix {
+        margin-top: 40px; background: var(--card); border: 1px solid var(--rule); border-radius: 18px;
+        box-shadow: 0 26px 60px -34px rgb(11 26 46 / 0.35); padding: 38px 40px 40px;
+      }
+      .ftitle { font-size: 18px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--slate); margin-bottom: 18px; }
+      .checks { display: flex; flex-direction: column; gap: 20px; }
+      .chk { display: flex; align-items: center; gap: 16px; }
+      .chk .box { flex: none; width: 30px; height: 30px; border-radius: 8px; background: var(--accent);
+                  display: flex; align-items: center; justify-content: center; }
+      .chk .box svg { width: 17px; height: 17px; stroke: #fff; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+      .chk .lbl { font-size: 27px; font-weight: 650; letter-spacing: -0.01em; color: var(--navy); }
+      .chk .lbl b { font-weight: 800; }
+      .punch { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--rule);
+               font-size: 34px; font-weight: 800; letter-spacing: -0.015em; color: var(--navy); }
+      .punch .em { color: var(--accent); }
+
+      .foot { margin-top: auto; padding-top: 22px; border-top: 1px solid var(--rule); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+      .foot .name { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+      .foot .role { margin-top: 4px; font-size: 18px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); }
+      .cta { font-size: 20px; font-weight: 700; letter-spacing: 0.01em; color: var(--accent); text-align: right; line-height: 1.4; }
+      .cta .dm { display: inline-block; border: 2px solid var(--accent); border-radius: 10px; padding: 8px 14px; }
+    </style>
+  </head>
+
+  <body>
+    <div class="card" id="card">
+      <div class="accentbar"></div>
+
+      <div class="header">
+        <div class="eyebrow">Where small businesses lose money</div>
+        <div class="tag">Automate it</div>
+      </div>
+
+      <div class="hero">You are not losing to competitors.<br />You are losing to <span class="em">missed calls.</span></div>
+      <div class="sub">Every missed touchpoint is money walking out the door, quietly, every single day.</div>
+
+      <div class="list">
+        <div class="row">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5V19a2 2 0 0 1-2 2A16 16 0 0 1 4 6a2 2 0 0 1 1-2Z"/></svg></span>
+          <span class="body"><div class="moment">A customer calls to order</div><div class="lost">Nobody picks up. They call the next place.</div></span>
+          <span class="out">Lost <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </div>
+        <div class="row">
+          <span class="ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2Z"/></svg></span>
+          <span class="body"><div class="moment">A lead messages at 9pm</div><div class="lost">You reply next morning. Already booked someone else.</div></span>
+          <span class="out">Lost <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </div>
+        <div class="row">
+          <span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span class="body"><div class="moment">Someone is ready to pay</div><div class="lost">Whoever books is busy. They wait, then forget.</div></span>
+          <span class="out">Lost <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </div>
+      </div>
+
+      <div class="midline">The businesses winning right now are the ones that never miss.</div>
+
+      <div class="fix">
+        <div class="ftitle">What I build for you</div>
+        <div class="checks">
+          <div class="chk"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="lbl"><b>Answers instantly</b>, day or night</span></div>
+          <div class="chk"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="lbl"><b>Books appointments</b> automatically</span></div>
+          <div class="chk"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="lbl"><b>Follows up</b> without anyone lifting a finger</span></div>
+        </div>
+        <div class="punch">Never miss a customer <span class="em">again.</span></div>
+      </div>
+
+      <div class="foot">
+        <div>
+          <div class="name">Tolulope Fatoyinbo</div>
+          <div class="role">AI Automation Specialist</div>
+        </div>
+        <div class="cta">DM <span class="dm">GROWTH</span></div>
+      </div>
+    </div>
+  </body>
+</html>

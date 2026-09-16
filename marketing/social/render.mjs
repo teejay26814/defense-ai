@@ -33,12 +33,14 @@ const run = async () => {
     args: ['--no-sandbox', '--force-color-profile=srgb', '--hide-scrollbars'],
   });
   const page = await browser.newPage({ deviceScaleFactor: SCALE });
-  await page.goto(pathToFileURL(join(here, 'composition.html')).href, { waitUntil: 'networkidle' });
+  const comp = process.argv[2] || 'composition.html';
+  const outName = process.argv[3] || 'post.png';
+  await page.goto(pathToFileURL(join(here, comp)).href, { waitUntil: 'networkidle' });
   await page.evaluate(async () => { await document.fonts.ready; });
 
   const card = await page.$('#card');
   if (!card) throw new Error('#card not found');
-  const file = join(outDir, 'post.png');
+  const file = join(outDir, outName);
   await card.screenshot({ path: file });
   console.log('rendered ' + file);
   await browser.close();
