@@ -2,145 +2,175 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Missed calls — carousel</title>
-    <link rel="stylesheet" href="./fonts.css" />
+    <title>Missed calls — editorial deck</title>
+    <link rel="stylesheet" href="./fonts-deck.css" />
     <!--
-      7-slide carousel, 1080x1350 (4:5). White editorial system: navy type, one blue
-      accent. Anton (heavy display) for titles, Figtree for body. One idea per slide,
-      minimal chrome. No CTA/DM chip. Rendered locally by render.mjs (screenshots each
-      .slide). No em dashes.
+      7-slide editorial carousel, 1080x1350. Strict design system.
+      Two families only: Barlow Condensed (display) + Inter (body).
+      One grid, tokenised spacing, section numbers that match the footer page number,
+      controlled line breaks, restrained palette (navy + white + one blue accent used
+      once per slide). No icons, cards, gradients or shadows. Rendered by render.mjs.
     -->
     <style>
       :root{
-        --paper:#f6f7f9; --card:#ffffff; --navy:#0b1a2e; --slate:#55637a;
-        --steel:#9aa7ba; --faint:#9aa4b2; --accent:#2563eb; --rule:rgb(11 26 46 / 0.12);
+        /* palette */
+        --ink:#0b1a2e; --paper:#ffffff; --muted:#5a6577; --faint:#aab2c0;
+        --accent:#2563eb; --hair:rgb(11 26 46 / 0.14);
+        /* type */
+        --font-display:"Barlow Condensed", sans-serif;
+        --font-body:"Inter", sans-serif;
+        /* grid */
+        --page-x:96px; --page-y:86px;
+        --sp-xs:10px; --sp-sm:18px; --sp-md:28px; --sp-lg:44px; --sp-xl:72px;
+        /* sizes */
+        --eyebrow:21px; --pagenum:22px; --footer:18px;
+        --secnum:190px; --headline:98px; --headline-lg:112px;
+        --body:33px; --meta:20px;
       }
       *{margin:0;padding:0;box-sizing:border-box}
-      body{background:#e7e9ee;display:flex;flex-direction:column;align-items:center;gap:32px;padding:40px}
+      body{background:#dfe2e8;display:flex;flex-direction:column;align-items:center;gap:36px;padding:44px}
 
       .slide{
-        position:relative;width:1080px;height:1350px;overflow:hidden;
-        background:var(--paper);color:var(--navy);
-        font-family:Figtree,ui-sans-serif,system-ui,sans-serif;
-        padding:96px 88px 84px;display:flex;flex-direction:column;
+        position:relative;width:1080px;height:1350px;overflow:hidden;background:var(--paper);color:var(--ink);
+        font-family:var(--font-body);padding:var(--page-y) var(--page-x);
+        display:flex;flex-direction:column;
       }
-      .accentbar{width:60px;height:5px;background:var(--accent);border-radius:2px}
 
-      .anton{font-family:"Anton",Impact,sans-serif;font-weight:400;text-transform:uppercase;
-             letter-spacing:0.005em;line-height:0.94;color:var(--navy)}
-      .em{color:var(--accent)}
+      /* header + footer share the grid */
+      .top{display:flex;justify-content:space-between;align-items:center;
+           padding-bottom:var(--sp-sm);border-bottom:1px solid var(--hair)}
+      .eyebrow{font-family:var(--font-body);font-size:var(--eyebrow);font-weight:600;
+               letter-spacing:0.18em;text-transform:uppercase;color:var(--muted)}
+      .pagenum{font-family:var(--font-display);font-size:var(--pagenum);font-weight:600;
+               letter-spacing:0.14em;color:var(--faint)}
+
+      .main{flex:1;display:flex;flex-direction:column;justify-content:center}
+
+      .secnum{font-family:var(--font-display);font-weight:800;font-size:var(--secnum);
+              line-height:0.8;letter-spacing:-0.02em;color:rgb(11 26 46 / 0.07);margin-bottom:var(--sp-md)}
+
+      .headline{font-family:var(--font-display);font-weight:800;text-transform:uppercase;
+                font-size:var(--headline);line-height:0.92;letter-spacing:-0.01em;color:var(--ink)}
+      .headline .a{color:var(--accent)}
+
+      .body{font-family:var(--font-body);font-weight:400;font-size:var(--body);
+            line-height:1.5;color:var(--muted);max-width:30ch;margin-top:var(--sp-lg)}
+      .body b{font-weight:600;color:var(--ink)}
+
+      .meta{font-family:var(--font-body);font-size:var(--meta);font-weight:600;
+            letter-spacing:0.16em;text-transform:uppercase;color:var(--faint);margin-top:var(--sp-lg)}
+
+      .foot{display:flex;justify-content:space-between;align-items:baseline;
+            padding-top:var(--sp-sm);border-top:1px solid var(--hair)}
+      .foot .l,.foot .r{font-size:var(--footer);font-weight:600;letter-spacing:0.14em;
+            text-transform:uppercase;color:var(--muted)}
+      .foot .r{color:var(--faint)}
 
       /* cover */
-      .kicker{font-size:24px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate)}
-      .cover .title{font-size:150px;margin-top:26px}
-      .cover .sub{margin-top:auto;font-size:30px;line-height:1.4;color:var(--slate);font-weight:500;max-width:80%}
-      .cover .swipe{margin-top:26px;font-size:22px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent)}
-
-      /* leak slides */
-      .idx{font-family:"Anton",Impact,sans-serif;font-size:150px;line-height:0.8;color:rgb(37 99 235 / 0.14)}
-      .leak .title{font-size:96px;margin-top:20px}
-      .leak .body{margin-top:28px;font-size:38px;line-height:1.34;color:var(--slate);font-weight:500;max-width:88%}
-      .leak .body b{color:var(--navy);font-weight:700}
-      .lost{margin-top:auto;display:inline-flex;align-items:center;gap:12px;font-size:24px;font-weight:800;
-            letter-spacing:0.16em;text-transform:uppercase;color:var(--steel)}
-      .lost svg{width:26px;height:26px;stroke:var(--steel);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+      .cover .main{justify-content:center}
+      .cover .kick{font-family:var(--font-body);font-size:22px;font-weight:600;letter-spacing:0.2em;
+                   text-transform:uppercase;color:var(--accent);margin-bottom:var(--sp-md)}
+      .cover .headline{font-size:var(--headline-lg)}
+      .cover .body{font-size:36px;max-width:27ch;margin-top:var(--sp-lg)}
 
       /* statement */
-      .stmt{justify-content:center}
-      .stmt .title{font-size:120px}
-      .stmt .sub{margin-top:34px;font-size:34px;line-height:1.4;color:var(--slate);font-weight:500;max-width:82%}
+      .stmt .headline{font-size:118px}
 
-      /* fix */
-      .fix .title{font-size:104px;margin-top:20px}
-      .checks{margin-top:52px;display:flex;flex-direction:column;gap:30px}
-      .chk{display:flex;align-items:center;gap:24px}
-      .chk .box{flex:none;width:46px;height:46px;border-radius:11px;background:var(--accent);display:flex;align-items:center;justify-content:center}
-      .chk .box svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
-      .chk .lbl{font-size:38px;font-weight:750;letter-spacing:-0.01em}
-      .chk .lbl b{font-weight:850}
+      /* fix list */
+      .rows{margin-top:var(--sp-xl);border-top:1px solid var(--hair)}
+      .row{display:flex;align-items:baseline;gap:36px;padding:30px 0;border-bottom:1px solid var(--hair)}
+      .row .verb{flex:none;width:290px;font-family:var(--font-display);font-weight:800;text-transform:uppercase;
+                 font-size:46px;line-height:1;letter-spacing:-0.01em;color:var(--ink)}
+      .row .desc{font-family:var(--font-body);font-weight:400;font-size:30px;line-height:1.35;color:var(--muted)}
 
-      /* close */
-      .close .title{font-size:118px;margin-top:20px}
-      .close .sub{margin-top:30px;font-size:34px;font-weight:500;color:var(--slate)}
-      .close .cta{margin-top:40px;font-size:40px;font-weight:800;letter-spacing:-0.015em;line-height:1.25;color:var(--navy)}
-      .close .cta .em{color:var(--accent)}
-      .sign{margin-top:auto;padding-top:30px;border-top:1px solid var(--rule)}
-      .sign .name{font-size:34px;font-weight:800;letter-spacing:-0.01em}
-      .sign .role{margin-top:6px;font-size:22px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--slate)}
-
-      /* shared footer */
-      .foot{position:absolute;left:88px;right:88px;bottom:44px;display:flex;justify-content:space-between;
-            font-size:17px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint)}
+      /* close CTA */
+      .close .cta{font-family:var(--font-display);font-weight:800;text-transform:uppercase;
+                  font-size:52px;line-height:1;letter-spacing:-0.01em;color:var(--ink);margin-top:var(--sp-xl)}
+      .close .cta .a{color:var(--accent)}
     </style>
   </head>
   <body>
 
-    <!-- 1 COVER -->
+    <!-- 01 COVER -->
     <div class="slide cover">
-      <div class="accentbar"></div>
-      <div class="kicker" style="margin-top:22px">Not competitors. Not the economy.</div>
-      <div class="anton title">You're losing to <span class="em">missed calls.</span></div>
-      <div class="sub">Here is how small businesses lose money, quietly, every single day.</div>
-      <div class="swipe">Swipe &rarr;</div>
-      <div class="foot"><span>Tolulope Fatoyinbo</span><span>01 / 07</span></div>
+      <div class="top"><span class="eyebrow">To every small business owner</span><span class="pagenum">01 / 07</span></div>
+      <div class="main">
+        <div class="kick">A hard truth</div>
+        <div class="headline">It's not the economy.<br />It's the <span class="a">missed call.</span></div>
+        <div class="body">The quiet way small businesses lose money, every single day.</div>
+      </div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">Swipe &rarr;</span></div>
     </div>
 
-    <!-- 2 LEAK 1 -->
+    <!-- 02 -->
     <div class="slide leak">
-      <div class="idx">01</div>
-      <div class="anton title">The unanswered call</div>
-      <div class="body">A customer calls to place an order. <b>Nobody picks up.</b> They call the next place.</div>
-      <div class="lost">Money out the door <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></div>
-      <div class="foot"><span>Tolulope Fatoyinbo</span><span>02 / 07</span></div>
+      <div class="top"><span class="eyebrow">How the money leaks</span><span class="pagenum">02 / 07</span></div>
+      <div class="main">
+        <div class="secnum">02</div>
+        <div class="headline">The unanswered<br />call</div>
+        <div class="body">A customer calls to place an order. <b>Nobody picks up.</b> They call the next place.</div>
+        <div class="meta">Money out the door</div>
+      </div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation Specialist</span></div>
     </div>
 
-    <!-- 3 LEAK 2 -->
+    <!-- 03 -->
     <div class="slide leak">
-      <div class="idx">02</div>
-      <div class="anton title">The late reply</div>
-      <div class="body">A lead messages at 9pm. You reply the next morning. <b>They already booked someone else.</b></div>
-      <div class="lost">Money out the door <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></div>
-      <div class="foot"><span>Tolulope Fatoyinbo</span><span>03 / 07</span></div>
+      <div class="top"><span class="eyebrow">How the money leaks</span><span class="pagenum">03 / 07</span></div>
+      <div class="main">
+        <div class="secnum">03</div>
+        <div class="headline">The late<br />reply</div>
+        <div class="body">A lead messages at 9pm. You reply the next morning. <b>They already booked someone else.</b></div>
+        <div class="meta">Money out the door</div>
+      </div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation Specialist</span></div>
     </div>
 
-    <!-- 4 LEAK 3 -->
+    <!-- 04 -->
     <div class="slide leak">
-      <div class="idx">03</div>
-      <div class="anton title">The slow booking</div>
-      <div class="body">Someone wants to pay. The person who books is busy. <b>They wait, then they forget.</b></div>
-      <div class="lost">Money out the door <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></div>
-      <div class="foot"><span>Tolulope Fatoyinbo</span><span>04 / 07</span></div>
+      <div class="top"><span class="eyebrow">How the money leaks</span><span class="pagenum">04 / 07</span></div>
+      <div class="main">
+        <div class="secnum">04</div>
+        <div class="headline">The slow<br />booking</div>
+        <div class="body">Someone is ready to pay. Whoever handles bookings is busy, so <b>they wait, then forget.</b></div>
+        <div class="meta">Money out the door</div>
+      </div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation Specialist</span></div>
     </div>
 
-    <!-- 5 STATEMENT -->
+    <!-- 05 STATEMENT -->
     <div class="slide stmt">
-      <div class="anton title">Every miss is <span class="em">money</span> out the door.</div>
-      <div class="sub">And it happens without anyone even noticing.</div>
-      <div class="foot"><span>Tolulope Fatoyinbo</span><span>05 / 07</span></div>
+      <div class="top"><span class="eyebrow">The real cost</span><span class="pagenum">05 / 07</span></div>
+      <div class="main">
+        <div class="headline">Every miss is<br /><span class="a">money</span> out the door.</div>
+        <div class="body">And it happens without anyone even noticing.</div>
+      </div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation Specialist</span></div>
     </div>
 
-    <!-- 6 FIX -->
+    <!-- 06 FIX -->
     <div class="slide fix">
-      <div class="accentbar"></div>
-      <div class="anton title" style="margin-top:24px">The winners <span class="em">never miss.</span></div>
-      <div class="checks">
-        <div class="chk"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="lbl"><b>Answer</b> instantly, day or night</span></div>
-        <div class="chk"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="lbl"><b>Book</b> appointments automatically</span></div>
-        <div class="chk"><span class="box"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="lbl"><b>Follow up</b> on autopilot</span></div>
+      <div class="top"><span class="eyebrow">What changes</span><span class="pagenum">06 / 07</span></div>
+      <div class="main">
+        <div class="headline">The winners<br /><span class="a">never miss.</span></div>
+        <div class="rows">
+          <div class="row"><span class="verb">Answer</span><span class="desc">Every call and message, instantly, day or night.</span></div>
+          <div class="row"><span class="verb">Book</span><span class="desc">Appointments confirmed automatically, no back and forth.</span></div>
+          <div class="row"><span class="verb">Follow up</span><span class="desc">On autopilot, so no lead ever goes cold.</span></div>
+        </div>
       </div>
-      <div class="foot"><span>Tolulope Fatoyinbo</span><span>06 / 07</span></div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation Specialist</span></div>
     </div>
 
-    <!-- 7 CLOSE -->
+    <!-- 07 CLOSE -->
     <div class="slide close">
-      <div class="accentbar"></div>
-      <div class="anton title">Never miss a <span class="em">customer</span> again.</div>
-      <div class="sub">Not because you hired more staff. Because you built smarter. That is what I do.</div>
-      <div class="cta">Let's fix it.<br />DM me <span class="em">"GROWTH"</span> to start.</div>
-      <div class="sign">
-        <div class="name">Tolulope Fatoyinbo</div>
-        <div class="role">AI Automation Specialist</div>
+      <div class="top"><span class="eyebrow">Let's build it</span><span class="pagenum">07 / 07</span></div>
+      <div class="main">
+        <div class="headline">Never miss a<br /><span class="a">customer</span> again.</div>
+        <div class="body">Not because you hired more staff. Because you built smarter. That is what I do.</div>
+        <div class="cta">DM me <span class="a">"Growth"</span> to start.</div>
       </div>
+      <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation Specialist</span></div>
     </div>
 
   </body>
