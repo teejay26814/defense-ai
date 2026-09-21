@@ -69,35 +69,42 @@ body{background:#dfe2e8;display:flex;justify-content:center;padding:44px}
           <span class="lg"><span class="sw blue"></span>Businesses using AI</span>
           <span class="lg"><span class="sw grey"></span>You</span>
         </div>
-        <svg viewBox="0 0 896 300" fill="none">
-          <!-- faint gridlines -->
-          <g stroke="rgb(11 26 46 / 0.06)" stroke-width="1">
-            <line x1="0" y1="50" x2="760" y2="50"/><line x1="0" y1="100" x2="760" y2="100"/>
-            <line x1="0" y1="150" x2="760" y2="150"/><line x1="0" y1="200" x2="760" y2="200"/>
+        <svg viewBox="0 0 896 320" fill="none">
+          <!-- gridlines + Y-axis % labels (0..100). Plot: x 92..784, y 44(=100%)..250(=0%) -->
+          <g font-family="Inter" font-size="18" font-weight="600" fill="#aab2c0">
+            <line x1="92" y1="44"  x2="784" y2="44"  stroke="rgb(11 26 46 / 0.06)"/><text x="72" y="50"  text-anchor="end">100</text>
+            <line x1="92" y1="95.5" x2="784" y2="95.5" stroke="rgb(11 26 46 / 0.06)"/><text x="72" y="101" text-anchor="end">75</text>
+            <line x1="92" y1="147" x2="784" y2="147" stroke="rgb(11 26 46 / 0.06)"/><text x="72" y="153" text-anchor="end">50</text>
+            <line x1="92" y1="198.5" x2="784" y2="198.5" stroke="rgb(11 26 46 / 0.06)"/><text x="72" y="204" text-anchor="end">25</text>
+            <line x1="92" y1="250" x2="784" y2="250" stroke="rgb(11 26 46 / 0.18)"/><text x="72" y="256" text-anchor="end">0</text>
           </g>
-          <!-- baseline (time axis) -->
-          <line x1="0" y1="250" x2="760" y2="250" stroke="rgb(11 26 46 / 0.18)" stroke-width="1.5"/>
+          <text x="30" y="150" font-family="Inter" font-size="15" font-weight="700" letter-spacing="1.5"
+                fill="#aab2c0" text-anchor="middle" transform="rotate(-90 30 150)">% USING AI</text>
           <!-- shaded gap -->
-          <path d="M0,242 L190,200 L380,150 L570,92 L760,46 L760,247 L570,243 L380,238 L190,233 L0,230 Z"
-                fill="rgb(37 99 235 / 0.08)"/>
-          <!-- YOU (flat) -->
-          <polyline points="0,230 190,233 380,238 570,243 760,247" stroke="#9aa4b2" stroke-width="4.5"
+          <path d="M92,213 L322,150 L553,105 L784,77 L784,229 L553,231 L322,233 L92,236 Z" fill="rgb(37 99 235 / 0.08)"/>
+          <!-- YOU (flat, low) -->
+          <polyline points="92,236 322,233 553,231 784,229" stroke="#9aa4b2" stroke-width="4.5"
                     stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- COMPETITORS (rising) -->
-          <polyline points="0,242 190,200 380,150 570,92 760,46" stroke="#2563eb" stroke-width="6.5"
+          <!-- BUSINESSES USING AI (rising) -->
+          <polyline points="92,213 322,150 553,105 784,77" stroke="#2563eb" stroke-width="6.5"
                     stroke-linecap="round" stroke-linejoin="round"/>
           <!-- endpoint dots with white ring -->
-          <circle cx="760" cy="46" r="13" fill="#fff"/><circle cx="760" cy="46" r="9" fill="#2563eb"/>
-          <circle cx="760" cy="247" r="11" fill="#fff"/><circle cx="760" cy="247" r="7" fill="#9aa4b2"/>
+          <circle cx="784" cy="77" r="13" fill="#fff"/><circle cx="784" cy="77" r="9" fill="#2563eb"/>
+          <circle cx="784" cy="229" r="11" fill="#fff"/><circle cx="784" cy="229" r="7" fill="#9aa4b2"/>
           <!-- THE GAP bracket -->
           <g stroke="#2563eb" stroke-width="2">
-            <line x1="800" y1="52" x2="800" y2="241"/>
-            <line x1="792" y1="52" x2="808" y2="52"/><line x1="792" y1="241" x2="808" y2="241"/>
+            <line x1="816" y1="83" x2="816" y2="223"/>
+            <line x1="808" y1="83" x2="824" y2="83"/><line x1="808" y1="223" x2="824" y2="223"/>
           </g>
-          <text x="842" y="148" font-family="Barlow Condensed" font-size="30" font-weight="800"
-                letter-spacing="1" fill="#2563eb" text-anchor="middle" transform="rotate(90 842 148)">THE GAP</text>
-          <!-- time axis label -->
-          <text x="0" y="285" font-family="Inter" font-size="17" font-weight="600" letter-spacing="1.5" fill="#aab2c0">TIME &#8594;</text>
+          <text x="856" y="153" font-family="Barlow Condensed" font-size="30" font-weight="800"
+                letter-spacing="1" fill="#2563eb" text-anchor="middle" transform="rotate(90 856 153)">THE GAP</text>
+          <!-- X-axis year labels -->
+          <g font-family="Inter" font-size="19" font-weight="600" fill="#8b95a6">
+            <text x="92"  y="286" text-anchor="middle">2023</text>
+            <text x="322" y="286" text-anchor="middle">2024</text>
+            <text x="553" y="286" text-anchor="middle">2025</text>
+            <text x="784" y="286" text-anchor="middle">2026</text>
+          </g>
         </svg>
       </div>
 
