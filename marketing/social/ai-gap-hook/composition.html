@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AI Gap — hook</title>
+<link rel="stylesheet" href="./fonts.css" />
+<style>
+/* Single hook graphic, 1080x1350. White + navy + electric blue.
+   Barlow Condensed (display) + Inter (body). One trend chart carries "the gap".
+   Rendered by render.mjs (screenshots .slide). */
+:root{
+  --ink:#0b1a2e; --paper:#ffffff; --muted:#5a6577; --faint:#aab2c0;
+  --accent:#2563eb; --hair:rgb(11 26 46 / 0.14);
+  --disp:"Barlow Condensed",sans-serif; --sans:"Inter",system-ui,sans-serif;
+  --x:92px; --y:78px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#dfe2e8;display:flex;justify-content:center;padding:44px}
+.slide{position:relative;width:1080px;height:1350px;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);padding:var(--y) var(--x);display:flex;flex-direction:column}
+
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--hair)}
+.label{font-size:19px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+.label .d{color:var(--accent)}
+.label.r{color:var(--faint)}
+
+.main{flex:1;display:flex;flex-direction:column;justify-content:center;gap:0}
+
+.pre{font-size:30px;font-weight:500;color:var(--muted);letter-spacing:.01em}
+.hook{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:112px;line-height:0.9;letter-spacing:-0.01em;color:var(--ink)}
+.hook.blue{color:var(--accent)}
+.gap1{height:26px}
+.gap2{height:34px}
+
+/* trend chart */
+.chart{margin-top:48px}
+.chart .cap{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.chart .cap .t{font-size:17px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
+.chart .legend{display:flex;gap:30px;margin-bottom:14px}
+.chart .lg{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600;color:var(--ink)}
+.chart .sw{width:24px;height:5px;border-radius:3px}
+.chart .sw.blue{background:var(--accent)}
+.chart .sw.grey{background:#9aa4b2}
+.chart svg{display:block;width:100%;height:auto}
+
+.sub{margin-top:44px;font-size:29px;line-height:1.45;color:var(--muted);max-width:30ch}
+.sub b{color:var(--ink);font-weight:600}
+
+.foot{display:flex;justify-content:space-between;align-items:baseline;padding-top:20px;border-top:1px solid var(--hair)}
+.foot .nm{font-size:24px;font-weight:700;letter-spacing:-0.01em;color:var(--ink)}
+.foot .ro{font-size:17px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.foot .r{font-size:17px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--faint)}
+</style>
+</head>
+<body>
+  <div class="slide" id="card">
+    <div class="top"><span class="label">The AI Gap <span class="d">·</span> 2026</span><span class="label r">Field notes</span></div>
+
+    <div class="main">
+      <div class="pre">Your competitors are</div>
+      <div class="hook">Already using AI.</div>
+      <div class="gap1"></div>
+      <div class="pre">You are still</div>
+      <div class="hook blue">Thinking about it.</div>
+
+      <div class="chart">
+        <div class="cap"><span class="t">AI adoption over time</span></div>
+        <div class="legend">
+          <span class="lg"><span class="sw blue"></span>Businesses using AI</span>
+          <span class="lg"><span class="sw grey"></span>You</span>
+        </div>
+        <svg viewBox="0 0 896 300" fill="none">
+          <!-- faint gridlines -->
+          <g stroke="rgb(11 26 46 / 0.06)" stroke-width="1">
+            <line x1="0" y1="50" x2="760" y2="50"/><line x1="0" y1="100" x2="760" y2="100"/>
+            <line x1="0" y1="150" x2="760" y2="150"/><line x1="0" y1="200" x2="760" y2="200"/>
+          </g>
+          <!-- baseline (time axis) -->
+          <line x1="0" y1="250" x2="760" y2="250" stroke="rgb(11 26 46 / 0.18)" stroke-width="1.5"/>
+          <!-- shaded gap -->
+          <path d="M0,242 L190,200 L380,150 L570,92 L760,46 L760,247 L570,243 L380,238 L190,233 L0,230 Z"
+                fill="rgb(37 99 235 / 0.08)"/>
+          <!-- YOU (flat) -->
+          <polyline points="0,230 190,233 380,238 570,243 760,247" stroke="#9aa4b2" stroke-width="4.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- COMPETITORS (rising) -->
+          <polyline points="0,242 190,200 380,150 570,92 760,46" stroke="#2563eb" stroke-width="6.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- endpoint dots with white ring -->
+          <circle cx="760" cy="46" r="13" fill="#fff"/><circle cx="760" cy="46" r="9" fill="#2563eb"/>
+          <circle cx="760" cy="247" r="11" fill="#fff"/><circle cx="760" cy="247" r="7" fill="#9aa4b2"/>
+          <!-- THE GAP bracket -->
+          <g stroke="#2563eb" stroke-width="2">
+            <line x1="800" y1="52" x2="800" y2="241"/>
+            <line x1="792" y1="52" x2="808" y2="52"/><line x1="792" y1="241" x2="808" y2="241"/>
+          </g>
+          <text x="842" y="148" font-family="Barlow Condensed" font-size="30" font-weight="800"
+                letter-spacing="1" fill="#2563eb" text-anchor="middle" transform="rotate(90 842 148)">THE GAP</text>
+          <!-- time axis label -->
+          <text x="0" y="285" font-family="Inter" font-size="17" font-weight="600" letter-spacing="1.5" fill="#aab2c0">TIME &#8594;</text>
+        </svg>
+      </div>
+
+      <div class="sub">That gap is costing you customers <b>right now</b>, and you cannot even see it.</div>
+    </div>
+
+    <div class="foot">
+      <div><div class="nm">Tolulope Fatoyinbo</div><div class="ro">AI Automation Specialist</div></div>
+      <div class="r">Full breakdown in caption &darr;</div>
+    </div>
+  </div>
+</body>
+</html>
