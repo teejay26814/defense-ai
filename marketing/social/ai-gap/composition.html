@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>The AI Gap — carousel</title>
+<link rel="stylesheet" href="./fonts.css" />
+<style>
+/* ============================================================================
+   THE AI GAP — 8-slide editorial carousel, 1080x1350.
+   Type system: Instrument Serif (display) / Manrope (body/UI) / Space Grotesk
+   (numbers + data). Palette: deep navy-black ink on warm white, one electric
+   blue accent used sparingly (numbers, keywords, thin rules, CTA).
+   Shared grid + header/footer; each slide composed individually. Rendered by
+   render.mjs (screenshots each .slide).
+   ============================================================================ */
+:root{
+  --ink:#0d1220; --paper:#f4f2ec; --muted:#5c6473; --faint:#a2a8b4;
+  --accent:#2b5bff; --hair:rgb(13 18 32 / 0.12); --hair2:rgb(13 18 32 / 0.20);
+  --serif:"Instrument Serif", Georgia, serif;
+  --sans:"Manrope", system-ui, sans-serif;
+  --mono:"Space Grotesk", monospace;
+  --x:96px; --y:80px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#d8dbe1;display:flex;flex-direction:column;align-items:center;gap:40px;padding:44px}
+
+.slide{position:relative;width:1080px;height:1350px;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);padding:var(--y) var(--x);display:flex;flex-direction:column}
+.slide::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:radial-gradient(120% 90% at 50% 0%, rgb(255 255 255/.5), transparent 60%)}
+
+/* header + footer */
+.top{display:flex;justify-content:space-between;align-items:center;z-index:2}
+.label{font-family:var(--sans);font-size:19px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+.label .d{color:var(--accent)}
+.pg{font-family:var(--mono);font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--faint)}
+.rule{height:1px;background:var(--hair);margin-top:18px;z-index:2}
+.main{flex:1;display:flex;flex-direction:column;justify-content:center;z-index:2}
+.foot{display:flex;justify-content:space-between;align-items:baseline;padding-top:16px;border-top:1px solid var(--hair);z-index:2}
+.foot .l,.foot .r{font-family:var(--sans);font-size:16px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--faint)}
+
+/* shared type */
+.serif{font-family:var(--serif);font-weight:400;line-height:0.98;letter-spacing:0}
+.idx{font-family:var(--mono);font-weight:500;font-size:26px;letter-spacing:0.1em;color:var(--accent)}
+.kntag{font-family:var(--serif);font-style:italic;color:var(--accent)}
+.body{font-family:var(--sans);font-weight:400;font-size:27px;line-height:1.5;color:var(--muted);max-width:30ch}
+.body b{font-weight:600;color:var(--ink)}
+.accent{color:var(--accent)}
+
+/* ---- S1 hook ---- */
+.s1 .pre{font-family:var(--serif);font-size:46px;color:var(--muted);line-height:1.1}
+.s1 .big{font-family:var(--serif);font-size:132px;line-height:0.92;color:var(--ink);letter-spacing:-0.01em}
+.s1 .big.blue{color:var(--accent)}
+.s1 .tick{width:64px;height:2px;background:var(--accent);margin:30px 0}
+.s1 .body{margin-top:40px;font-size:29px;max-width:26ch}
+
+/* ---- section number heading blocks ---- */
+.head .serif{font-size:96px;line-height:0.96;margin-top:14px}
+.head{margin-bottom:40px}
+
+/* ---- S2 data anchor ---- */
+.data{font-family:var(--mono);font-weight:700;font-size:210px;line-height:0.82;letter-spacing:-0.03em;color:var(--accent)}
+.data-cap{font-family:var(--sans);font-size:20px;font-weight:600;letter-spacing:0.06em;color:var(--muted);text-transform:uppercase;margin-top:8px}
+.list{list-style:none}
+.li{display:flex;align-items:baseline;gap:18px;padding:15px 0;border-top:1px solid var(--hair);font-size:27px;color:var(--ink)}
+.li:last-child{border-bottom:1px solid var(--hair)}
+.li .b{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;transform:translateY(-4px)}
+
+/* ---- S3 anchors ---- */
+.q{font-family:var(--serif);font-size:76px;line-height:1.0;color:var(--muted)}
+.q .k{color:var(--ink)}
+.anchors{display:flex;flex-direction:column;margin-top:20px}
+.anchor{font-family:var(--sans);font-weight:800;font-size:96px;line-height:1.02;letter-spacing:-0.02em;color:var(--ink);
+  border-top:1px solid var(--hair2);padding:8px 0}
+.anchor:last-child{border-bottom:1px solid var(--hair2)}
+.anchor.blue{color:var(--accent)}
+
+/* ---- S4 industries ---- */
+.rows2{margin-top:8px}
+.r2{display:flex;align-items:baseline;gap:28px;border-top:1px solid var(--hair2);padding:22px 0}
+.r2:last-child{border-bottom:1px solid var(--hair2)}
+.r2 .n{font-family:var(--mono);font-size:22px;color:var(--accent);width:52px;flex:none}
+.r2 .t{font-family:var(--serif);font-size:64px;line-height:1;color:var(--ink)}
+
+/* ---- S5 flow ---- */
+.flow{display:flex;align-items:center;gap:18px;margin:6px 0 30px;flex-wrap:wrap}
+.node{font-family:var(--sans);font-weight:700;font-size:24px;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink);
+  border:1.5px solid var(--hair2);border-radius:8px;padding:14px 20px}
+.node.on{border-color:var(--accent);color:var(--accent)}
+.arrow{font-family:var(--sans);color:var(--accent);font-size:26px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px;margin-top:6px}
+.g2{font-size:26px;color:var(--ink);padding:12px 0;border-top:1px solid var(--hair)}
+
+/* ---- S6 equation ---- */
+.eq{display:flex;flex-direction:column;gap:6px;margin-top:20px}
+.eq .row{font-family:var(--sans);font-weight:800;font-size:78px;letter-spacing:-0.01em;line-height:1.02}
+.eq .gt{font-family:var(--serif);font-size:150px;line-height:0.7;color:var(--accent);margin:6px 0}
+.eq .hype{color:var(--faint)}
+
+/* ---- S7 truth ---- */
+.s7 .main{justify-content:center}
+.s7 .k{font-family:var(--serif);font-size:64px;color:var(--muted);line-height:1.05}
+.s7 .huge{font-family:var(--serif);font-size:150px;line-height:0.9;color:var(--ink);letter-spacing:-0.01em;margin-top:20px}
+.s7 .huge .blue{color:var(--accent)}
+.s7 .body{margin-top:44px;font-size:27px;max-width:30ch}
+
+/* ---- S8 cta ---- */
+.s8 .serif{font-size:82px;line-height:0.98}
+.tags{display:flex;flex-wrap:wrap;gap:12px 14px;margin:30px 0}
+.tag{font-family:var(--sans);font-weight:700;font-size:20px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);
+  border:1px solid var(--hair2);border-radius:999px;padding:10px 18px}
+.dm{font-family:var(--sans);font-weight:800;font-size:64px;letter-spacing:-0.01em;color:var(--ink);margin-top:6px}
+.dm .a{color:var(--accent)}
+.sign{margin-top:auto;padding-top:22px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;align-items:flex-end}
+.sign .nm{font-family:var(--serif);font-size:38px;color:var(--ink)}
+.sign .ro{font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.sign .at{font-family:var(--mono);font-size:19px;color:var(--accent)}
+</style>
+</head>
+<body>
+
+  <!-- ===== S1 HOOK ===== -->
+  <div class="slide s1">
+    <div class="top"><span class="label">The AI Gap <span class="d">·</span> 2026</span><span class="pg">01/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <div class="pre">Your competitors are</div>
+      <div class="big">already using AI.</div>
+      <div class="tick"></div>
+      <div class="pre">You are still</div>
+      <div class="big blue">thinking about it.</div>
+      <div class="body">That gap is costing you customers right now, and you cannot even see it.</div>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">Field notes</span></div>
+  </div>
+
+  <!-- ===== S2 VOICE AGENTS ===== -->
+  <div class="slide s2">
+    <div class="top"><span class="label">Field notes <span class="d">·</span> Voice AI</span><span class="pg">02/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <div class="head"><span class="idx">01</span><div class="serif">Voice agents became<br>the standard.</div></div>
+      <div style="display:flex;gap:56px;align-items:flex-start">
+        <div>
+          <div class="data">$22B</div>
+          <div class="data-cap">Projected voice-AI market, 2026</div>
+        </div>
+        <div style="flex:1">
+          <p class="body" style="margin-bottom:14px">Not robotic phone menus. Real conversations that:</p>
+          <ul class="list">
+            <li class="li"><span class="b"></span>Book appointments</li>
+            <li class="li"><span class="b"></span>Answer questions</li>
+            <li class="li"><span class="b"></span>Capture leads</li>
+          </ul>
+          <p style="font-family:var(--serif);font-style:italic;font-size:38px;color:var(--accent);margin-top:22px">While you sleep.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation</span></div>
+  </div>
+
+  <!-- ===== S3 WRONG QUESTION ===== -->
+  <div class="slide s3">
+    <div class="top"><span class="label">Field notes <span class="d">·</span> The question</span><span class="pg">03/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <span class="idx">02</span>
+      <div class="q" style="margin-top:14px">&ldquo;<span class="k">What can AI do?</span>&rdquo;<br>is the wrong question.</div>
+      <p class="body" style="margin-top:28px">The businesses getting serious about AI ask one thing instead:</p>
+      <p style="font-family:var(--serif);font-style:italic;font-size:52px;color:var(--accent);margin:14px 0 24px">&ldquo;What does this save me?&rdquo;</p>
+      <div class="anchors">
+        <div class="anchor">Time.</div>
+        <div class="anchor">Calls.</div>
+        <div class="anchor blue">Money.</div>
+      </div>
+      <p class="body" style="margin-top:26px">If your automation cannot answer that, it is just a toy.</p>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation</span></div>
+  </div>
+
+  <!-- ===== S4 SPECIALISATION ===== -->
+  <div class="slide s4">
+    <div class="top"><span class="label">Field notes <span class="d">·</span> Systems</span><span class="pg">04/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <div class="head"><span class="idx">03</span><div class="serif">Specialised<br>beats general.</div></div>
+      <div class="rows2">
+        <div class="r2"><span class="n">01</span><span class="t">Restaurants</span></div>
+        <div class="r2"><span class="n">02</span><span class="t">Clinics</span></div>
+        <div class="r2"><span class="n">03</span><span class="t">Real estate</span></div>
+        <div class="r2"><span class="n">04</span><span class="t">Finance</span></div>
+      </div>
+      <p class="body" style="margin-top:30px">The fastest-growing AI agents are built for one workflow. A system designed around <b>your exact business</b> beats a generic tool every time.</p>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation</span></div>
+  </div>
+
+  <!-- ===== S5 OUTBOUND ===== -->
+  <div class="slide s5">
+    <div class="top"><span class="label">Field notes <span class="d">·</span> Outbound</span><span class="pg">05/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <div class="head"><span class="idx">04</span><div class="serif">Outbound is where<br>the money is now.</div></div>
+      <div class="flow">
+        <span class="node on">Lead</span><span class="arrow">&rarr;</span>
+        <span class="node">Follow-up</span><span class="arrow">&rarr;</span>
+        <span class="node">Response</span><span class="arrow">&rarr;</span>
+        <span class="node on">Booking</span>
+      </div>
+      <p class="body" style="margin-bottom:8px">Everyone thinks AI just answers calls. The real growth is AI that <b>starts</b> the work:</p>
+      <div class="grid2">
+        <div class="g2">Payment reminders</div>
+        <div class="g2">Appointment confirmations</div>
+        <div class="g2">Lead follow-ups</div>
+        <div class="g2">Reactivation</div>
+      </div>
+      <p style="font-family:var(--serif);font-style:italic;font-size:40px;color:var(--accent);margin-top:26px">Automatically.</p>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation</span></div>
+  </div>
+
+  <!-- ===== S6 REAL ADVANTAGE ===== -->
+  <div class="slide s6">
+    <div class="top"><span class="label">Field notes <span class="d">·</span> The advantage</span><span class="pg">06/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <span class="idx">05</span>
+      <div class="serif" style="font-size:88px;margin-top:14px">The winners aren't<br>the ones with the<br>best AI.</div>
+      <p class="body" style="margin-top:26px">They are the ones who built it into how they <b>actually work.</b></p>
+      <div class="eq">
+        <div class="row">AI + Workflow</div>
+        <div class="gt">&gt;</div>
+        <div class="row hype">AI + Hype</div>
+      </div>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">AI Automation</span></div>
+  </div>
+
+  <!-- ===== S7 TRUTH ===== -->
+  <div class="slide s7">
+    <div class="top"><span class="label">The AI Gap <span class="d">·</span> 2026</span><span class="pg">07/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <div class="k">The truth most people<br>won't tell you:</div>
+      <div class="huge">AI is no longer<br>the future.<br>It is the <span class="blue">baseline.</span></div>
+      <p class="body">Every month you wait is another month your competitors improve their systems, response times and customer experience.</p>
+    </div>
+    <div class="foot"><span class="l">Tolulope Fatoyinbo</span><span class="r">Field notes</span></div>
+  </div>
+
+  <!-- ===== S8 CTA ===== -->
+  <div class="slide s8">
+    <div class="top"><span class="label">The good news</span><span class="pg">08/08</span></div>
+    <div class="rule"></div>
+    <div class="main">
+      <div class="serif">Catching up is faster<br>than you think.</div>
+      <p class="body" style="margin-top:24px">If your business still runs on:</p>
+      <div class="tags">
+        <span class="tag">Manual calls</span><span class="tag">Missed messages</span>
+        <span class="tag">Slow follow-ups</span><span class="tag">Repetitive admin</span>
+      </div>
+      <p class="body" style="margin-top:2px">That is exactly what I fix.</p>
+      <div class="dm">DM me <span class="a">&ldquo;AI&rdquo;</span></div>
+      <p class="body" style="margin-top:14px">and let's find the one system that would save your business the most time.</p>
+    </div>
+    <div class="sign">
+      <div><div class="nm">Tolulope Fatoyinbo</div><div class="ro">AI Automation Specialist</div></div>
+      <div class="at">@tolulope-fatoyinbo</div>
+    </div>
+  </div>
+
+</body>
+</html>
