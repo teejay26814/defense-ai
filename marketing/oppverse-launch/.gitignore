@@ -7,3 +7,4 @@ captures/
 stems/
 oppverse-launch.mp4
 *_preview-720p.mp4
+__pycache__/
