@@ -1,0 +1,5 @@
+/* Brand fonts, matching oppverseai.vercel.app: Sora (display) + Inter (UI).
+   JetBrains Mono stands in for the site's ui-monospace data labels. All OFL, variable. */
+@font-face{font-family:"Sora";src:url(fonts/Sora-VF.ttf) format("truetype");font-weight:100 800;font-display:block}
+@font-face{font-family:"Inter";src:url(fonts/Inter-VF.ttf) format("truetype");font-weight:100 900;font-display:block}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMono-VF.ttf) format("truetype");font-weight:100 800;font-display:block}

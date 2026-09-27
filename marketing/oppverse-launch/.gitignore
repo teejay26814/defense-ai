@@ -1,0 +1,9 @@
+node_modules/
+frames/
+probe/
+captures/
+*_compat.mp4
+*.gif
+stems/
+oppverse-launch.mp4
+*_preview-720p.mp4
