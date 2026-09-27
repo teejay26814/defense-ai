@@ -165,12 +165,13 @@ def main():
         raw = subprocess.run([FF, '-v', 'quiet', '-i', vo, '-ac', '2', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout
         v = np.frombuffer(raw, np.float32).reshape(-1, 2)
         vbus = np.zeros_like(music); vbus[: min(len(v), len(vbus))] = v[: len(vbus)]
-        # duck music (and soften SFX) wherever the voice is speaking: 60ms envelope, -9 dB
+        # duck music (-10.5 dB) and soften SFX wherever the voice is speaking: 60ms envelope
         env = np.abs(vbus).max(axis=1)
         k = int(.06 * SR); env = np.convolve(env, np.ones(k) / k, 'same')
-        duck = 1 - .64 * np.clip(env / .05, 0, 1)
+        vbus *= 1.5                                                 # voice leads the mix
+        duck = 1 - .70 * np.clip(env / .05, 0, 1)
         duck = np.convolve(duck, np.ones(k * 4) / (k * 4), 'same')
-        music *= duck[:, None]; sfx *= (0.35 + 0.65 * duck)[:, None]
+        music *= duck[:, None]; sfx *= (0.28 + 0.72 * duck)[:, None]
         mix = music + sfx + vbus
     else:
         mix = music + sfx
