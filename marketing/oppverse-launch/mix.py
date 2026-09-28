@@ -2,6 +2,7 @@
 
     python3 mix.py                      -> oppverse-launch_final.mp4 (+ stems/)
     python3 mix.py --vo voice.wav       -> same, with the voice-over on top and the music ducked under it
+    python3 mix.py --music ambition     -> pick the score (see MUSICS); --preview muxes onto the share cut, fast
 
 Every cue is placed by its *hit point* (the file's measured peak), so the transient lands on the
 exact frame of the visual event, not wherever the file happens to start. Levels are set as a target
@@ -20,7 +21,16 @@ OUT = os.path.join(HERE, 'oppverse-launch_final.mp4')
 SR = 48000
 DUR = 53.0
 
-MUSIC = ('mixkit-21-445', 3.8)   # track, offset in seconds: its drop (14.21s) lands on the logo at 10.41s
+# Scores. offset: where in the track the film starts, chosen so the track's big moment lands on the
+# logo at 10.41s. dips: (start, end, gain) automation. Level is matched to the original trap bed.
+MUSICS = {
+    'trap':     dict(track='mixkit-21-445', offset=3.8,        # drop at 14.21s; near-silent before it
+                     dips=[]),
+    'ambition': dict(track='mixkit-driving-ambition-32', offset=28.14,   # cinematic; big hit at 38.55s
+                     dips=[(8.2, 10.33, .22)]),                # clear the air under the hero line, slam back on the hit
+    'night':    dict(track='mixkit-we-own-the-night-roll-out-320', offset=7.04,  # electronic; drop at 17.45s
+                     dips=[]),
+}
 
 def load(name):
     raw = subprocess.run([FF, '-v', 'quiet', '-i', os.path.join(SFX, name + '.mp3'), '-ac', '2', '-ar', str(SR), '-f', 'f32le', '-'],
@@ -140,26 +150,34 @@ def build_sfx():
         place(bus, a, start)
     return bus
 
-def build_music():
-    name, off = MUSIC
-    a, _, pk = src(name)
-    a = a[int(off * SR):].copy()
+def build_music(key='ambition'):
+    cfg = MUSICS[key]
+    a, _, pk = src(cfg['track'])
+    a = a[int(cfg['offset'] * SR):].copy()
     bus = np.zeros((int(DUR * SR) + SR, 2), np.float32)
     n = min(len(a), len(bus)); bus[:n] = a[:n]
     tt = np.arange(len(bus)) / SR
     g = np.clip(tt / 0.6, 0, 1)                                   # fade in
     g *= np.clip((DUR - .3 - tt) / 2.4, 0, 1) ** 1.5              # fade out into the end card
     g *= np.where(tt < 10.3, .7, 1.0)                             # hold the cold open back so the drop hits
-    return bus * g[:, None] * .52
+    for t0, t1, lv in cfg['dips']:                                # 250ms ramps in, 80ms snap back out
+        down = np.clip((tt - t0) / .25, 0, 1); up = np.clip((tt - (t1 - .08)) / .08, 0, 1)
+        g *= 1 - (1 - lv) * down * (1 - up)
+    # loudness-match every score to the original bed over the post-drop body of the film
+    ref, _, _ = src(MUSICS['trap']['track'])
+    body = lambda x, off: x[int((off + 10.5) * SR): int((off + 45) * SR)]
+    k = np.sqrt(np.mean(body(ref, MUSICS['trap']['offset']) ** 2)) / np.sqrt(np.mean(body(src(cfg['track'])[0], cfg['offset']) ** 2))
+    return bus * g[:, None] * .52 * k
 
 def wav(path, a):
     subprocess.run([FF, '-y', '-v', 'quiet', '-f', 'f32le', '-ar', str(SR), '-ac', '2', '-i', '-', path],
                    input=np.ascontiguousarray(a, np.float32).tobytes(), check=True)
 
 def main():
-    vo = sys.argv[sys.argv.index('--vo') + 1] if '--vo' in sys.argv else None
+    arg = lambda k, d=None: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else d
+    vo, key, preview = arg('--vo'), arg('--music', 'ambition'), '--preview' in sys.argv
     os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
-    sfx, music = build_sfx(), build_music()
+    sfx, music = build_sfx(), build_music(key)
     if vo:
         raw = subprocess.run([FF, '-v', 'quiet', '-i', vo, '-ac', '2', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout
         v = np.frombuffer(raw, np.float32).reshape(-1, 2)
@@ -186,10 +204,16 @@ def main():
     integrated = float(meas[meas.rindex('I:'):].split()[1])
     gain = -14.0 - integrated
     print('integrated %.1f LUFS -> gain %+.1f dB' % (integrated, gain))
-    subprocess.run([FF, '-y', '-v', 'error', '-i', VIDEO, '-i', mixpath,
-                    '-filter_complex', f'[1:a]{glue},volume={gain:.2f}dB,alimiter=limit=0.84:attack=4:release=60:level=disabled,aresample=48000[a]',
-                    '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-preset', 'slow', '-b:v', '10M', '-maxrate', '14M', '-bufsize', '20M', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '256k', '-t', str(DUR), '-movflags', '+faststart', OUT], check=True)
-    print('cues:', len(C), '->', OUT)
+    master = f'[1:a]{glue},volume={gain:.2f}dB,alimiter=limit=0.84:attack=4:release=60:level=disabled,aresample=48000[a]'
+    if preview:   # reuse the already-encoded share cut: seconds instead of minutes
+        out = os.path.join(HERE, f'oppverse-launch_{key}_preview.mp4')
+        venc = ['-c:v', 'copy']; vin = os.path.join(HERE, 'oppverse-launch_1080p-share.mp4')
+    else:
+        out = OUT; vin = VIDEO
+        venc = ['-c:v', 'libx264', '-preset', 'slow', '-b:v', '10M', '-maxrate', '14M', '-bufsize', '20M', '-pix_fmt', 'yuv420p']
+    subprocess.run([FF, '-y', '-v', 'error', '-i', vin, '-i', mixpath, '-filter_complex', master,
+                    '-map', '0:v', '-map', '[a]', *venc, '-c:a', 'aac', '-b:a', '256k', '-t', str(DUR), '-movflags', '+faststart', out], check=True)
+    print('score:', key, ' cues:', len(C), '->', out)
 
 if __name__ == '__main__':
     main()
