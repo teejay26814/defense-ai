@@ -81,10 +81,10 @@ for k in range(8):
     cue('Pop_1' if k % 2 else 'rm_click__3_', 21.09 + .55 + k * .115 + .26, .12)
 cue('Digital_counting', 22.0, .20, align='start', len=2.1, fade=.5)
 cue('Mountain_Audio_-_New_Idea_Notification', 26.5, .22)
-cue('woosh-building-109596', 28.12, .38)
+cue('woosh-building-109596', 28.12, .26)
 # ---- S6 match explained ----------------------------------------------------------------------
-cue('06_Portal_Hop', 28.42, .22, fade=.6, len=1.2)
-cue('Whoosh_2', 28.8, .14)
+cue('06_Portal_Hop', 28.22, .18, fade=.5, len=.9)   # clear of the voice's 'Every'
+cue('Whoosh_2', 28.8, .08)
 cue('09_Data_Transfer', 29.25, .16, fade=.6, len=1.6)
 # the music breaks down 26-31s: a robotic riser carries the explanation and cuts dead on the 92% lock
 cue('10_Evolve_Riser_Robo_Drums', 23.72, .34, align='start', len=7.63, fade=.12)
@@ -108,14 +108,13 @@ cue('Whoosh_2', 40.5, .16)
 # ---- S8 pipeline -----------------------------------------------------------------------------
 for t in (41.3, 41.78, 42.23, 42.67):
     cue('mixkit-hard-pop-click-2364', t, .16)
-cue('quick-win', 43.16, .28)
+cue('quick-win', 43.02, .18)            # just ahead of the voice's 'Accepted'
 cue('Short_Whoosh', 44.12, .18)
 # ---- S9 close --------------------------------------------------------------------------------
 cue('mixkit-cinematic-wind-swoosh-1471', 44.62, .18)
 cue('mixkit-cinematic-wind-swoosh-1471', 45.78, .16)
 cue('BUILD-UP', 47.74, .50)
-cue('03_Grand_Hit_A', 47.79, .58, fade=2.5)
-cue('07_Subsonic_A', 47.79, .18, align='start', fade=2.5)
+cue('03_Grand_Hit_A', 47.79, .58, len=.9, fade=.7)   # short tail: the brand name follows
 cue('rm_click__2_', 49.05, .18)
 
 

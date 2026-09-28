@@ -29,7 +29,7 @@ PLACE = {
     8: 19.05,  # with a persona for every path.      (persona switch 19.31)
     9: 21.45,  # Jobs, fellowships, scholarships, grants and global programs.
     10: 26.10, # One universe.                       (fellowships lights up)
-    11: 28.35, # Every match is scored across five layers, and explained.
+    11: 28.55, # Every match is scored across five layers, and explained.
     12: 32.25, # Not eligible?                       (screened card appears)
     13: 33.20, # It never reaches you.
     14: 35.60, # Ranked for you
@@ -39,14 +39,14 @@ PLACE = {
     18: 41.72, # Compare.
     19: 42.20, # Tailor.
     20: 42.64, # Track.
-    21: 43.08, # Accepted.
+    21: 43.18, # Accepted.
     22: 44.30, # Stop searching everywhere.
     23: 45.75, # Start seeing what fits.
     24: 48.35, # Oppverse AI.                        (after the end hit)
     25: 49.50, # Build your opportunity profile today.
 }
 TEMPO = {0: 1.07, 1: 1.07,                       # the cold open is tight: a hair quicker, pitch kept
-         17: 1.12, 18: 1.12, 19: 1.12, 20: 1.12, 21: 1.12}  # pipeline words land one per beat
+         17: 1.12, 18: 1.12, 19: 1.12, 20: 1.12}         # (not 'Accepted': stretching smeared it)  # pipeline words land one per beat
 
 def decode(path, sr, extra=()):
     raw = subprocess.run([FF, '-v', 'quiet', '-i', path, *extra, '-ac', '1', '-ar', str(sr), '-f', 'f32le', '-'],
