@@ -150,7 +150,7 @@ def build_sfx():
         place(bus, a, start)
     return bus
 
-def build_music(key='ambition'):
+def build_music(key='trap'):
     cfg = MUSICS[key]
     a, _, pk = src(cfg['track'])
     a = a[int(cfg['offset'] * SR):].copy()
@@ -175,7 +175,7 @@ def wav(path, a):
 
 def main():
     arg = lambda k, d=None: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else d
-    vo, key, preview = arg('--vo'), arg('--music', 'ambition'), '--preview' in sys.argv
+    vo, key, preview = arg('--vo'), arg('--music', 'trap'), '--preview' in sys.argv
     os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
     sfx, music = build_sfx(), build_music(key)
     if vo:
