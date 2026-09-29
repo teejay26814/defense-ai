@@ -5,6 +5,7 @@ import { useState } from "react";
 import { recordConfidence } from "./actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
+import { ProjectExcerpt } from "@/components/ui/project-excerpt";
 import {
   CONFIDENCE_LABELS,
   DIFFICULTY_LABELS,
@@ -61,14 +62,11 @@ export function Flashcard({
         </button>
       ) : (
         <div className="mt-4">
-          <div className="rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-3 pl-4 pr-3">
-            <p className="label-eyebrow">
-              From your project
-            </p>
+          <ProjectExcerpt>
             <p className="measure mt-2 whitespace-pre-line leading-relaxed text-ink">
               {question.model_answer}
             </p>
-          </div>
+          </ProjectExcerpt>
 
           {/*
             Asked only after the answer is visible. Rating a question you have not seen the

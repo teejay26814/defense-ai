@@ -6,6 +6,7 @@ import { recordConfidence } from "./actions";
 import { FlipCard } from "./flip-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 import { CONFIDENCE_LABELS, DIFFICULTY_LABELS, type Question } from "@/lib/types";
 
@@ -179,11 +180,8 @@ export function StudySession({
         </button>
       </div>
 
-      <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-navy-300">
-        <div
-          className="h-full rounded-full bg-navy-700 transition-[width] duration-300"
-          style={{ width: `${(position / queue.length) * 100}%` }}
-        />
+      <div className="mb-6">
+        <ProgressBar value={(position / queue.length) * 100} label="Study session progress" />
       </div>
 
       <div key={current.id} className="animate-scale-in">

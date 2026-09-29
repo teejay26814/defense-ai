@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { ProjectExcerpt } from "@/components/ui/project-excerpt";
 import { DIFFICULTY_LABELS, type Question } from "@/lib/types";
 
 /**
@@ -133,12 +135,8 @@ export function QuizRunner({
         </p>
       </div>
 
-      {/* Progress. Width only, so nothing reflows as it fills. */}
-      <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-navy-300">
-        <div
-          className="h-full rounded-full bg-navy-700 transition-[width] duration-300"
-          style={{ width: `${(index / questions.length) * 100}%` }}
-        />
+      <div className="mb-6">
+        <ProgressBar value={(index / questions.length) * 100} label="Quiz progress" />
       </div>
 
       <div
@@ -196,14 +194,11 @@ export function QuizRunner({
               {chosenIsCorrect ? "Correct." : "Not quite."}
             </p>
 
-            <div className="mt-3 rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-3 pl-4 pr-3">
-              <p className="label-eyebrow">
-                From your project
-              </p>
+            <ProjectExcerpt className="mt-3">
               <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink">
                 {question.model_answer}
               </p>
-            </div>
+            </ProjectExcerpt>
 
             <button
               type="button"

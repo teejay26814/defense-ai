@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 /**
  * A real flip, not an accordion. The question and the answer are two faces of one card
@@ -14,6 +14,12 @@ import type { ReactNode } from "react";
  * Only `transform` is animated, per the design guardrails, and the global
  * prefers-reduced-motion rule already zeroes every transition-duration to near-nothing, so
  * a reduced-motion visitor gets the same state change with no spin.
+ *
+ * Focus follows the flip. The front is a button, and revealing makes it inert - so without
+ * this, a keyboard or screen-reader user who pressed it would be left focused on something
+ * hidden, with the answer they asked for never announced. Focus moves only on the
+ * turn-over itself, not when a card mounts already revealed (stepping back with Previous),
+ * so it never jumps on its own.
  */
 export function FlipCard({
   revealed,
@@ -26,6 +32,14 @@ export function FlipCard({
   front: ReactNode;
   back: ReactNode;
 }) {
+  const backRef = useRef<HTMLDivElement>(null);
+  const wasRevealed = useRef(revealed);
+
+  useEffect(() => {
+    if (revealed && !wasRevealed.current) backRef.current?.focus({ preventScroll: true });
+    wasRevealed.current = revealed;
+  }, [revealed]);
+
   return (
     <div className="[perspective:1600px]">
       <div
@@ -49,8 +63,10 @@ export function FlipCard({
           turn - the same trick a real card trick relies on, just in CSS.
         */}
         <div
+          ref={backRef}
+          tabIndex={revealed ? -1 : undefined}
           aria-hidden={!revealed}
-          className={`absolute inset-0 flex flex-col overflow-y-auto rounded-feature border border-navy-100/70
+          className={`absolute inset-0 flex flex-col overflow-y-auto rounded-feature outline-none border border-navy-100/70
             bg-surface p-6 shadow-lifted [backface-visibility:hidden] sm:p-8
             ${revealed ? "" : "pointer-events-none"}`}
           style={{ transform: "rotateY(180deg)" }}

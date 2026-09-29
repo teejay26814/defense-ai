@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Sitting } from "./sitting";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
+import { ProjectExcerpt } from "@/components/ui/project-excerpt";
 import { createClient } from "@/lib/supabase/server";
 import {
   DEFENSE_SCOPES,
@@ -143,14 +144,11 @@ export default async function SittingPage({
                   {a.answer.trim() || <span className="text-ink-muted">Nothing given.</span>}
                 </p>
 
-                <div className="mt-3 rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-3 pl-4 pr-3">
-                  <p className="label-eyebrow">
-                    Your project says
-                  </p>
+                <ProjectExcerpt label="Your project says" className="mt-3">
                   <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-ink">
                     {a.model_answer}
                   </p>
-                </div>
+                </ProjectExcerpt>
 
                 {a.feedback && (
                   <p className="mt-3 text-sm leading-relaxed text-ink-muted">{a.feedback}</p>

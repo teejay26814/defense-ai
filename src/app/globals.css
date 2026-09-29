@@ -442,9 +442,17 @@
       transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  &:hover::before {
-    opacity: 1;
-    transform: translateX(60%);
+  /*
+   * Only where a real pointer can hover. On a phone, :hover fires on tap and then sticks
+   * until the next tap somewhere else, which leaves the sheen frozen half-way across the
+   * card. Tailwind's own hover: variant is already gated like this; a hand-written :hover
+   * is not, so it has to be done here.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover::before {
+      opacity: 1;
+      transform: translateX(60%);
+    }
   }
 }
 
@@ -568,6 +576,24 @@
   html {
     /* Anchor links and focus jumps should not slam against the viewport edge. */
     scroll-padding-block-start: var(--spacing-section);
+  }
+
+  html {
+    /*
+     * Browser surfaces the rest of the design does not draw. A system-blue text selection,
+     * a black caret and grey default checkboxes are small, but they are the first thing that
+     * shows a page was assembled rather than designed.
+     */
+    accent-color: var(--color-navy-500);
+    caret-color: var(--color-navy-500);
+    /* The grey flash Android and iOS paint over anything tapped. Every control here has
+       its own :active state, so the flash is redundant as well as off-brand. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background-color: rgb(17 85 168 / 0.22);
+    color: inherit;
   }
 
   body {

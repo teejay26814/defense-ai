@@ -1,3 +1,5 @@
+import { ProgressBar } from "@/components/ui/progress-bar";
+
 /**
  * The readiness ring.
  *
@@ -115,10 +117,13 @@ export function ReadinessSubmetric({
           {value === null ? "–" : `${pct}%`}
         </span>
       </div>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-navy-100">
-        <div
-          className="h-full rounded-full bg-navy-500 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ width: `${pct}%` }}
+      <div className="mt-2">
+        <ProgressBar
+          value={pct}
+          label={label}
+          trackClassName="bg-navy-100"
+          fillClassName="bg-navy-500"
+          durationClassName="duration-700"
         />
       </div>
     </div>
