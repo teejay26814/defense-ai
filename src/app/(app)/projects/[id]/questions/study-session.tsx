@@ -46,6 +46,8 @@ export function StudySession({
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const [requeued, setRequeued] = useState<Question[]>([]);
+  // Which way the last step went, so the next card slides in from the side it came from.
+  const [direction, setDirection] = useState<"next" | "prev">("next");
 
   const current = queue[position];
   const done = position >= queue.length;
@@ -57,10 +59,12 @@ export function StudySession({
   }, [current]);
 
   const goNext = useCallback(() => {
+    setDirection("next");
     setPosition((p) => Math.min(p + 1, queue.length));
   }, [queue.length]);
 
   const goPrev = useCallback(() => {
+    setDirection("prev");
     setPosition((p) => Math.max(p - 1, 0));
   }, []);
 
@@ -142,6 +146,7 @@ export function StudySession({
                 setQueue(requeued);
                 setRequeued([]);
                 setPosition(0);
+                setDirection("next");
                 // A fresh Set, not just cleared for these ids - a card being redone should
                 // ask for real recall again, not show the answer immediately because it was
                 // already opened once during the first pass.
@@ -184,7 +189,10 @@ export function StudySession({
         <ProgressBar value={(position / queue.length) * 100} label="Study session progress" />
       </div>
 
-      <div key={current.id} className="animate-scale-in">
+      <div
+        key={current.id}
+        className={direction === "next" ? "animate-card-next" : "animate-card-prev"}
+      >
         <FlipCard
           revealed={revealed}
           onReveal={reveal}

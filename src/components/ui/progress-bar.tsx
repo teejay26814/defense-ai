@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 /**
  * A thin progress bar.
  *
@@ -9,6 +11,10 @@
  * The default colours are the theme-aware tokens. The bars this replaced used navy-700 on
  * navy-300, which are fixed brand swatches: in dark mode the navy fill all but vanished
  * against the canvas and the pale unfilled track read as the progress, backwards.
+ *
+ * The offset goes through a custom property rather than an inline transform so that
+ * @starting-style can reach it: on first paint the fill starts empty and slides to its
+ * value, instead of a server-rendered bar that is simply already there.
  */
 export function ProgressBar({
   value,
@@ -37,8 +43,10 @@ export function ProgressBar({
       className={`h-1.5 w-full overflow-hidden rounded-full ${trackClassName}`}
     >
       <div
-        className={`h-full w-full rounded-full transition-transform ease-[cubic-bezier(0.22,1,0.36,1)] ${durationClassName} ${fillClassName}`}
-        style={{ transform: `translateX(${pct - 100}%)` }}
+        className={`h-full w-full rounded-full transition-transform ease-out-strong
+          [transform:translateX(var(--fill-offset))] starting:[transform:translateX(-100%)]
+          motion-reduce:transition-none ${durationClassName} ${fillClassName}`}
+        style={{ "--fill-offset": `${pct - 100}%` } as CSSProperties}
       />
     </div>
   );

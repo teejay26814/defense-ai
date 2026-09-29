@@ -141,7 +141,7 @@ export function QuizRunner({
 
       <div
         key={question.id}
-        className="animate-scale-in rounded-surface border border-navy-100/70 bg-surface p-6 shadow-lifted"
+        className="animate-card-next rounded-surface border border-navy-100/70 bg-surface p-6 shadow-lifted"
       >
         <div className="mb-3 flex flex-wrap items-center gap-2">
           {question.chapter && <Badge tone="info">Chapter {question.chapter}</Badge>}
@@ -150,7 +150,7 @@ export function QuizRunner({
 
         <p className="font-display text-lg leading-snug text-ink">{question.question}</p>
 
-        <ul className="stagger-children mt-5 space-y-2.5">
+        <ul className="mt-5 space-y-2.5">
           {order.map((option, i) => {
             const isCorrect = option.original === question.correct_option;
             const isChosen = chosen === i;

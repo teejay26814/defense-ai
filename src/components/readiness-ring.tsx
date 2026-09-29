@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { ProgressBar } from "@/components/ui/progress-bar";
 
 /**
@@ -69,7 +71,13 @@ export function ReadinessRing({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          // Fills from empty on first paint. The page is server-rendered at the final value,
+          // so the transition above only ever ran when a score changed in place - the one
+          // number the whole product is about just appeared, already drawn. @starting-style
+          // gives it a from-state with no JS; browsers without it show the final ring.
+          style={{ "--ring-empty": circumference } as CSSProperties}
+          className="transition-[stroke-dashoffset] duration-700 ease-out-strong
+            starting:[stroke-dashoffset:var(--ring-empty)] motion-reduce:transition-none"
         />
       </svg>
 

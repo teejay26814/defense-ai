@@ -166,6 +166,14 @@
   --shadow-floating: 0 4px 8px -2px rgb(5 38 89 / 0.07), 0 20px 32px -8px rgb(5 38 89 / 0.14);
 
   /*
+   * Motion curves. One strong ease-out for everything that enters, fills or responds - it
+   * starts fast, so the change lands the moment the student acts, then settles. Declared
+   * here so it is a utility (ease-out-strong) instead of a cubic-bezier retyped in every
+   * component and drifting apart.
+   */
+  --ease-out-strong: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /*
    * Spacing steps used for page rhythm. Intentional tokens, so vertical spacing is picked
    * from a small set rather than reaching for an arbitrary Tailwind step each time.
    */
@@ -372,6 +380,26 @@
   }
 }
 
+/*
+ * A flashcard arriving. Direction-aware - forward comes in from the right, Previous from the
+ * left - so stepping through a deck reads as moving along it. Deliberately tiny and short:
+ * this fires on every keypress in a drill, dozens of times a session, and anything longer
+ * starts to stand between the student and the next question.
+ */
+@keyframes card-next {
+  from {
+    opacity: 0;
+    transform: translateX(0.75rem);
+  }
+}
+
+@keyframes card-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-0.75rem);
+  }
+}
+
 /* A slow drift for the gradient fields, so a large colour area is never quite static. */
 @keyframes drift {
   0%,
@@ -384,15 +412,23 @@
 }
 
 @utility animate-rise {
-  animation: rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rise 320ms var(--ease-out-strong) both;
 }
 
 @utility animate-fade {
   animation: fade 240ms ease-out both;
 }
 
+@utility animate-card-next {
+  animation: card-next 180ms var(--ease-out-strong) both;
+}
+
+@utility animate-card-prev {
+  animation: card-prev 180ms var(--ease-out-strong) both;
+}
+
 @utility animate-scale-in {
-  animation: scale-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: scale-in 260ms var(--ease-out-strong) both;
 }
 
 /*
@@ -401,7 +437,7 @@
  */
 @utility stagger-children {
   & > * {
-    animation: rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: rise 320ms var(--ease-out-strong) both;
   }
   & > *:nth-child(1) { animation-delay: 0ms; }
   & > *:nth-child(2) { animation-delay: 45ms; }
@@ -439,7 +475,7 @@
     );
     transition:
       opacity 200ms ease-out,
-      transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform 620ms var(--ease-out-strong);
   }
 
   /*
@@ -563,12 +599,18 @@
  */
 @utility press {
   transition:
-    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms var(--ease-out-strong),
+    box-shadow 180ms var(--ease-out-strong),
     border-color 180ms ease-out;
 
   &:active {
     transform: scale(0.988);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active {
+      transform: none;
+    }
   }
 }
 
@@ -630,15 +672,55 @@
     border-radius: 2px;
   }
 
-  /* Animate transform and opacity only. transition-all is banned by CLAUDE.md. */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+}
+
+/*
+ * Reduced motion: fewer and gentler, not none.
+ *
+ * This used to zero every animation and transition on the page. That also froze loading
+ * spinners mid-turn - a "Deleting..." button that looks hung - and removed the plain fades
+ * that tell a student something new arrived, which move nothing and trouble nobody.
+ *
+ * So instead: every entrance keeps its fade but loses its travel (the keyframes are
+ * redefined to opacity only, which also covers stagger-children), and the ambient loops
+ * stop. Components that move on interaction - the flashcard flip, hover lifts - handle
+ * their own reduced-motion branch next to the motion itself.
+ */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes rise {
+    from {
+      opacity: 0;
     }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes card-next {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes card-prev {
+    from {
+      opacity: 0;
+    }
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Ambient decoration only - nothing is lost by switching it off. */
+  .bloom::before {
+    animation: none;
+  }
+
+  .sheen::before {
+    display: none;
   }
 }

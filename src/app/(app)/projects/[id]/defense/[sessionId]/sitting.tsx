@@ -144,7 +144,7 @@ export function Sitting({
 
       <div
         key={current.id}
-        className="animate-scale-in rounded-feature border border-navy-100/70 bg-surface p-6 shadow-lifted sm:p-8"
+        className="animate-card-next rounded-feature border border-navy-100/70 bg-surface p-6 shadow-lifted sm:p-8"
       >
         {current.chapter && (
           <Badge tone="info" className="mb-3">

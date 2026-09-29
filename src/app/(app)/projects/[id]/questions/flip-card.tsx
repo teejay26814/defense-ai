@@ -11,9 +11,13 @@ import { useEffect, useRef, type ReactNode } from "react";
  * has to happen from a keyboard shortcut in StudySession - there must be exactly one source
  * of truth for whether the card is turned over, never two.
  *
- * Only `transform` is animated, per the design guardrails, and the global
- * prefers-reduced-motion rule already zeroes every transition-duration to near-nothing, so
- * a reduced-motion visitor gets the same state change with no spin.
+ * Only `transform` is animated, per the design guardrails. 340ms, not longer: in a drill the
+ * flip happens on every card, and at 500ms it started to feel like waiting for the answer
+ * rather than turning it over.
+ *
+ * Under prefers-reduced-motion there is no spin at all - the card stays flat and the two
+ * faces cross-fade instead. A 180-degree rotation is exactly the kind of large movement that
+ * setting asks to avoid, but snapping instantly would lose the cue that the card changed.
  *
  * Focus follows the flip. The front is a button, and revealing makes it inert - so without
  * this, a keyboard or screen-reader user who pressed it would be left focused on something
@@ -43,8 +47,9 @@ export function FlipCard({
   return (
     <div className="[perspective:1600px]">
       <div
-        className="relative min-h-[20rem] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d] sm:min-h-[22rem]"
-        style={{ transform: revealed ? "rotateY(180deg)" : "none" }}
+        className={`relative min-h-[20rem] transition-transform duration-[340ms] ease-out-strong
+          [transform-style:preserve-3d] motion-reduce:transform-none motion-reduce:transition-none
+          sm:min-h-[22rem] ${revealed ? "[transform:rotateY(180deg)]" : ""}`}
       >
         <button
           type="button"
@@ -53,7 +58,8 @@ export function FlipCard({
           tabIndex={revealed ? -1 : 0}
           className={`press absolute inset-0 flex w-full flex-col rounded-feature border border-navy-100/70
             bg-surface p-6 text-left shadow-lifted [backface-visibility:hidden] sm:p-8
-            ${revealed ? "pointer-events-none" : ""}`}
+            motion-reduce:transition-[opacity,transform] motion-reduce:duration-200
+            ${revealed ? "pointer-events-none motion-reduce:opacity-0" : ""}`}
         >
           {front}
         </button>
@@ -67,9 +73,9 @@ export function FlipCard({
           tabIndex={revealed ? -1 : undefined}
           aria-hidden={!revealed}
           className={`absolute inset-0 flex flex-col overflow-y-auto rounded-feature outline-none border border-navy-100/70
-            bg-surface p-6 shadow-lifted [backface-visibility:hidden] sm:p-8
-            ${revealed ? "" : "pointer-events-none"}`}
-          style={{ transform: "rotateY(180deg)" }}
+            bg-surface p-6 shadow-lifted [backface-visibility:hidden] [transform:rotateY(180deg)] sm:p-8
+            motion-reduce:transform-none motion-reduce:transition-opacity motion-reduce:duration-200
+            ${revealed ? "" : "pointer-events-none motion-reduce:opacity-0"}`}
         >
           {back}
         </div>
