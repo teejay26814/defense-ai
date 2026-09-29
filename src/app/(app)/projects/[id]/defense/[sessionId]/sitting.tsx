@@ -9,6 +9,7 @@ import { finishDefense, submitAnswer, type DefenseState } from "../actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form";
+import { ProgressBar } from "@/components/ui/progress-bar";
 import { getGenerationJobStatus } from "@/lib/generation-jobs";
 import { DIFFICULTY_LABELS, type Question } from "@/lib/types";
 
@@ -137,16 +138,13 @@ export function Sitting({
         <Badge tone="neutral">{DIFFICULTY_LABELS[current.difficulty] ?? "Explain"}</Badge>
       </div>
 
-      <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-navy-300">
-        <div
-          className="h-full rounded-full bg-navy-700 transition-[width] duration-300"
-          style={{ width: `${(position / total) * 100}%` }}
-        />
+      <div className="mb-6">
+        <ProgressBar value={(position / total) * 100} label="Mock defense progress" />
       </div>
 
       <div
         key={current.id}
-        className="animate-scale-in rounded-feature border border-navy-100/70 bg-surface p-6 shadow-lifted sm:p-8"
+        className="animate-card-next rounded-feature border border-navy-100/70 bg-surface p-6 shadow-lifted sm:p-8"
       >
         {current.chapter && (
           <Badge tone="info" className="mb-3">

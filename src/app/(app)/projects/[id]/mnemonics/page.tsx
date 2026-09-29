@@ -80,7 +80,7 @@ export default async function MnemonicsPage({
               </div>
 
               {/* The hook, given the weight it needs to actually stick. */}
-              <div className="bloom rounded-lg border-l-2 border-navy-500 bg-navy-050/60 py-4 pl-4 pr-3">
+              <div className="bloom rounded-surface bg-navy-050/70 px-4 py-4 shadow-hairline">
                 <p className="label-eyebrow">
                   Remember it as
                 </p>

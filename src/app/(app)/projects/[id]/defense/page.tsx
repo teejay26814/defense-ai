@@ -101,12 +101,12 @@ export default async function DefensePage({
             {complete.map((s) => {
               const band = readinessBand(s.readiness!);
               return (
-                <li key={s.id}>
+                <li key={s.id} className="rule-hairline">
                   <Link
                     href={`/projects/${id}/defense/${s.id}`}
-                    className="rule-hairline press flex items-center gap-5 py-4
-                      transition-[background-color,padding] duration-200
-                      hover:bg-navy-050/60 hover:px-3"
+                    className="press group -mx-3 flex items-center gap-5 rounded-control px-3 py-4
+                      transition-[background-color] duration-200
+                      hover:bg-navy-050/60"
                   >
                     <span className="figures-data w-14 shrink-0 font-sans text-2xl font-semibold text-ink">
                       {s.readiness}

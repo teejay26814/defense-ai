@@ -467,9 +467,9 @@ export default async function DashboardPage() {
               <li key={p.id} className="rule-hairline">
                 <Link
                   href={`/projects/${p.id}`}
-                  className="press flex items-baseline gap-5 py-4
-                    transition-[background-color,padding] duration-200
-                    hover:bg-navy-050/60 hover:px-4"
+                  className="press group -mx-4 flex items-baseline gap-5 rounded-control px-4 py-4
+                    transition-[background-color] duration-200
+                    hover:bg-navy-050/60"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block font-display text-lg text-ink">{p.title}</span>
@@ -477,7 +477,7 @@ export default async function DashboardPage() {
                       {p.documents.length} document{p.documents.length === 1 ? "" : "s"}
                     </span>
                   </span>
-                  <IconChevronRight className="size-4 shrink-0 text-navy-300" />
+                  <IconChevronRight className="size-4 shrink-0 text-navy-300 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </li>
             ))}

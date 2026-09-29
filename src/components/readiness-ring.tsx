@@ -1,3 +1,7 @@
+import type { CSSProperties } from "react";
+
+import { ProgressBar } from "@/components/ui/progress-bar";
+
 /**
  * The readiness ring.
  *
@@ -67,7 +71,13 @@ export function ReadinessRing({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          // Fills from empty on first paint. The page is server-rendered at the final value,
+          // so the transition above only ever ran when a score changed in place - the one
+          // number the whole product is about just appeared, already drawn. @starting-style
+          // gives it a from-state with no JS; browsers without it show the final ring.
+          style={{ "--ring-empty": circumference } as CSSProperties}
+          className="transition-[stroke-dashoffset] duration-700 ease-out-strong
+            starting:[stroke-dashoffset:var(--ring-empty)] motion-reduce:transition-none"
         />
       </svg>
 
@@ -115,10 +125,13 @@ export function ReadinessSubmetric({
           {value === null ? "–" : `${pct}%`}
         </span>
       </div>
-      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-navy-100">
-        <div
-          className="h-full rounded-full bg-navy-500 transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ width: `${pct}%` }}
+      <div className="mt-2">
+        <ProgressBar
+          value={pct}
+          label={label}
+          trackClassName="bg-navy-100"
+          fillClassName="bg-navy-500"
+          durationClassName="duration-700"
         />
       </div>
     </div>

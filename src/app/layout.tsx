@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Figtree, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -35,6 +35,15 @@ export const metadata: Metadata = {
   description:
     "Turn your final-year project into a defense you are ready for. Upload your chapters, " +
     "understand them deeply, practice the questions, and walk in prepared.",
+};
+
+// Tints the phone's status bar and browser chrome to the page, so the app does not sit under
+// a white strip on a dark canvas. Follows the system theme; these match --color-parchment.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fdfbf7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d1830" },
+  ],
 };
 
 // Runs before paint, before React hydrates, so a returning student's chosen theme never

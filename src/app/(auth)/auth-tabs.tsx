@@ -27,7 +27,7 @@ export function AuthTabs({ active }: { active: "signin" | "signup" }) {
               transition-colors duration-200
               after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full
               after:origin-left after:transition-transform after:duration-300
-              after:content-[''] after:ease-[cubic-bezier(0.22,1,0.36,1)]
+              after:content-[''] after:ease-out-strong
               ${
                 isActive
                   ? "font-semibold text-ink after:scale-x-100 after:bg-navy-500"
