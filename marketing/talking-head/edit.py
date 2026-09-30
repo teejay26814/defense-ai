@@ -25,12 +25,12 @@ W, H, FPS, SR = 1080, 1920, 30, 48000
 
 # iPhone HLG is designed to look right on SDR screens: convert the gamut only, keep the curve.
 TO_SDR = 'colorspace=all=bt709:iall=bt2020:itrc=bt709:format=yuv420p'
-# Brand grade: firmer contrast, cooler shadows (ties to the navy/blue brand), warm highlights kept
+# Brand grade: gentle contrast, cooler shadows (ties to the navy/blue brand), warm highlights kept
 # for skin, yellows (the curtains) pulled back, soft vignette.
-GRADE = ("eq=contrast=1.1:saturation=1.0,"
+GRADE = ("eq=contrast=1.04:saturation=1.0,"
          "colorbalance=rs=-0.04:bs=0.05:rh=0.02:gh=0.01:bh=-0.02,"
          "huesaturation=saturation=-0.18:colors=y:strength=1,"
-         "curves=master='0/0 0.12/0.09 0.5/0.5 0.88/0.92 1/1',"
+         "curves=master='0/0 0.12/0.105 0.5/0.5 0.88/0.9 1/1',"
          "vignette=angle=PI/5")
 
 # tag outputs as plain Rec.709 so every phone decodes the colours the same way
