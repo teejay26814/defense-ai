@@ -3,3 +3,4 @@ work/
 *.mp4
 node_modules
 out/
+__pycache__/
