@@ -25,13 +25,15 @@ W, H, FPS, SR = 1080, 1920, 30, 48000
 
 # iPhone HLG is designed to look right on SDR screens: convert the gamut only, keep the curve.
 TO_SDR = 'colorspace=all=bt709:iall=bt2020:itrc=bt709:format=yuv420p'
-# Brand grade: gentle contrast, cooler shadows (ties to the navy/blue brand), warm highlights kept
-# for skin, yellows (the curtains) pulled back, soft vignette.
-GRADE = ("eq=contrast=1.04:saturation=1.0,"
-         "colorbalance=rs=-0.04:bs=0.05:rh=0.02:gh=0.01:bh=-0.02,"
-         "huesaturation=saturation=-0.18:colors=y:strength=1,"
-         "curves=master='0/0 0.12/0.105 0.5/0.5 0.88/0.9 1/1',"
-         "vignette=angle=PI/5")
+# Grade: warm "creator glow" matched to a reference the client liked - peachy warmth, lifted
+# soft shadows, richer skin (reds/oranges up, curtain yellows down), gentle luma-only glow.
+GRADE = ("colortemperature=temperature=5000:mix=0.7,eq=saturation=1.1:gamma=1.04,"
+         "huesaturation=saturation=-0.15:colors=y:strength=1,"
+         "huesaturation=saturation=0.14:colors=r:strength=1,"
+         "colorbalance=rh=0.02:bh=-0.02,"
+         "curves=master='0/0.09 0.25/0.27 0.5/0.52 0.8/0.79 1/0.95',"
+         "split[ga][gb];[gb]gblur=sigma=30[gg];[ga][gg]blend=c0_mode=screen:c0_opacity=0.18:c1_opacity=0:c2_opacity=0,"
+         "vignette=angle=PI/6")
 
 # tag outputs as plain Rec.709 so every phone decodes the colours the same way
 TAGS = ['-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv']
