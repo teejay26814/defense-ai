@@ -1,0 +1,5 @@
+src/
+work/
+*.mp4
+node_modules
+out/
