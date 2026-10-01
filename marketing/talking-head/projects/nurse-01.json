@@ -136,7 +136,8 @@
  "fix": {
   "n18": "n8n",
   "cloud": "Claude",
-  "air": "AI"
+  "air": "AI",
+  "filling": "following"
  },
  "lines": [
   "Hi, I'm Tolu",
@@ -185,7 +186,7 @@
   "create content",
   "come up with",
   "content ideas",
-  "or filling up leads",
+  "or following up leads",
   "and all of that",
   "I'm here for you",
   "I'll be sharing",

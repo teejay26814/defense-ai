@@ -268,7 +268,7 @@ def stage_final(c):
          '-i', p(c, '.master.wav'), '-filter_complex', '[0:v][1:v]overlay=0:0:format=auto,format=yuv420p[v]',
          '-map', '[v]', '-map', '2:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', *TAGS,
          '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', '-shortest', out])
-    run([FF, '-y', '-v', 'error', '-i', out, '-c:v', 'libx264', '-preset', 'slow', '-b:v', '4.5M', '-maxrate', '6M', '-bufsize', '9M',
+    run([FF, '-y', '-v', 'error', '-i', out, '-c:v', 'libx264', '-preset', 'slow', '-b:v', '3.1M', '-maxrate', '4.2M', '-bufsize', '6M',
          *TAGS, '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-movflags', '+faststart', share])
     for f in (out, share): print(f'final: {f}  {os.path.getsize(f) / 1e6:.1f} MB')
 

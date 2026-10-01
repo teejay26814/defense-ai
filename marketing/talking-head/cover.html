@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Reel cover</title>
+<style>
+@font-face{font-family:"Barlow Condensed";src:url(fonts/BarlowCondensed-Black.ttf);font-weight:900}
+@font-face{font-family:"Barlow Condensed";src:url(fonts/BarlowCondensed-ExtraBold.ttf);font-weight:800}
+@font-face{font-family:"Inter";src:url(fonts/Inter-700.ttf);font-weight:700}
+@font-face{font-family:"Inter";src:url(fonts/Inter-600.ttf);font-weight:600}
+:root{--navy:#0b1a2e;--blue:#2563eb;--sky:#9dbcff}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+#c{position:relative;width:1080px;height:1920px;overflow:hidden}
+#c img{position:absolute;left:0;top:-150px;width:1080px;height:1920px}
+/* legibility: navy rises from the bottom, face stays untouched */
+#shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,26,46,0) 48%,rgba(11,26,46,.6) 58%,rgba(8,18,33,.94) 70%,rgba(6,14,26,1) 84%)}
+/* everything lives inside the 4:5 grid crop (y 285-1635) */
+#txt{position:absolute;left:72px;right:72px;top:1060px}
+.kick{display:inline-flex;align-items:center;gap:14px;padding:13px 22px;border-radius:999px;background:#fff;
+  font:700 28px/1 "Inter";letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+.kick i{width:12px;height:12px;border-radius:50%;background:var(--blue)}
+h1{margin-top:26px;font:900 128px/.9 "Barlow Condensed";text-transform:uppercase;color:#fff;letter-spacing:-.005em;text-shadow:0 8px 40px rgba(0,0,0,.35)}
+h1 .hl{display:inline-block;background:var(--blue);padding:0 18px 6px;border-radius:14px;margin-top:10px}
+.sub{margin-top:30px;font:600 34px/1.35 "Inter";color:#dbe6ff;max-width:22ch}
+</style></head>
+<body><div id="c"><img src="work/cover/bg.png"><div id="shade"></div>
+<div id="txt">
+  <span class="kick"><i></i>Hi, I'm Tolu</span>
+  <h1>A nurse<br>who builds<br><span class="hl">AI automations</span></h1>
+  <div class="sub">What I build, what works, and what breaks.</div>
+</div></div></body></html>
