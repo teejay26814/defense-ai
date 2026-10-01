@@ -1,0 +1,70 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Day cover</title>
+<!--
+  Build-in-public series cover. Reusable: cover_day.html?day=1&title=hello,%20world
+  1080x1920; everything that matters sits inside Instagram's 4:5 grid crop (y 285-1635).
+  The 365-dot tracker lights one dot per day posted.
+-->
+<style>
+@font-face{font-family:"Barlow Condensed";src:url(fonts/BarlowCondensed-Black.ttf);font-weight:900}
+@font-face{font-family:"Barlow Condensed";src:url(fonts/BarlowCondensed-Bold.ttf);font-weight:700}
+@font-face{font-family:"Inter";src:url(fonts/Inter-700.ttf);font-weight:700}
+@font-face{font-family:"Inter";src:url(fonts/Inter-600.ttf);font-weight:600}
+@font-face{font-family:"Inter";src:url(fonts/Inter-500.ttf);font-weight:500}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/JetBrainsMono-VF.ttf);font-weight:100 800}
+:root{--navy:#0b1a2e;--blue:#2563eb;--sky:#9dbcff;--ink:#eaf1ff}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden}
+#c{position:relative;width:1080px;height:1920px;overflow:hidden;color:var(--ink);
+  background:radial-gradient(1000px 760px at 85% 22%,rgba(37,99,235,.42),transparent 62%),
+             radial-gradient(900px 900px at 0% 95%,rgba(37,99,235,.14),transparent 60%),
+             linear-gradient(180deg,#0d2040,#0b1a2e 50%,#060f1d)}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(157,188,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(157,188,255,.06) 1px,transparent 1px);
+  background-size:72px 72px;background-position:36px 0;-webkit-mask-image:radial-gradient(90% 70% at 50% 40%,#000 25%,transparent 80%);mask-image:radial-gradient(90% 70% at 50% 40%,#000 25%,transparent 80%)}
+#grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:screen;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.w{position:absolute;left:72px;right:72px}
+.mono{font-family:"JetBrains Mono";font-weight:600}
+.top{top:330px;display:flex;justify-content:space-between;align-items:center;font-size:24px;letter-spacing:.16em;text-transform:uppercase}
+.top .l{display:inline-flex;align-items:center;gap:12px;color:#fff}
+.top .l i{width:12px;height:12px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 6px rgba(255,77,77,.18)}
+.top .r{color:var(--sky)}
+.rule{top:384px;height:2px;background:linear-gradient(90deg,rgba(157,188,255,.5),rgba(157,188,255,.05))}
+.day{top:420px;display:flex;align-items:flex-end;gap:26px}
+.day .k{font:900 150px/.8 "Barlow Condensed";text-transform:uppercase;color:transparent;-webkit-text-stroke:3px var(--sky);padding-bottom:24px;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.04em}
+.day .n{font:900 470px/.78 "Barlow Condensed";letter-spacing:-.02em;color:#fff;text-shadow:0 30px 90px rgba(37,99,235,.45)}
+.day .n b{color:var(--blue);font-weight:900;text-shadow:0 0 60px rgba(37,99,235,.7)}
+.title{top:860px;font-size:50px;color:#fff;letter-spacing:-.01em}
+.title .p{color:var(--blue)}
+.title .cur{display:inline-block;width:26px;height:50px;background:var(--sky);vertical-align:-8px;margin-left:8px}
+.sub{top:948px;font:500 33px/1.4 "Inter";color:#b9c9ea}
+.sub b{color:#fff;font-weight:700}
+.trk{top:1080px}
+.trk .hd{display:flex;justify-content:space-between;font-size:22px;letter-spacing:.14em;color:var(--sky);text-transform:uppercase;margin-bottom:22px}
+.trk .hd b{color:#fff}
+.dots{display:grid;grid-template-columns:repeat(31,1fr);gap:10px 0;justify-items:center}
+.dots i{width:14px;height:14px;border-radius:4px;background:rgba(157,188,255,.13)}
+.dots i.on{background:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.28),0 0 22px rgba(37,99,235,.95)}
+.dots i.next{background:transparent;border:2px dashed rgba(157,188,255,.45)}
+.stack{top:1455px;display:flex;gap:12px;flex-wrap:wrap}
+.stack span{padding:12px 18px;border-radius:12px;background:rgba(255,255,255,.07);border:1.5px solid rgba(157,188,255,.22);font:600 25px/1 "Inter";color:#dce7ff}
+</style></head>
+<body><div id="c"><div id="grid"></div>
+  <div class="w top mono"><span class="l"><i></i>Building in public</span><span class="r">Tolu · Nurse × AI</span></div>
+  <div class="w rule"></div>
+  <div class="w day"><span class="k">Day</span><span class="n" id="num"></span></div>
+  <div class="w title mono"><span class="p">&gt;</span> <span id="ttl"></span><span class="cur"></span></div>
+  <div class="w sub">A nurse building <b>AI automations</b> and making content, one day at a time.</div>
+  <div class="w trk mono"><div class="hd"><span>The year</span><span><b id="cnt"></b> / 365</span></div><div class="dots" id="dots"></div></div>
+  <div class="w stack"><span>n8n</span><span>Airtable</span><span>WhatsApp</span><span>Claude Code</span><span>Make</span></div>
+  <div id="grain"></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search), day = +(q.get('day') || 1);
+const s = String(day).padStart(3, '0'); const nz = s.search(/[1-9]/);
+document.getElementById('num').innerHTML = s.slice(0, nz) + '<b>' + s.slice(nz) + '</b>';   // the live digits glow blue
+document.getElementById('ttl').textContent = q.get('title') || 'hello, world';
+document.getElementById('cnt').textContent = s;
+document.getElementById('dots').innerHTML = Array.from({length: 372}, (_, i) =>
+  i >= 365 ? '<i style="visibility:hidden"></i>' : `<i class="${i < day ? 'on' : i === day ? 'next' : ''}"></i>`).join('');
+</script>
+</body></html>
