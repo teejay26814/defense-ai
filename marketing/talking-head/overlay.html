@@ -45,12 +45,26 @@ html,body{background:transparent;width:1080px;height:1920px;overflow:hidden}
 #end .tt{font:600 32px/1 "Inter";letter-spacing:.22em;text-transform:uppercase;color:var(--sky);margin-top:34px}
 #end .cta{margin-top:80px;display:inline-flex;align-items:center;gap:16px;padding:26px 40px;border-radius:999px;background:var(--blue);
   font:700 38px/1 "Inter";color:#fff;box-shadow:0 24px 60px -20px rgba(37,99,235,.9)}
+/* v2: role tags under the name card, tool chips, b-roll labels */
+#tags{position:absolute;left:64px;top:1560px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.tg{display:inline-flex;align-items:center;gap:12px;padding:12px 20px;border-radius:999px;background:rgba(255,255,255,.94);
+  font:700 26px/1 "Inter";letter-spacing:.06em;text-transform:uppercase;color:var(--navy);box-shadow:0 14px 30px -14px rgba(0,0,0,.5)}
+.tg i{width:10px;height:10px;border-radius:50%;background:var(--blue)}
+#chips{position:absolute;left:0;right:0;top:1010px;display:flex;justify-content:center;gap:14px}
+.ch{padding:14px 22px;border-radius:14px;background:rgba(11,26,46,.92);border:1px solid rgba(157,188,255,.35);
+  font:700 30px/1 "Inter";color:#fff;letter-spacing:-.005em;box-shadow:0 16px 36px -16px rgba(0,0,0,.6)}
+#lab{position:absolute;left:40px;display:inline-flex;align-items:center;gap:12px;padding:11px 18px;border-radius:10px;
+  background:rgba(11,26,46,.9);font:700 22px/1 "Inter";letter-spacing:.12em;text-transform:uppercase;color:#fff}
+#lab b{color:var(--sky);font-weight:700}
+#lab i{width:9px;height:9px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 5px rgba(255,77,77,.2)}
+
 .rev{opacity:0}
 </style>
 </head>
 <body>
 <div id="stage">
   <div id="cap"></div>
+  <div id="tags"></div><div id="chips"></div><div id="lab" style="opacity:0"></div>
   <div id="lt" style="opacity:0"><div class="bar"></div><div class="card"><div class="nm" id="ltn"></div><div class="tt" id="ltt"></div></div></div>
   <div id="end"><div class="veil"></div><div class="in">
     <div class="rule rev" id="e0"></div><div class="nm rev" id="e1"></div><div class="tt rev" id="e2"></div><div class="cta rev" id="e3"></div>
@@ -68,7 +82,7 @@ window.__seek = (t) => {
   // captions
   const ch = t < E.speech ? E.chunks.find(c => t >= c.t0 && t < c.t1) : null;
   if (ch !== lastChunk) {
-    cap.innerHTML = ch ? ch.w.map((w, i) => `<span class="w${w.em ? ' em' : ''}" data-i="${i}">${w.x}</span>`).join('') : '';
+    cap.innerHTML = ch ? ch.w.map((w, i) => `<span class="w${w.em ? ' em' : ''}" data-i="${i}">${w.x.replace(/[.,!?;:]+$/, '')}</span>`).join('') : '';
     lastChunk = ch;
   }
   if (ch) {
@@ -95,6 +109,33 @@ window.__seek = (t) => {
     lt.querySelector('.bar').style.transform = `scaleY(${eo(clamp((t - L.t0) / 0.2)) * (1 - eo(b))})`;
     card.firstChild.style.transform = `translateX(${-30 * (1 - eo(clamp((t - L.t0 - 0.1) / 0.45)))}px)`;
   }
+
+  // v2 layers
+  const cut = (u) => eo(clamp(u));
+  if (E.cap_top) cap.style.top = E.cap_top + 'px';
+  const tg = document.getElementById('tags');
+  if (E.tags) {
+    const vis = E.tags.filter(x => t >= x.t0 && t < x.t1);
+    const key = vis.map(x => x.text).join('|');
+    if (tg.dataset.k !== key) { tg.innerHTML = vis.map(x => `<span class="tg"><i></i>${x.text}</span>`).join(''); tg.dataset.k = key; }
+    vis.forEach((x, i) => { const el = tg.children[i]; const u = cut((t - x.t0) / 0.35), o = cut((t - (x.t1 - 0.3)) / 0.3);
+      el.style.opacity = u * (1 - o); el.style.transform = `translateX(${-40 * (1 - u)}px) scale(${0.9 + 0.1 * u})`; });
+  }
+  const chs = document.getElementById('chips');
+  if (E.chips && E.chips.length) {
+    const first = E.chips[0].t, lastEnd = E.chips[E.chips.length - 1].t + (E.chips_hold || 2.2);
+    const on = t >= first - 0.05 && t < lastEnd;
+    const vis = on ? E.chips.filter(x => t >= x.t - 0.05) : [];
+    const key = vis.map(x => x.text).join('|');
+    if (chs.dataset.k !== key) { chs.innerHTML = vis.map(x => `<span class="ch">${x.text}</span>`).join(''); chs.dataset.k = key; }
+    vis.forEach((x, i) => { const el = chs.children[i]; const u = cut((t - x.t + 0.05) / 0.25), o = cut((t - (lastEnd - 0.3)) / 0.3);
+      el.style.opacity = u * (1 - o); el.style.transform = `translateY(${24 * (1 - u)}px) scale(${0.85 + 0.15 * eb(clamp((t - x.t + 0.05) / 0.3))})`; });
+  }
+  const lab = document.getElementById('lab');
+  const L2 = (E.labels || []).find(x => t >= x.t0 && t < x.t1);
+  if (L2) { lab.innerHTML = L2.text; lab.style.top = (L2.top || 560) + 'px';
+    const u = cut((t - L2.t0 - 0.1) / 0.3), o = cut((t - (L2.t1 - 0.2)) / 0.2);
+    lab.style.opacity = u * (1 - o); lab.style.transform = `translateY(${12 * (1 - u)}px)`; } else lab.style.opacity = 0;
   // end card
   const N = E.end, end = document.getElementById('end');
   if (N) {
