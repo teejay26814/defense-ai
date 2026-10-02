@@ -126,7 +126,7 @@ def stage_base(c):
     cur = f"[vc]vignette=angle=PI/7,tpad=stop_mode=clone:stop_duration={T},boxblur=luma_radius=22:luma_power=2:enable='gte(t,{D + 0.1:.3f})'[v_0]"
     fc.append(cur); last = 'v_0'
     # b-roll cards
-    scr_i = idx[c['broll_source']]
+    scr_i = idx.get(c.get('broll_source'), 0)
     for j, b in enumerate(c.get('broll', [])):
         t0 = word_time(c, b['at']) + b.get('lead', 0); dur = b['dur']; t1 = t0 + dur
         b['_t0'] = t0
@@ -229,7 +229,9 @@ def stage_audio(c):
     k = int(.08 * SR); env = np.convolve(np.abs(voice), np.ones(k) / k, 'same')
     speech = env > np.percentile(env, 60) * 0.5
     v_rms = np.sqrt(np.mean(voice[speech] ** 2))
-    m = c['music']; mus = decode(os.path.join(SFX, m['track'] + '.mp3'), ch=2)[int(m.get('offset', 0) * SR):][:N]
+    m = c.get('music')
+    if not m: mus = np.zeros((N, 2), np.float32); m = {'level_db': -99}
+    else: mus = decode(os.path.join(SFX, m['track'] + '.mp3'), ch=2)[int(m.get('offset', 0) * SR):][:N]
     mus = np.pad(mus, ((0, max(0, N - len(mus))), (0, 0)))
     mus *= v_rms * 10 ** (m['level_db'] / 20) / (np.sqrt(np.mean(mus ** 2)) + 1e-9)
     tt = np.arange(N) / SR
