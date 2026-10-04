@@ -1,0 +1,22 @@
+{
+  "name": "building-20s",
+  "source": "src/IMG_4601.MOV",
+  "source_size": [3840, 2160],
+  "grade": "hue=h=-20:s=0.56,curves=all='0/0.02 0.21/0.135 0.58/0.55 1/0.965',colorbalance=rs=0.05:gs=0.01:bs=-0.04:rm=0.04:bm=-0.02,eq=contrast=1.07",
+  "shots": [
+    {"in": 1.0,  "out": 3.6,  "speed": 2, "cx": 0.36},
+    {"in": 5.0,  "out": 12.0, "speed": 5, "cx": 0.27},
+    {"in": 12.0, "out": 20.0, "speed": 5, "cx": 0.72},
+    {"in": 20.0, "out": 30.0, "speed": 6, "cx": 0.30},
+    {"in": 31.0, "out": 37.0, "speed": 3, "cx": 0.56},
+    {"in": 37.0, "out": 39.6, "speed": 2, "cx": 0.62},
+    {"in": 40.0, "out": 43.5, "speed": 2, "cx": 0.52},
+    {"in": 43.5, "out": 47.0, "speed": 2, "cx": 0.72},
+    {"in": 47.5, "out": 51.5, "speed": 2, "cx": 0.40}
+  ],
+  "text": {
+    "line1": "Building in your 20s:",
+    "line2": "Half excited. Half wondering if you're doing enough.",
+    "top": 1290, "in1": 0.3, "in2": 1.3
+  }
+}
