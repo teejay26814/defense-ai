@@ -84,7 +84,15 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
 .pbar em { margin-left: auto; font: 600 17px/1 'Figtree'; font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 
 /* S5 chapters */
-#s5p { margin-top: -290px; }
+#s5p { margin-top: -322px; height: 644px; background: #f3f6fa; }
+.chrome { height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 18px; background: #e9edf3; border-bottom: 1px solid #dde3ec; }
+.chrome i { width: 11px; height: 11px; border-radius: 50%; background: #c9d1dc; }
+.chrome span { margin-left: 18px; flex: 1; max-width: 560px; height: 26px; border-radius: 8px; background: #fff; font: 500 14px/26px 'Figtree'; color: var(--muted); padding: 0 12px; }
+.view { position: absolute; left: 0; right: 0; top: 44px; bottom: 0; overflow: hidden; }
+#shot { position: absolute; left: 0; top: 0; width: 960px; }
+#shot img { width: 960px; display: block; }
+.hl { position: absolute; left: 50px; width: 576px; height: 66px; border-radius: 12px; background: rgba(17,85,168,.07); box-shadow: inset 3px 0 0 var(--n500); opacity: 0; }
+#hlc { position: absolute; left: 18px; top: 360px; width: 924px; height: 108px; border-radius: 22px; box-shadow: 0 0 0 3px rgba(17,85,168,.55), 0 0 40px rgba(17,85,168,.25); opacity: 0; }
 .row { display: grid; grid-template-columns: 54px 1fr 70px; align-items: center; gap: 22px; padding: 22px 34px; border-bottom: 1px solid var(--line); }
 .row:last-child { border-bottom: 0; }
 .row .num { width: 54px; height: 54px; border-radius: 14px; background: var(--n050); color: var(--n700); display: grid; place-items: center; font: 700 22px/1 'Figtree'; }
@@ -102,8 +110,8 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
 .q { position: absolute; right: 34px; top: 30px; max-width: 640px; background: var(--n700); color: #fff; padding: 20px 26px; border-radius: 22px 22px 6px 22px; font: 500 25px/1.35 'Figtree'; opacity: 0; }
 .think { position: absolute; left: 34px; top: 132px; display: flex; gap: 12px; align-items: center; font: 500 21px/1 'Figtree'; color: var(--muted); opacity: 0; }
 .think i { width: 9px; height: 9px; border-radius: 50%; background: var(--n500); display: inline-block; }
-.ans { position: absolute; left: 34px; top: 126px; width: 760px; background: #fff; border: 1px solid var(--line); border-radius: 6px 22px 22px 22px; padding: 22px 26px; box-shadow: 0 8px 24px -12px rgba(5,38,89,.25); opacity: 0; }
-.ans p { font: 400 23px/1.45 'Figtree'; color: var(--ink); opacity: 0; }
+.ans { position: absolute; left: 34px; top: 126px; width: 860px; background: #fff; border: 1px solid var(--line); border-radius: 6px 22px 22px 22px; padding: 22px 26px; box-shadow: 0 8px 24px -12px rgba(5,38,89,.25); opacity: 0; }
+.ans p { font: 400 22px/1.5 'Figtree'; white-space: nowrap; color: var(--ink); opacity: 0; }
 .ans p b { font-weight: 700; color: var(--n700); }
 .chips { display: flex; gap: 12px; margin-top: 16px; }
 .chip { display: flex; align-items: center; gap: 9px; padding: 9px 15px; border-radius: 999px; background: var(--n050); border: 1px solid var(--n100); color: var(--n700); font: 600 17px/1 'Figtree'; opacity: 0; }
@@ -117,8 +125,8 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
 /* S7 remember */
 .top { position: absolute; left: 0; right: 0; top: 118px; display: flex; flex-direction: column; align-items: center; gap: 26px; text-align: center; }
 .top .h { font-size: 78px; }
-.card2 { position: absolute; top: 360px; width: 700px; height: 520px; border-radius: 26px; background: var(--paper); color: var(--ink); box-shadow: var(--sh-float); padding: 40px 44px; }
-#fc { left: 200px; } #qz { right: 200px; }
+.card2 { position: absolute; top: 345px; width: 720px; height: 560px; border-radius: 26px; background: var(--paper); color: var(--ink); box-shadow: var(--sh-float); padding: 40px 44px; }
+#fc { left: 190px; } #qz { right: 190px; }
 .lab { font: 700 17px/1 'Figtree'; letter-spacing: .2em; text-transform: uppercase; color: var(--n500); }
 .fcq { font: 600 46px/1.15 'Fraunces'; letter-spacing: -.015em; margin-top: 36px; color: var(--n800); }
 .fcmeta { position: absolute; left: 44px; bottom: 40px; font: 500 19px/1 'Figtree'; color: var(--muted); }
@@ -128,8 +136,8 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
 #fcb .rate { position: absolute; left: 44px; bottom: 36px; display: flex; gap: 12px; }
 #fcb .rate span { padding: 10px 18px; border-radius: 12px; border: 1px solid rgba(143,180,220,.4); font: 600 18px/1 'Figtree'; color: var(--n100); }
 #fcb .rate span.on { background: #fff; color: var(--n700); border-color: #fff; }
-.qq { font: 700 30px/1.25 'Figtree'; letter-spacing: -.01em; margin: 26px 0 22px; }
-.opt { display: flex; align-items: center; gap: 16px; padding: 15px 18px; border-radius: 14px; border: 1.5px solid var(--line); margin-bottom: 12px; font: 500 22px/1.2 'Figtree'; position: relative; }
+.qq { font: 700 28px/1.25 'Figtree'; letter-spacing: -.01em; margin: 22px 0 18px; }
+.opt { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 14px; border: 1.5px solid var(--line); margin-bottom: 10px; font: 500 19px/1.25 'Figtree'; position: relative; }
 .opt .l { width: 34px; height: 34px; border-radius: 10px; background: var(--n050); color: var(--n700); display: grid; place-items: center; font: 700 17px/1 'Figtree'; flex: none; }
 .opt .okfill { position: absolute; inset: -1.5px; border-radius: 14px; background: var(--okbg); border: 2px solid var(--ok); opacity: 0; }
 .opt > span, .opt > .l { position: relative; }
@@ -141,7 +149,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
 .ex .who { display: flex; align-items: center; gap: 14px; font: 700 18px/1 'Figtree'; letter-spacing: .24em; color: var(--n300); }
 .ex .who i { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg, var(--n300), var(--n500)); }
 .ex .who em { margin-left: auto; font-style: normal; letter-spacing: .14em; color: rgba(220,231,244,.55); font-weight: 600; }
-.ex p { font: 500 62px/1.12 'Fraunces'; letter-spacing: -.02em; margin-top: 34px; color: #fff; }
+.ex p { font: 500 54px/1.12 'Fraunces'; letter-spacing: -.02em; margin-top: 34px; color: #fff; }
 #s8k { position: absolute; left: 0; right: 0; top: 150px; display: flex; justify-content: center; }
 #rd { position: absolute; left: 50%; top: 50%; width: 760px; height: 560px; margin: -280px 0 0 -380px; border-radius: 30px; background: var(--paper); color: var(--ink); box-shadow: var(--sh-float); opacity: 0;
   display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
@@ -199,10 +207,11 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
     <div class="col">
       <div class="kicker" id="s5k">Your project</div>
       <div class="h"><span class="mask"><span id="s5a">Five chapters.</span></span><span class="mask"><span id="s5b" class="serif" style="color:var(--n100)">One private</span></span><span class="mask"><span id="s5c" class="serif" style="color:var(--n100)">knowledge base.</span></span></div>
+      <div class="sub" id="s5s">17,244 words, read and ready.</div>
     </div>
     <div class="panel" id="s5p">
-      <div class="pbar"><div class="dot"><img src="brand/logo-mark-white.svg"></div>Knowledge base<em>Indexed <span id="idx">0%</span></em></div>
-      <div id="rows"></div>
+      <div class="chrome"><i></i><i></i><i></i><span>academia-scribes.netlify.app/projects</span></div>
+      <div class="view"><div id="shot"><img src="captures/project-real.jpg"><div id="hlc"></div><div id="rows"></div></div></div>
     </div>
   </div>
 
@@ -216,13 +225,13 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
     <div class="panel" id="s6p">
       <div class="pbar"><div class="dot"><img src="brand/logo-mark-white.svg"></div>Ask my project<em>Private · your chapters only</em></div>
       <div class="chat">
-        <div class="q" id="q">What are the limitations of my study?</div>
+        <div class="q" id="q">What were the objectives of my study?</div>
         <div class="think" id="think"><i></i><i></i><i></i>&nbsp;Reading your chapters…</div>
         <div class="ans" id="ans">
-          <p>Your study names <b>three limitations</b>: the sample was drawn from a single state,</p>
-          <p>the design is cross-sectional, so it cannot show change over time,</p>
-          <p>and the questionnaire relied on <b>self-reported</b> responses.</p>
-          <div class="chips"><span class="chip" id="c1">Chapter 5 · 5.3 Limitations</span><span class="chip" id="c2">Chapter 3 · 3.4 Sampling</span></div>
+          <p>The study aimed to assess <b>the knowledge of neonatal jaundice</b></p>
+          <p>among women attending the antenatal clinic at Oluyoro Hospital,</p>
+          <p>and to identify the <b>perceived risk factors</b> and <b>sources of information</b>.</p>
+          <div class="chips"><span class="chip" id="c1">Chapter 5 · From your project</span><span class="chip" id="c2">Grounded in 5 chapters</span></div>
         </div>
       </div>
       <div class="inp"><span class="ph" id="ph">Ask about your project…</span><span id="typed"></span><span id="caret"></span>
@@ -234,19 +243,20 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', 
   <div class="scene" id="s7">
     <div class="top"><div class="kicker">02 · Remember</div><div class="h"><span class="mask"><span id="s7a">Built from <span class="serif" style="color:var(--n100)">your</span> chapters.</span></span></div></div>
     <div class="card2" id="fc">
-      <div class="lab">Flashcard · 7 of 24</div>
-      <div class="fcq">What gap in the literature does your study fill?</div>
-      <div class="fcmeta">Tap to reveal · Chapter 2</div>
-      <div id="fcb"><div class="lab">Answer</div><p>Prior studies looked at large firms. Few examined how small retailers adopt the technology, which is the gap this study addresses.</p>
+      <div class="lab">Flashcard · 3 of 6</div>
+      <div class="fcq">Why did you use a cross-sectional design?</div>
+      <div class="fcmeta">Tap to reveal · Chapter 3</div>
+      <div id="fcb"><div class="lab">Answer</div><p>It measured knowledge, perceived risk factors and information sources among antenatal women at a single point in time, which is exactly what the objectives called for.</p>
         <div class="rate"><span>Again</span><span>Hard</span><span class="on" id="solid">Solid</span></div></div>
     </div>
     <div class="card2" id="qz">
-      <div class="lab">Quiz · Question 3</div>
-      <div class="qq">Which sampling technique did your study use?</div>
-      <div class="opt"><span class="l">A</span><span>Convenience sampling</span></div>
-      <div class="opt"><span class="l">B</span><span>Snowball sampling</span></div>
-      <div class="opt" id="optc"><div class="okfill" id="okf"></div><span class="l">C</span><span>Stratified random sampling</span></div>
-      <div class="src" id="src">✓ Correct · from Chapter 3, 3.4</div>
+      <div class="lab">Quiz · Question 1 of 6 · Chapter 5</div>
+      <div class="qq">Can you tell us what the research objectives were for your study?</div>
+      <div class="opt"><span class="l">A</span><span>Measure the incidence of neonatal jaundice against national rates</span></div>
+      <div class="opt"><span class="l">B</span><span>Test bilirubinometers and screening apps like SpeCamX</span></div>
+      <div class="opt"><span class="l">C</span><span>Evaluate phototherapy and exchange transfusion outcomes</span></div>
+      <div class="opt" id="optc"><div class="okfill" id="okf"></div><span class="l">D</span><span>Assess mothers' knowledge, perceived risk factors and information sources</span></div>
+      <div class="src" id="src">✓ Correct · From your project</div>
     </div>
   </div>
 
@@ -319,9 +329,9 @@ A('#s2 .h', [{ transform: 'scale(1.035)', opacity: 1 }, { transform: 'scale(.96)
 
 /* ---------- S3 6.2 – 10.7 / S4 converge ---------- */
 const TILES = [
-  ['Chapter 1', 'Introduction · 14 pages', -640, -300, -9], ['Literature Review', 'Chapter 2 · 31 pages', 40, -350, 5],
-  ['Methodology', 'Chapter 3 · 18 pages', 600, -270, 8], ['Questionnaire.pdf', 'Appendix B', -720, 60, 6],
-  ['Results', 'Chapter 4 · 26 pages', 640, 80, -7], ['References', '84 sources', -360, -40, -4],
+  ['Chapter One', 'Victorias Project.docx · 1,781 words', -640, -300, -9], ['Chapter Two', 'Victorias Project.docx · 6,403 words', 40, -350, 5],
+  ['Chapter Three', 'Victorias Project.docx · 1,120 words', 600, -270, 8], ['Questionnaire.pdf', 'Appendix', -720, 60, 6],
+  ['Chapter Four', 'Victorias Project.docx · 1,937 words', 640, 80, -7], ['Chapter Five', 'Victorias Project.docx · 6,003 words', -360, -40, -4],
   ['Supervisor comments', 'Draft 3 · 12 notes', 330, -60, 3], ['Defense notes.docx', 'Last edited 2 weeks ago', 0, 160, -2],
 ];
 const tiles = $('#tiles');
@@ -367,16 +377,15 @@ A('#s5k', [{ opacity: 0 }, { opacity: 1 }], 14.75, .5);
 rise('#s5a', 14.8); rise('#s5b', 15.95); rise('#s5c', 16.1);
 panelIn('#s5p', 14.9);
 A('#s5p', [{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(-10px) scale(1.015)' }], 15.9, 3.0, 'linear');
-const CH = [['1', 'Introduction', '14 pages'], ['2', 'Literature Review', '31 pages'], ['3', 'Methodology', '18 pages'], ['4', 'Results & Discussion', '26 pages'], ['5', 'Conclusion & Recommendations', '11 pages']];
-const CHK = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+A('#s5s', [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], 16.6, .8);
+// real capture, panned from the project title down to the five chapters it has read
+A('#shot', [{ transform: 'translateY(-40px)' }, { transform: 'translateY(-330px)' }], 15.45, 1.1, 'cubic-bezier(.65,0,.35,1)');
+A('#hlc', [{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 0 }], 15.9, 1.0, 'ease-out');
 const ROW_T = [];
-CH.forEach(([n, t, p], i) => {
-  const r = document.createElement('div'); r.className = 'row';
-  r.innerHTML = `<div class="num">${n}</div><div><b>Chapter ${n} · ${t}</b><small>${p}</small><div class="track"><div class="fill"></div></div></div><div class="chk">${CHK}</div>`;
-  $('#rows').appendChild(r);
-  const t0 = 15.25 + i * .36; ROW_T.push(t0 + .62);
-  A(r.querySelector('.fill'), [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], t0, .6, 'cubic-bezier(.4,0,.2,1)');
-  A(r.querySelector('.chk'), [{ transform: 'scale(0)' }, { transform: 'scale(1.18)', offset: .6 }, { transform: 'scale(1)' }], t0 + .58, .4);
+[563, 637, 710, 784, 858].forEach((cy, i) => {
+  const el = document.createElement('div'); el.className = 'hl'; el.style.top = (cy - 33) + 'px'; $('#rows').appendChild(el);
+  const t0 = 16.2 + i * .3; ROW_T.push(t0);
+  A(el, [{ opacity: 0, transform: 'scaleX(.96)' }, { opacity: 1, transform: 'scaleX(1)', offset: .35 }, { opacity: .35, transform: 'scaleX(1)' }], t0, .7);
 });
 
 /* ---------- S6 18.90 – 24.23 ---------- */
@@ -384,7 +393,7 @@ scene('#s6', 18.90, 24.23, .3, .35); enter('#s6', 18.90); leave('#s6', 24.23);
 rise('#s6a', 19.0);
 A('#s6s', [{ opacity: 0, transform: 'translateY(20px)' }, { opacity: 1, transform: 'translateY(0)' }], 19.4, .8);
 panelIn('#s6p', 19.0);
-const TYPE = { t0: 19.55, t1: 21.0, text: 'What are the limitations of my study?' };
+const TYPE = { t0: 19.55, t1: 21.0, text: 'What were the objectives of my study?' };
 const SEND = 21.15;
 fade('#ph', 1, 0, TYPE.t0, .05);
 A('#send', [{ transform: 'scale(1)' }, { transform: 'scale(.86)' }, { transform: 'scale(1)' }], SEND, .25, 'ease-out');
@@ -414,7 +423,7 @@ A('#src', [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform
 /* ---------- S8 28.50 – 33.03 ---------- */
 scene('#s8', 28.50, 33.03, .25, .3); enter('#s8', 28.50);
 A('#s8k1', [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], 28.6, .6);
-const QS = ['Why did you choose this methodology?', 'What gap does your study fill?', 'How did you validate your instrument?', 'What would you do differently?'];
+const QS = ['Can you tell us what the research objectives were for your study?', 'Why did you choose Oluyoro Hospital?', 'How did you measure the mothers’ knowledge?', 'What would you do differently?'];
 const QT = [beat(32), beat(33.5), beat(34.5), beat(35.5)];
 const RD = beat(37);
 QS.forEach((q, i) => {
@@ -461,13 +470,12 @@ A('#glow', [{ opacity: .7, transform: 'scale(1)' }, { opacity: .9, transform: 's
 fade('#black', 0, 1, 43.7, .8, 'cubic-bezier(.45,0,.55,1)');
 
 /* ---------- JS-driven layers ---------- */
-const typed = $('#typed'), caret = $('#caret'), idx = $('#idx'), arc = $('#arc'), rdn = $('#rdn'), grain = $('#grain');
+const typed = $('#typed'), caret = $('#caret'), arc = $('#arc'), rdn = $('#rdn'), grain = $('#grain');
 const ease = x => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
 window.__seek = t => {
   const n = Math.max(0, Math.min(TYPE.text.length, Math.floor((t - TYPE.t0) / (TYPE.t1 - TYPE.t0) * TYPE.text.length)));
   typed.textContent = t >= SEND ? '' : TYPE.text.slice(0, n);
   caret.style.opacity = (t > TYPE.t0 && t < TYPE.t1) || Math.floor(t * 2.4) % 2 ? 1 : 0;
-  idx.textContent = Math.round(100 * Math.min(1, Math.max(0, (t - 15.25) / (ROW_T[4] - 15.25)))) + '%';
   const r = ease((t - RD - .25) / 1.5);
   arc.setAttribute('stroke-dashoffset', (276.46 * (1 - .86 * r)).toFixed(2));
   rdn.innerHTML = Math.round(86 * r) + '<small>%</small>';

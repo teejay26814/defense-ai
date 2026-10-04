@@ -49,10 +49,12 @@ const page = await ctx.newPage();
 
 // ---- log in ----
 await page.goto(`${BASE}/login`, { waitUntil: 'networkidle', timeout: 60000 });
-await page.fill('input[type="email"], input[name="email"], #email', EMAIL);
-await page.fill('input[type="password"], input[name="password"], #password', PASS);
-await page.click('button[type="submit"], button:has-text("Sign in"), button:has-text("Log in")');
-await page.waitForLoadState('networkidle', { timeout: 60000 }).catch(() => {});
+await page.waitForTimeout(1500);   // let the form hydrate, or typed values are lost
+await page.locator('input[type="email"]').pressSequentially(EMAIL, { delay: 10 });
+await page.locator('input[type="password"]').pressSequentially(PASS, { delay: 10 });
+await page.getByRole('button', { name: /^Sign in/ }).last().click();
+await page.waitForURL(u => !u.pathname.startsWith('/login'), { timeout: 30000 }).catch(() => console.log('login did not leave /login'));
+await page.waitForLoadState('networkidle', { timeout: 60000 }).catch(()=>{});
 await page.waitForTimeout(2500);
 console.log('logged in ->', page.url());
 

@@ -100,7 +100,10 @@ python3 mix_story.py                       # score + SFX + VO -> story_final.mp4
 - **Timing:** `story.py` holds the timing and the VO lines. The music runs at 112.5 bpm and the
   drop lands on the logo at 11.7s. The examiner cards, the montage words and the final hit all
   sit on that beat grid, and `story.html` uses the same numbers.
-- **App screens:** the panels are drawn from the app's design tokens. The saved login stopped
-  working on Oct 4. With a working login, `capture-live.mjs` can swap real screens in.
+- **Real content:** the knowledge-base beat is the live project page (`captures/03-project.png`,
+  cropped to `captures/project-real.jpg`). The chapter files and word counts, the quiz question
+  and options, the Ask answer text and the first examiner question all come from the real
+  neonatal jaundice project. The Ask panel is redrawn because the live Ask page returned
+  "Search is unavailable right now" on Oct 4.
 - **To swap the voice:** use a different Kokoro voice, e.g. `bm_george` or `af_bella`, or drop
   in a recorded take as `vo/NN.wav` files, one per line in `story.py`.

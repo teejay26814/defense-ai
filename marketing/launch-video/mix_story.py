@@ -257,10 +257,10 @@ add(fx, whoosh(.6), 8.6, .18)
 add(fx, whoosh(.9), 10.72, .45); add(fx, riser(1.0), 10.66, .55)
 add(fx, impact(1.0), 11.66, 1.0); add(fx, chime([86, 93, 98], .05, 2.5), 11.7, .22)
 for tr in [14.63, 18.90, 24.23, 28.50]: add(fx, whoosh(.55), tr - .3, .32)
-ROW_T = [15.25 + i * .36 + .62 for i in range(5)]
+ROW_T = [16.2 + i * .3 for i in range(5)]
 for k, t0 in enumerate(ROW_T): add(fx, pop(1000 + 140 * k, 620 + 90 * k), t0, .3, pan=.4)
-add(fx, chime([81, 88], .06, 1.2), ROW_T[-1] + .25, .18)
-TYPE_T0, TYPE_T1, TEXT = 19.55, 21.0, 'What are the limitations of my study?'
+add(fx, chime([81, 88], .06, 1.2), ROW_T[-1] + .3, .18); add(fx, whoosh(1.0), 15.4, .14)
+TYPE_T0, TYPE_T1, TEXT = 19.55, 21.0, 'What were the objectives of my study?'
 for i, c in enumerate(TEXT):
     tc = TYPE_T0 + i * (TYPE_T1 - TYPE_T0) / len(TEXT)
     add(fx, key_click(), tc + rng.uniform(-.005, .005), (.32 if c != ' ' else .45) * rng.uniform(.7, 1), pan=.35)
