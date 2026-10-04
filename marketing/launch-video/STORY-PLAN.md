@@ -93,7 +93,7 @@ silence on the final logo. VO optional (see decisions).
 ```bash
 npm i
 node render-story.mjs                      # picture -> story-silent.mp4
-/opt/tts/bin/python vo_tts.py bm_george 1.1   # voice -> vo/NN.wav (Kokoro, British male, runs locally)
+/opt/tts/bin/python vo_tts.py               # voice -> vo/NN.wav (Kokoro af_heart, runs locally)
 python3 mix_story.py                       # score + SFX + VO -> story_final.mp4 (-14 LUFS, -1 dBTP)
 VERT=1 OUT=story-silent-v.mp4 node render-story.mjs   # 9:16 picture (story.html?vert), same audio
 ```

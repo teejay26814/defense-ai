@@ -12,8 +12,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from story import VO
 
-voice = sys.argv[1] if len(sys.argv) > 1 else 'bm_george'
-speed = float(sys.argv[2]) if len(sys.argv) > 2 else 1.0
+voice = sys.argv[1] if len(sys.argv) > 1 else 'af_heart'
+speed = float(sys.argv[2]) if len(sys.argv) > 2 else 0.95
 # the brand says it aka-DEM-ia, not the dictionary's aka-DEE-mia
 SAY = {'Academia': '[Academia](/ˌækəˈdɛmiə/)'}
 pipe = KPipeline(lang_code='a' if voice[0] == 'a' else 'b', repo_id='hexgrad/Kokoro-82M')
