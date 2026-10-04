@@ -9,3 +9,9 @@ captures/
 *.gif
 stills/
 contact-sheet.png
+stems/
+vo/
+story-silent.mp4
+story_novo.mp4
+__pycache__/
+package-lock.json

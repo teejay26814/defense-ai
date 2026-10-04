@@ -83,3 +83,24 @@ silence on the final logo. VO optional (see decisions).
 3. Full render → contact sheet check → send.
 4. Sound design pass.
 5. 9:16 (and 4:5) cuts.
+
+---
+
+## Built (Oct 4): `story.html` → `story_final.mp4`
+
+44.5s, 1920×1080, 30fps. Every sound in it is made in code: no sample packs and no stock music.
+
+```bash
+npm i
+node render-story.mjs                      # picture -> story-silent.mp4
+/opt/tts/bin/python vo_tts.py af_heart     # voice -> vo/NN.wav (Kokoro, open weights, runs locally)
+python3 mix_story.py                       # score + SFX + VO -> story_final.mp4 (-14 LUFS, -1 dBTP)
+```
+
+- **Timing:** `story.py` holds the timing and the VO lines. The music runs at 112.5 bpm and the
+  drop lands on the logo at 11.7s. The examiner cards, the montage words and the final hit all
+  sit on that beat grid, and `story.html` uses the same numbers.
+- **App screens:** the panels are drawn from the app's design tokens. The saved login stopped
+  working on Oct 4. With a working login, `capture-live.mjs` can swap real screens in.
+- **To swap the voice:** use a different Kokoro voice, e.g. `bm_george` or `af_bella`, or drop
+  in a recorded take as `vo/NN.wav` files, one per line in `story.py`.
