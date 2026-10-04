@@ -93,8 +93,9 @@ silence on the final logo. VO optional (see decisions).
 ```bash
 npm i
 node render-story.mjs                      # picture -> story-silent.mp4
-/opt/tts/bin/python vo_tts.py af_heart     # voice -> vo/NN.wav (Kokoro, open weights, runs locally)
+/opt/tts/bin/python vo_tts.py bm_george 1.1   # voice -> vo/NN.wav (Kokoro, British male, runs locally)
 python3 mix_story.py                       # score + SFX + VO -> story_final.mp4 (-14 LUFS, -1 dBTP)
+VERT=1 OUT=story-silent-v.mp4 node render-story.mjs   # 9:16 picture (story.html?vert), same audio
 ```
 
 - **Timing:** `story.py` holds the timing and the VO lines. The music runs at 112.5 bpm and the
@@ -107,3 +108,6 @@ python3 mix_story.py                       # score + SFX + VO -> story_final.mp4
   "Search is unavailable right now" on Oct 4.
 - **To swap the voice:** use a different Kokoro voice, e.g. `bm_george` or `af_bella`, or drop
   in a recorded take as `vo/NN.wav` files, one per line in `story.py`.
+
+- **Pronunciation:** the brand says Academia as aka-DEM-ia (/ˌækəˈdɛmiə/). `vo_tts.py` forces that
+  through `SAY`, because the TTS dictionary default is aka-DEE-mia.

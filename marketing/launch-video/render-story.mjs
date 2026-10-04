@@ -15,7 +15,8 @@ const args = process.argv.slice(2);
 const probe = args[0] === '--probe' ? args.slice(1).map(Number) : null;
 const comp = process.env.COMP || 'story.html';
 const out = join(here, process.env.OUT || 'story-silent.mp4');
-const framesDir = join(here, 'frames');
+const framesDir = join(here, process.env.VERT ? 'frames-v' : 'frames');
+const [VW, VH] = process.env.VERT ? [1080, 1920] : [1920, 1080];
 
 function chromiumExe() {
   const base = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
@@ -28,9 +29,9 @@ const ffmpeg = () => execFileSync('python3', ['-c', 'import imageio_ffmpeg;print
 const browser = await chromium.launch({ executablePath: chromiumExe(), args: ['--no-sandbox', '--force-color-profile=srgb', '--hide-scrollbars'] });
 const scale = +(process.env.SCALE || 1);
 async function openPage() {
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: scale });
+  const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: scale });
   page.on('pageerror', e => console.error('PAGE ERROR', e.message));
-  await page.goto(pathToFileURL(join(here, comp)).href + '?render', { waitUntil: 'networkidle' });
+  await page.goto(pathToFileURL(join(here, comp)).href + (process.env.VERT ? '?render&vert' : '?render'), { waitUntil: 'networkidle' });
   await page.evaluate(async () => { await document.fonts.ready; });
   const cdp = await page.context().newCDPSession(page);
   const seek = (s) => page.evaluate((s) => {
@@ -40,7 +41,7 @@ async function openPage() {
   }, s);
   // CDP capture with fast (lossless) PNG encoding: ~4x quicker than locator screenshots
   const shot = async (path) => {
-    const r = await cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true, clip: { x: 0, y: 0, width: 1920, height: 1080, scale: 1 } });
+    const r = await cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true, clip: { x: 0, y: 0, width: VW, height: VH, scale: 1 } });
     writeFileSync(path, Buffer.from(r.data, 'base64'));
   };
   return { page, seek, shot };
@@ -52,9 +53,10 @@ const fps = +(process.env.FPS || meta.fps);
 
 if (probe) {
   mkdirSync(join(here, 'probe'), { recursive: true });
+  const pfx = process.env.VERT ? 'v_' : 't_';
   for (const s of probe) {
     await first.seek(s);
-    await first.shot(join(here, 'probe', `t_${s.toFixed(2)}.png`));
+    await first.shot(join(here, 'probe', `${pfx}${s.toFixed(2)}.png`));
     console.log('probe', s);
   }
   await browser.close();

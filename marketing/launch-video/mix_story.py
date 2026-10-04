@@ -317,8 +317,9 @@ for i in range(0, N, 48):                                                 # 1 ms
     e = env[i]; cur = (att if e > cur else rel) * cur + (1 - (att if e > cur else rel)) * e; g[i:i + 48] = cur
 duck = 1 - .68 * np.clip(g / .05, 0, 1)                                   # up to -10 dB
 
+VO_GAIN = .67     # bm_george is denser than a peak match suggests; this keeps voice ~9 dB over the bed
 stems = dict(music=norm(mus, -6), drums=norm(drm, -5), sfx=norm(fx, -4), vo=vo2)
-mix = stems['music'] * .62 * duck[:, None] + stems['drums'] * .5 * duck[:, None] ** .8 + stems['sfx'] * .6 * duck[:, None] ** .35 + vo2 * (1.0 if use_vo else 0)
+mix = stems['music'] * .62 * duck[:, None] + stems['drums'] * .5 * duck[:, None] ** .8 + stems['sfx'] * .6 * duck[:, None] ** .35 + vo2 * (VO_GAIN if use_vo else 0)
 mix[-int(.9 * SR):] *= np.linspace(1, 0, int(.9 * SR))[:, None] ** 2
 
 os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
