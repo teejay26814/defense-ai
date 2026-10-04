@@ -2,21 +2,24 @@
   "name": "building-20s",
   "source": "src/IMG_4601.MOV",
   "source_size": [3840, 2160],
-  "grade": "hue=h=-20:s=0.56,curves=all='0/0.02 0.21/0.135 0.58/0.55 1/0.965',colorbalance=rs=0.05:gs=0.01:bs=-0.04:rm=0.04:bm=-0.02,eq=contrast=1.07",
+  "aspect": [4, 5],
+  "out_size": [1440, 1800],
+  "hdr": true,
+  "grade": "hqdn3d=1.2:1.2:3:3,lutyuv=y='clip(64+(val-64)*1.04,64,940)':u='512+(val-512)*0.93':v='512+(val-512)*0.93'",
   "shots": [
-    {"in": 1.0,  "out": 3.6,  "speed": 2, "cx": 0.36},
-    {"in": 5.0,  "out": 12.0, "speed": 5, "cx": 0.27},
-    {"in": 12.0, "out": 20.0, "speed": 5, "cx": 0.72},
-    {"in": 20.0, "out": 30.0, "speed": 6, "cx": 0.30},
-    {"in": 31.0, "out": 37.0, "speed": 3, "cx": 0.56},
-    {"in": 37.0, "out": 39.6, "speed": 2, "cx": 0.62},
-    {"in": 40.0, "out": 43.5, "speed": 2, "cx": 0.52},
-    {"in": 43.5, "out": 47.0, "speed": 2, "cx": 0.72},
-    {"in": 47.5, "out": 51.5, "speed": 2, "cx": 0.40}
+    {"in": 2.0,  "out": 4.0,  "speed": 2,   "cx": 0.45},
+    {"in": 5.0,  "out": 12.0, "speed": 5,   "cx": 0.32},
+    {"in": 12.0, "out": 20.0, "speed": 5,   "cx": 0.58},
+    {"in": 20.0, "out": 30.0, "speed": 6,   "cx": 0.32},
+    {"in": 31.0, "out": 37.0, "speed": 3,   "cx": 0.58},
+    {"in": 37.0, "out": 39.6, "speed": 2,   "cx": 0.55},
+    {"in": 40.0, "out": 43.5, "speed": 2,   "cx": 0.50},
+    {"in": 43.5, "out": 45.8, "speed": 1,   "cx": 0.58}
   ],
   "text": {
     "line1": "Building in your 20s:",
     "line2": "Half excited. Half wondering if you're doing enough.",
-    "top": 1290, "in1": 0.3, "in2": 1.3
+    "cta": "Which half are you today?",
+    "top": 1250, "size1": 76, "size2": 60, "in1": 0.3, "in2": 1.2
   }
 }
