@@ -18,7 +18,7 @@ async function open() {
   await page.goto(pathToFileURL(join(here, 'overlay.html')).href, { waitUntil: 'load' });
   await page.evaluate(async () => { await document.fonts.ready; });
   const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Emulation.setDefaultBackgroundColorOverride', { color: probe ? { r: 90, g: 96, b: 110, a: 1 } : { r: 0, g: 0, b: 0, a: 0 } });
+  await cdp.send('Emulation.setDefaultBackgroundColorOverride', { color: probe && process.env.PROBE_BG ? { r: 90, g: 96, b: 110, a: 1 } : { r: 0, g: 0, b: 0, a: 0 } });
   const seek = s => page.evaluate(s => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = s * 1000; } return new Promise(r => requestAnimationFrame(() => r())); }, s);
   const shot = async p => { const r = await cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true }); writeFileSync(p, Buffer.from(r.data, 'base64')); };
   return { page, seek, shot };

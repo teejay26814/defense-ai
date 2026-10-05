@@ -14,6 +14,7 @@ import imageio_ffmpeg
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FF = imageio_ffmpeg.get_ffmpeg_exe()
 SR, GAP, FPS = 48000, 0.30, 30
+SIL, PAD, PAD_END = 0.22, 0.07, 0.12      # silences longer than SIL inside a phrase are cut, keeping PAD of air each side
 
 cfg = json.load(open(sys.argv[1]))
 T = json.load(open(os.path.join(HERE, cfg['transcript'])))
@@ -51,11 +52,29 @@ for si, seg in enumerate(cfg['segments']):
         lo = max(prev[-1][1] if prev else 0, r[0][0] - .25) + .01
         hi = min(nxt[0][0] if nxt else 1e9, r[-1][1] + .3) - .01
         s, e = refine(r[0][0], r[-1][1], lo, hi, tight=seg.get('tight') and ri == 0)
-        s, e = round(s * FPS) / FPS, round(e * FPS) / FPS          # frame-aligned
-        cuts.append({'in': s, 'out': e, 'zoom': seg['zoom'], 'seg': si, 'beat': seg.get('beat') if ri == 0 else None, 't': t_out})
+        # silences inside the run (whisper often folds a pause into a word's duration): cut them too
+        pieces, p0, q = [], s, None
+        for f in range(int(s * 100) + 1, int(e * 100)):
+            if db[f] <= thr: q = f if q is None else q
+            else:
+                if q is not None and (f - q) / 100 >= SIL:
+                    sent_end = any(abs(w[1] - q / 100) < .25 and w[2][-1:] in '.?!' for w in r)
+                    pad = PAD_END if sent_end else PAD
+                    pieces.append((p0, q / 100 + pad)); p0 = f / 100 - pad
+                q = None
+        pieces.append((p0, e))
+        mapped = []
+        for k, (ps, pe) in enumerate(pieces):
+            ps, pe = round(ps * FPS) / FPS, round(pe * FPS) / FPS          # frame-aligned
+            if pe - ps < 2 / FPS: continue
+            cuts.append({'in': ps, 'out': pe, 'zoom': seg['zoom'], 'seg': si, 'beat': seg.get('beat') if ri == 0 and k == 0 else None, 't': round(t_out, 4)})
+            mapped.append((ps, pe, t_out)); t_out += pe - ps
+        def m(t):                                                   # raw-take time -> edited time
+            for ps, pe, to in mapped:
+                if t <= pe: return to + max(0, t - ps)
+            ps, pe, to = mapped[-1]; return to + pe - ps
         for w in r:
-            out_words.append({'t0': round(t_out + w[0] - s, 3), 't1': round(t_out + w[1] - s, 3), 'w': fix.get(round(w[0], 2), w[2]), 'seg': si})
-        t_out += e - s
+            out_words.append({'t0': round(m(w[0]), 3), 't1': round(m(w[1]), 3), 'w': fix.get(round(w[0], 2), w[2]), 'seg': si})
 work = os.path.join(HERE, 'work', cfg['name']); os.makedirs(work, exist_ok=True)
 json.dump({'cuts': cuts, 'words': out_words, 'duration': round(t_out, 3)}, open(os.path.join(work, 'edl.json'), 'w'), indent=1)
 print(f'{len(cuts)} cuts, {t_out:.1f}s')

@@ -12,24 +12,25 @@ html, body { background: transparent; width: 1080px; height: 1920px; overflow: h
 .g { position: absolute; left: 0; right: 0; top: 0; opacity: 0; }
 
 /* cards: navy glass, layered shadow */
-.card { position: absolute; left: 110px; width: 860px; border-radius: 30px; background: rgba(6, 26, 64, .9); border: 1.5px solid var(--line);
+.card { position: absolute; left: 110px; width: 860px; border-radius: 30px; background: rgba(5, 22, 54, .97); border: 1.5px solid var(--line);
   box-shadow: 0 2px 6px rgba(0,8,24,.35), 0 24px 60px -12px rgba(0,8,24,.6); color: #fff; }
 .lab { font: 600 22px/1 'Inter'; letter-spacing: .22em; text-transform: uppercase; color: var(--soft); }
 
 /* captions */
 #cap { position: absolute; left: 70px; right: 70px; top: 1330px; text-align: center; }
-.grp { position: absolute; left: 0; right: 0; top: 0; opacity: 0; font: 700 66px/1.14 'Inter'; letter-spacing: -.015em; color: #fff;
-  text-shadow: 0 2px 4px rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.45); }
+.grp { position: absolute; left: 0; right: 0; top: 0; opacity: 0; text-align: center; }
+.grp > b { display: inline-block; padding: 12px 26px 16px; border-radius: 20px; background: rgba(5,22,54,.88); box-shadow: 0 10px 30px -10px rgba(0,8,24,.6);
+  font: 700 64px/1.14 'Inter'; letter-spacing: -.015em; color: #fff; }
 .grp .k { color: var(--soft); }
 
 /* hook chips */
-.chip { position: absolute; padding: 18px 28px; border-radius: 999px; background: rgba(6,26,64,.88); border: 1.5px solid var(--line); color: #fff;
+.chip { position: absolute; padding: 18px 28px; border-radius: 999px; background: rgba(5,22,54,.97); border: 1.5px solid var(--line); color: #fff;
   font: 600 34px/1 'Inter'; box-shadow: 0 16px 40px -10px rgba(0,8,24,.6); white-space: nowrap; opacity: 0; }
 .chip b { color: var(--soft); font-weight: 700; }
 
 /* definition */
 .flow { display: flex; align-items: center; justify-content: center; gap: 18px; }
-.node { min-width: 200px; padding: 22px 24px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1.5px solid var(--line); text-align: center; opacity: .35; }
+.node { min-width: 200px; padding: 22px 24px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1.5px solid var(--line); text-align: center; opacity: .5; }
 .node svg { width: 44px; height: 44px; display: block; margin: 0 auto 12px; }
 .node span { font: 600 26px/1.15 'Inter'; display: block; }
 .node.on { opacity: 1; background: rgba(143,193,255,.14); border-color: rgba(143,193,255,.8); }
@@ -37,18 +38,18 @@ html, body { background: transparent; width: 1080px; height: 1920px; overflow: h
 .arrow::after { content: ''; position: absolute; right: -2px; top: -7px; border: 9px solid transparent; border-left: 13px solid var(--soft); border-right: 0; }
 
 /* notifications (fictional) */
-.notif { position: absolute; left: 90px; width: 900px; border-radius: 34px; background: rgba(242, 246, 252, .96); color: var(--ink); padding: 26px 30px; display: flex; gap: 22px;
+.notif { position: absolute; left: 90px; width: 900px; border-radius: 34px; background: rgba(8, 24, 56, .97); color: #fff; border: 1.5px solid rgba(160,196,240,.4); padding: 26px 30px; display: flex; gap: 22px;
   box-shadow: 0 4px 10px rgba(0,8,24,.25), 0 30px 70px -14px rgba(0,8,24,.65); opacity: 0; }
-.notif .ic { width: 84px; height: 84px; border-radius: 20px; background: linear-gradient(150deg, #0b3a82, #06204d); flex: none; display: grid; place-items: center; color: #fff; font: 700 30px/1 'Inter'; }
-.notif .top { display: flex; justify-content: space-between; font: 600 24px/1 'Inter'; color: #56627a; letter-spacing: .04em; }
+.notif .ic { width: 84px; height: 84px; border-radius: 20px; background: linear-gradient(150deg, #2a6fd0, #0b3a82); flex: none; display: grid; place-items: center; color: #fff; font: 700 30px/1 'Inter'; }
+.notif .top { display: flex; justify-content: space-between; font: 600 24px/1 'Inter'; color: #9fb6d8; letter-spacing: .04em; }
 .notif .ti { font: 700 33px/1.1 'Inter'; margin-top: 10px; }
-.notif .bd { font: 500 28px/1.25 'Inter'; margin-top: 6px; color: #26324a; }
+.notif .bd { font: 500 28px/1.25 'Inter'; margin-top: 6px; color: #dbe7f8; }
 .notif .bd b { font-family: 'Mono'; font-weight: 700; }
-.sample { position: absolute; left: 0; right: 0; top: 620px; text-align: center; font: 600 20px/1 'Inter'; letter-spacing: .2em; color: rgba(220,232,250,.8); text-transform: uppercase; opacity: 0; }
+.sample { position: absolute; left: 0; right: 0; margin: 0 auto; width: max-content; top: 582px; padding: 10px 18px; border-radius: 999px; background: rgba(5,22,54,.94); white-space: nowrap; font: 600 18px/1 'Inter'; letter-spacing: .18em; color: #cfe3ff; text-transform: uppercase; opacity: 0; }
 .nobody { position: absolute; left: 50%; top: 440px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; padding: 18px 30px; border-radius: 999px;
-  background: rgba(6,26,64,.92); border: 1.5px solid var(--line); font: 600 34px/1 'Inter'; color: #fff; white-space: nowrap; opacity: 0; }
+  background: rgba(5,22,54,.97); border: 1.5px solid var(--line); font: 600 34px/1 'Inter'; color: #fff; white-space: nowrap; opacity: 0; }
 .nobody .strike { position: absolute; left: 92px; right: 26px; top: 50%; height: 3px; background: var(--soft); transform-origin: 0 50%; transform: scaleX(0); }
-.eq { position: absolute; left: 0; right: 0; text-align: center; font: 700 44px/1 'Inter'; color: #fff; opacity: 0; }
+.eq { position: absolute; left: 50%; width: max-content; padding: 18px 34px; border-radius: 999px; background: rgba(5,22,54,.97); border: 1.5px solid rgba(143,193,255,.7); font: 700 44px/1 'Inter'; color: #fff; opacity: 0; margin-left: -190px; }
 .eq span { color: var(--soft); }
 
 /* chat */
@@ -64,23 +65,23 @@ html, body { background: transparent; width: 1080px; height: 1920px; overflow: h
 .tag { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; font: 600 21px/1 'Inter'; color: var(--soft2); letter-spacing: .06em; opacity: 0; }
 .dots { display: inline-flex; gap: 8px; padding: 22px 26px; border-radius: 26px; background: #e9f1fc; margin-top: 22px; margin-left: auto; opacity: 0; }
 .dots i { width: 12px; height: 12px; border-radius: 50%; background: #5a74a0; }
-.knows { position: absolute; right: 120px; top: 92px; padding: 14px 22px; border-radius: 999px; background: #e9f1fc; color: var(--ink); font: 700 24px/1 'Inter'; opacity: 0;
+.knows { position: absolute; right: 120px; top: 92px; padding: 14px 22px; border-radius: 999px; background: linear-gradient(150deg, #1d5fc0, #0b3a82); color: #fff; border: 1.5px solid rgba(143,193,255,.8); font: 700 24px/1 'Inter'; opacity: 0;
   box-shadow: 0 12px 30px -8px rgba(0,8,24,.55); }
 .steps { display: flex; gap: 14px; justify-content: center; }
-.step { padding: 16px 24px; border-radius: 999px; border: 1.5px solid var(--line); background: rgba(6,26,64,.88); font: 700 26px/1 'Inter'; letter-spacing: .12em; color: rgba(255,255,255,.4); }
+.step { padding: 16px 24px; border-radius: 999px; border: 1.5px solid var(--line); background: rgba(5,22,54,.97); font: 700 26px/1 'Inter'; letter-spacing: .12em; color: rgba(255,255,255,.55); }
 .step.on { color: #fff; border-color: var(--soft); background: rgba(20,60,120,.92); }
 
 /* payoff */
-.task { position: absolute; left: 160px; width: 760px; padding: 24px 30px; border-radius: 22px; background: rgba(6,26,64,.9); border: 1.5px solid var(--line); color: #fff;
+.task { position: absolute; left: 160px; width: 760px; padding: 24px 30px; border-radius: 22px; background: rgba(5,22,54,.97); border: 1.5px solid var(--line); color: #fff;
   font: 600 32px/1 'Inter'; display: flex; align-items: center; gap: 18px; box-shadow: 0 16px 40px -12px rgba(0,8,24,.6); opacity: 0; }
 .task i { font-style: normal; font: 600 22px/1 'Mono'; color: var(--soft); margin-left: auto; letter-spacing: .04em; }
 .task .sq { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--soft); }
-.big { position: absolute; left: 0; right: 0; text-align: center; font: 700 64px/1.05 'Inter'; letter-spacing: -.02em; color: #fff; opacity: 0;
-  text-shadow: 0 6px 24px rgba(0,8,24,.55); }
+.big { position: absolute; left: 50%; width: max-content; margin-left: -330px; padding: 26px 44px; border-radius: 28px; background: rgba(5,22,54,.97); border: 1.5px solid rgba(143,193,255,.5);
+  font: 700 64px/1.05 'Inter'; letter-spacing: -.02em; color: #fff; opacity: 0; box-shadow: 0 20px 50px -12px rgba(0,8,24,.6); }
 .big span { color: var(--soft); }
-.pill { position: absolute; left: 50%; display: flex; align-items: center; gap: 16px; padding: 20px 32px; border-radius: 999px; background: rgba(6,26,64,.92); border: 1.5px solid var(--line);
+.pill { position: absolute; left: 50%; display: flex; align-items: center; gap: 16px; padding: 20px 32px; border-radius: 999px; background: rgba(5,22,54,.97); border: 1.5px solid var(--line);
   color: #fff; font: 600 34px/1 'Inter'; white-space: nowrap; transform: translateX(-50%); opacity: 0; box-shadow: 0 16px 40px -10px rgba(0,8,24,.6); }
-.pill.light { background: #fff; color: var(--navy); border-color: #fff; }
+.pill.light { background: linear-gradient(150deg, #1d5fc0, #0b3a82); color: #fff; border-color: rgba(143,193,255,.8); }
 .pill svg { width: 38px; height: 38px; }
 </style></head>
 <body>
@@ -125,8 +126,8 @@ const ICON = {
   reply: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 19c0-5-4-8-9-8H5M9 7l-4 4 4 4"/></svg>',
   moon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cfe3ff" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>',
   key: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2.5"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>',
-  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#06204d" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path id="hand" d="M12 12V6.5"/><path d="M12 12l3.5 2"/></svg>',
-  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="#06204d" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path id="hand" d="M12 12V6.5"/><path d="M12 12l3.5 2"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
 };
 function flow(nodes, top) {                          // [icon, label] x n -> card with nodes + arrows
   const c = el(`<div class="card" style="top:${top}px;padding:34px 30px"><div class="flow"></div></div>`);
@@ -157,7 +158,7 @@ const draw = (a, t) => A(a, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)
 /* ---------------- DEFINITION: "a task is done on its own" ---------------- */
 {
   const s = segStart(2), e = segEnd(2);
-  const lab = el(`<div class="g" style="top:150px;text-align:center"><div class="lab">Automation</div></div>`);
+  const lab = el(`<div class="g" style="top:132px;text-align:center"><div class="lab" style="display:inline-block;padding:10px 20px;border-radius:999px;background:rgba(5,22,54,.97)">Automation</div></div>`);
   show(lab, s, e + .2, 10);
   const f = flow([['task', 'A task'], ['gear', 'Runs itself'], ['check', 'Done']], 210);
   show(f.c, s + .1, e + .2);
@@ -210,8 +211,8 @@ const draw = (a, t) => A(a, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)
   show(st, at(9, 'information') - .2, end, 12);
   [['read', 0], ['understood', 1], ['response', 2]].forEach(([w, i]) => {
     const n = st.querySelectorAll('.step')[i], t = at(9, w);
-    A(n, [{ color: 'rgba(255,255,255,.4)', borderColor: 'rgba(160,196,240,.35)', transform: 'scale(1)' }, { color: '#ffffff', borderColor: '#8fc1ff', transform: 'scale(1.08)', offset: .5 },
-          { color: '#ffffff', borderColor: '#8fc1ff', transform: 'scale(1)' }], t, .4); cue(t, 'tick');
+    A(n, [{ color: 'rgba(255,255,255,.55)', borderColor: 'rgba(160,196,240,.35)', backgroundColor: 'rgba(5,22,54,.97)', transform: 'scale(1)' }, { color: '#ffffff', borderColor: '#8fc1ff', backgroundColor: 'rgb(23,84,176)', transform: 'scale(1.08)', offset: .5 },
+          { color: '#ffffff', borderColor: '#8fc1ff', backgroundColor: 'rgb(23,84,176)', transform: 'scale(1)' }], t, .4); cue(t, 'tick');
   });
   fadeOut(f.c, end);
 }
@@ -241,7 +242,7 @@ const draw = (a, t) => A(a, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)
   show(st, segStart(13) - .1, end, 12);
   [['reads', 0], ['understands', 1], ['respond', 2]].forEach(([w, i]) => {
     const n = st.querySelectorAll('.step')[i], t = at(13, w);
-    A(n, [{ color: 'rgba(255,255,255,.4)', borderColor: 'rgba(160,196,240,.35)' }, { color: '#ffffff', borderColor: '#8fc1ff' }], t, .3); cue(t, 'tick');
+    A(n, [{ color: 'rgba(255,255,255,.55)', borderColor: 'rgba(160,196,240,.35)', backgroundColor: 'rgba(5,22,54,.97)' }, { color: '#ffffff', borderColor: '#8fc1ff', backgroundColor: 'rgb(23,84,176)' }], t, .3); cue(t, 'tick');
   });
   fadeOut(c, end); fadeOut(kn, end);
 }
@@ -280,16 +281,18 @@ const draw = (a, t) => A(a, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)
   const groups = []; let g = [];
   W.forEach((w, i) => {
     const prev = W[i - 1];
-    const brk = g.length && (g.length >= 4 || (g.map(x => x.w).join(' ') + ' ' + w.w).length > 22 || /[.,?!]$/.test(prev.w) || w.t0 - prev.t1 > .3 || w.seg !== prev.seg);
+    const brk = g.length && (g.length >= 5 || (g.map(x => x.w).join(' ') + ' ' + w.w).length > 26 || /[.?!]$/.test(prev.w) ||
+      (/,$/.test(prev.w) && g.length >= 2) || w.t0 - prev.t1 > .45 || w.seg !== prev.seg);
     if (brk) { groups.push(g); g = []; }
     g.push(w);
   });
   groups.push(g);
   groups.forEach((g, i) => {
-    const t0 = g[0].t0 - .04, nxt = groups[i + 1], t1 = nxt ? Math.min(nxt[0].t0 - .04, g[g.length - 1].t1 + .6) : E.duration;
+    const t0 = Math.max(0, g[0].t0 - .08), nxt = groups[i + 1];
+    const t1 = nxt ? Math.max(Math.min(nxt[0].t0 - .08, g[g.length - 1].t1 + .7), Math.min(t0 + .55, nxt[0].t0 - .08)) : E.duration;
     const html = g.map(w => { const c = clean(w.w); const txt = w.w.replace(/[,.]$/, '');
       return KEY.has(c) || (c === 'ai') ? `<span class="k">${txt}</span>` : txt; }).join(' ');
-    const n = el(`<div class="grp">${html}</div>`, $('#cap'));
+    const n = el(`<div class="grp"><b>${html}</b></div>`, $('#cap'));
     A(n, [{ opacity: 0, transform: 'translateY(14px) scale(.98)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t0, .16, OUT);
     A(n, [{ opacity: 1 }, { opacity: 0 }], t1 - .02, .04, 'linear');
   });

@@ -44,8 +44,12 @@ def main():
         x0 = int(min(max(FACE[0] - cw / 2, 0), 2160 - cw)); y0 = int(min(max(FACE[1] - ch * .47, 0), 3840 - ch))
         p = os.path.join(work, f'cut{k:02d}.mp4'); parts.append(p)
         if os.path.exists(p) and '--fresh' not in sys.argv: continue
-        vf = f"crop={cw}:{ch}:{x0}:{y0},scale={W}:{H}:flags=lanczos,format=yuv420p10le,{grade}"
-        run(['-ss', f"{c['in']:.4f}", '-t', f"{c['out'] - c['in']:.4f}", '-i', src, '-an', '-vf', vf, '-r', '30', *x265(8, 'fast'), *HDR_TAGS, p])
+        # The iPhone clip is variable frame rate: resample onto an exact 30 fps grid and stop at exactly the
+        # number of frames the audio for this cut lasts. (Trimming by time with -t/-r added 1-2 frames per
+        # cut, so the picture drifted ~0.7 s behind the voice by the end.)
+        n = round((c['out'] - c['in']) * 30)
+        vf = f"fps=30:round=near,crop={cw}:{ch}:{x0}:{y0},scale={W}:{H}:flags=lanczos,format=yuv420p10le,{grade}"
+        run(['-ss', f"{c['in']:.4f}", '-i', src, '-an', '-vf', vf, '-frames:v', str(n), *x265(8, 'fast'), *HDR_TAGS, p])
         print(f'cut {k:2d}  {c["in"]:7.2f}-{c["out"]:7.2f}  z{z}')
     lst = os.path.join(work, 'cuts.txt'); open(lst, 'w').write(''.join(f"file '{p}'\n" for p in parts))
     graded = os.path.join(work, 'graded.mp4')
