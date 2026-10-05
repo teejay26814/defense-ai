@@ -1,0 +1,300 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>AI automation explainer — graphics</title>
+<style>
+@font-face { font-family: 'Inter'; font-weight: 500; src: url(../fonts/Inter-500.ttf); }
+@font-face { font-family: 'Inter'; font-weight: 600; src: url(../fonts/Inter-600.ttf); }
+@font-face { font-family: 'Inter'; font-weight: 700; src: url(../fonts/Inter-700.ttf); }
+@font-face { font-family: 'Mono'; font-weight: 100 900; src: url(../fonts/JetBrainsMono-VF.ttf); }
+:root { --navy: #06204d; --navy2: #0b2f6b; --ink: #0d1a33; --soft: #8fc1ff; --soft2: #cfe3ff; --line: rgba(160, 196, 240, .35); --white: #ffffff; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: transparent; width: 1080px; height: 1920px; overflow: hidden; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+.g { position: absolute; left: 0; right: 0; top: 0; opacity: 0; }
+
+/* cards: navy glass, layered shadow */
+.card { position: absolute; left: 110px; width: 860px; border-radius: 30px; background: rgba(6, 26, 64, .9); border: 1.5px solid var(--line);
+  box-shadow: 0 2px 6px rgba(0,8,24,.35), 0 24px 60px -12px rgba(0,8,24,.6); color: #fff; }
+.lab { font: 600 22px/1 'Inter'; letter-spacing: .22em; text-transform: uppercase; color: var(--soft); }
+
+/* captions */
+#cap { position: absolute; left: 70px; right: 70px; top: 1330px; text-align: center; }
+.grp { position: absolute; left: 0; right: 0; top: 0; opacity: 0; font: 700 66px/1.14 'Inter'; letter-spacing: -.015em; color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.45); }
+.grp .k { color: var(--soft); }
+
+/* hook chips */
+.chip { position: absolute; padding: 18px 28px; border-radius: 999px; background: rgba(6,26,64,.88); border: 1.5px solid var(--line); color: #fff;
+  font: 600 34px/1 'Inter'; box-shadow: 0 16px 40px -10px rgba(0,8,24,.6); white-space: nowrap; opacity: 0; }
+.chip b { color: var(--soft); font-weight: 700; }
+
+/* definition */
+.flow { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.node { min-width: 200px; padding: 22px 24px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1.5px solid var(--line); text-align: center; opacity: .35; }
+.node svg { width: 44px; height: 44px; display: block; margin: 0 auto 12px; }
+.node span { font: 600 26px/1.15 'Inter'; display: block; }
+.node.on { opacity: 1; background: rgba(143,193,255,.14); border-color: rgba(143,193,255,.8); }
+.arrow { width: 54px; height: 4px; background: var(--soft); border-radius: 2px; position: relative; transform-origin: 0 50%; transform: scaleX(0); }
+.arrow::after { content: ''; position: absolute; right: -2px; top: -7px; border: 9px solid transparent; border-left: 13px solid var(--soft); border-right: 0; }
+
+/* notifications (fictional) */
+.notif { position: absolute; left: 90px; width: 900px; border-radius: 34px; background: rgba(242, 246, 252, .96); color: var(--ink); padding: 26px 30px; display: flex; gap: 22px;
+  box-shadow: 0 4px 10px rgba(0,8,24,.25), 0 30px 70px -14px rgba(0,8,24,.65); opacity: 0; }
+.notif .ic { width: 84px; height: 84px; border-radius: 20px; background: linear-gradient(150deg, #0b3a82, #06204d); flex: none; display: grid; place-items: center; color: #fff; font: 700 30px/1 'Inter'; }
+.notif .top { display: flex; justify-content: space-between; font: 600 24px/1 'Inter'; color: #56627a; letter-spacing: .04em; }
+.notif .ti { font: 700 33px/1.1 'Inter'; margin-top: 10px; }
+.notif .bd { font: 500 28px/1.25 'Inter'; margin-top: 6px; color: #26324a; }
+.notif .bd b { font-family: 'Mono'; font-weight: 700; }
+.sample { position: absolute; left: 0; right: 0; top: 620px; text-align: center; font: 600 20px/1 'Inter'; letter-spacing: .2em; color: rgba(220,232,250,.8); text-transform: uppercase; opacity: 0; }
+.nobody { position: absolute; left: 50%; top: 440px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; padding: 18px 30px; border-radius: 999px;
+  background: rgba(6,26,64,.92); border: 1.5px solid var(--line); font: 600 34px/1 'Inter'; color: #fff; white-space: nowrap; opacity: 0; }
+.nobody .strike { position: absolute; left: 92px; right: 26px; top: 50%; height: 3px; background: var(--soft); transform-origin: 0 50%; transform: scaleX(0); }
+.eq { position: absolute; left: 0; right: 0; text-align: center; font: 700 44px/1 'Inter'; color: #fff; opacity: 0; }
+.eq span { color: var(--soft); }
+
+/* chat */
+.chat { padding: 26px 28px 30px; }
+.chat .hd { display: flex; align-items: center; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.chat .av { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(140deg, #5b7fb8, #2b4a80); }
+.chat .nm { font: 700 30px/1.1 'Inter'; }
+.chat .tm { font: 600 24px/1 'Mono'; color: var(--soft2); }
+.chat .sleep { margin-left: auto; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: rgba(143,193,255,.14); font: 600 23px/1 'Inter'; color: var(--soft2); opacity: 0; }
+.bub { max-width: 640px; padding: 20px 24px; border-radius: 26px; font: 500 30px/1.3 'Inter'; margin-top: 22px; opacity: 0; }
+.bub.in { background: rgba(255,255,255,.1); border-bottom-left-radius: 8px; }
+.bub.out { margin-left: auto; background: #e9f1fc; color: var(--ink); border-bottom-right-radius: 8px; }
+.tag { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; font: 600 21px/1 'Inter'; color: var(--soft2); letter-spacing: .06em; opacity: 0; }
+.dots { display: inline-flex; gap: 8px; padding: 22px 26px; border-radius: 26px; background: #e9f1fc; margin-top: 22px; margin-left: auto; opacity: 0; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: #5a74a0; }
+.knows { position: absolute; right: 120px; top: 92px; padding: 14px 22px; border-radius: 999px; background: #e9f1fc; color: var(--ink); font: 700 24px/1 'Inter'; opacity: 0;
+  box-shadow: 0 12px 30px -8px rgba(0,8,24,.55); }
+.steps { display: flex; gap: 14px; justify-content: center; }
+.step { padding: 16px 24px; border-radius: 999px; border: 1.5px solid var(--line); background: rgba(6,26,64,.88); font: 700 26px/1 'Inter'; letter-spacing: .12em; color: rgba(255,255,255,.4); }
+.step.on { color: #fff; border-color: var(--soft); background: rgba(20,60,120,.92); }
+
+/* payoff */
+.task { position: absolute; left: 160px; width: 760px; padding: 24px 30px; border-radius: 22px; background: rgba(6,26,64,.9); border: 1.5px solid var(--line); color: #fff;
+  font: 600 32px/1 'Inter'; display: flex; align-items: center; gap: 18px; box-shadow: 0 16px 40px -12px rgba(0,8,24,.6); opacity: 0; }
+.task i { font-style: normal; font: 600 22px/1 'Mono'; color: var(--soft); margin-left: auto; letter-spacing: .04em; }
+.task .sq { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--soft); }
+.big { position: absolute; left: 0; right: 0; text-align: center; font: 700 64px/1.05 'Inter'; letter-spacing: -.02em; color: #fff; opacity: 0;
+  text-shadow: 0 6px 24px rgba(0,8,24,.55); }
+.big span { color: var(--soft); }
+.pill { position: absolute; left: 50%; display: flex; align-items: center; gap: 16px; padding: 20px 32px; border-radius: 999px; background: rgba(6,26,64,.92); border: 1.5px solid var(--line);
+  color: #fff; font: 600 34px/1 'Inter'; white-space: nowrap; transform: translateX(-50%); opacity: 0; box-shadow: 0 16px 40px -10px rgba(0,8,24,.6); }
+.pill.light { background: #fff; color: var(--navy); border-color: #fff; }
+.pill svg { width: 38px; height: 38px; }
+</style></head>
+<body>
+<div id="stage" data-fps="30">
+  <div id="gfx"></div>
+  <div id="cap"></div>
+</div>
+<script src="edl-data.js"></script>
+<script>
+const E = window.EDL, W = E.words;
+document.getElementById('stage').dataset.duration = E.duration;
+const $ = s => document.querySelector(s);
+const OUT = 'cubic-bezier(.16,1,.3,1)', IN = 'cubic-bezier(.6,0,.8,.25)', POP = 'cubic-bezier(.34,1.56,.64,1)';
+function A(el, kf, t, d, e = OUT) {
+  const fill = el.__n ? 'forwards' : 'both'; el.__n = 1;
+  return el.animate(kf, { delay: t * 1000, duration: d * 1000, easing: e, fill });
+}
+const clean = s => s.toLowerCase().replace(/[^a-z0-9']/g, '');
+function at(seg, word, n = 0) {                      // edited-timeline time of the nth matching word in a segment
+  const m = W.filter(w => w.seg === seg && clean(w.w).startsWith(word));
+  if (!m.length) throw new Error(`no ${word} in seg ${seg}`);
+  return m[Math.min(n, m.length - 1)].t0;
+}
+const segStart = s => W.find(w => w.seg === s).t0;
+const segEnd = s => { const m = W.filter(w => w.seg === s); return m[m.length - 1].t1; };
+const el = (html, parent = $('#gfx')) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; parent.appendChild(n); return n; };
+const show = (n, t0, t1, y = 24) => { A(n, [{ opacity: 0, transform: `translateY(${y}px)` }, { opacity: 1, transform: 'translateY(0)' }], t0, .45);
+  if (t1 != null) A(n, [{ opacity: 1 }, { opacity: 0 }], t1 - .25, .25, 'linear'); };
+const popIn = (n, t, tx = '') => A(n, [{ opacity: 0, transform: `${tx} scale(.7)` }, { opacity: 1, transform: `${tx} scale(1)` }], t, .4, POP);
+const fadeOut = (n, t, d = .3) => A(n, [{ opacity: 1 }, { opacity: 0 }], t, d, 'linear');
+const CUES = [];                                     // sound cues the mixer reads back: [time, kind]
+const cue = (t, k) => CUES.push([+t.toFixed(3), k]);
+const ICON = {
+  card: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>',
+  task: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>',
+  msg: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  ai: '<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/><path d="M9.5 15l1.6-6h1.8l1.6 6M10.2 13h3.6"/></svg>',
+  reply: '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 19c0-5-4-8-9-8H5M9 7l-4 4 4 4"/></svg>',
+  moon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cfe3ff" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>',
+  key: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#8fc1ff" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2.5"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#06204d" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path id="hand" d="M12 12V6.5"/><path d="M12 12l3.5 2"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="#06204d" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+};
+function flow(nodes, top) {                          // [icon, label] x n -> card with nodes + arrows
+  const c = el(`<div class="card" style="top:${top}px;padding:34px 30px"><div class="flow"></div></div>`);
+  const f = c.querySelector('.flow'), ns = [], as = [];
+  nodes.forEach(([ic, lb], i) => {
+    if (i) as.push(el('<div class="arrow"></div>', f));
+    ns.push(el(`<div class="node">${ICON[ic]}<span>${lb}</span></div>`, f));
+  });
+  return { c, ns, as };
+}
+const light = (n, t) => { A(n, [{ opacity: .35, transform: 'scale(.96)' }, { opacity: 1, transform: 'scale(1.04)', offset: .6 }, { opacity: 1, transform: 'scale(1)' }], t, .45, OUT);
+  n.classList.add('on-later'); n.__on = t; };
+const draw = (a, t) => A(a, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], t, .3, 'cubic-bezier(.4,0,.2,1)');
+
+/* ---------------- HOOK: "I keep hearing the word AI automation" ---------------- */
+{
+  const T0 = at(0, 'automation'), T1 = segStart(1);
+  const chips = [['<b>AI</b> automation', 150, 250], ['automation', 560, 175], ['<b>AI</b> agents', 610, 470], ['<b>AI</b> automation', 120, 520]];
+  chips.forEach(([h, x, y], i) => {
+    const n = el(`<div class="chip" style="left:${x}px;top:${y}px">${h}</div>`);
+    const t = T0 - .05 + i * .32; popIn(n, t); cue(t, 'pop');
+    A(n, [{ transform: 'translateY(0)' }, { transform: `translateY(${i % 2 ? -14 : 12}px)` }], t + .4, T1 - t, 'linear');
+    A(n, [{ opacity: 1 }, { opacity: 0, transform: 'translateY(-30px) scale(.9)' }], T1 - .05 + i * .03, .3, IN);
+  });
+  cue(T1 - .1, 'whoosh');
+}
+
+/* ---------------- DEFINITION: "a task is done on its own" ---------------- */
+{
+  const s = segStart(2), e = segEnd(2);
+  const lab = el(`<div class="g" style="top:150px;text-align:center"><div class="lab">Automation</div></div>`);
+  show(lab, s, e + .2, 10);
+  const f = flow([['task', 'A task'], ['gear', 'Runs itself'], ['check', 'Done']], 210);
+  show(f.c, s + .1, e + .2);
+  light(f.ns[0], at(2, 'task')); cue(at(2, 'task'), 'tick');
+  draw(f.as[0], at(2, 'done') - .1); light(f.ns[1], at(2, 'done')); cue(at(2, 'done'), 'tick');
+  A(f.ns[1].querySelector('svg'), [{ transform: 'rotate(0)' }, { transform: 'rotate(360deg)' }], at(2, 'done'), 2.4, 'linear');
+  draw(f.as[1], at(2, 'own') - .1); light(f.ns[2], at(2, 'own')); cue(at(2, 'own'), 'confirm');
+}
+
+/* ---------------- BANK ALERT (fictional mock) ---------------- */
+{
+  const tb = at(3, 'bank'), td = at(4, 'debit'), tn = segStart(5), ta = at(6, 'automatically'), tz = at(7, 'automation'), end = segEnd(7) + .35;
+  const n1 = el(`<div class="notif" style="top:140px"><div class="ic">DB</div><div style="flex:1"><div class="top"><span>DEMO BANK</span><span>now</span></div>
+    <div class="ti">Credit Alert</div><div class="bd">NGN <b>25,000.00</b> received · Acct ****0000</div></div></div>`);
+  const n2 = el(`<div class="notif" style="top:360px"><div class="ic">DB</div><div style="flex:1"><div class="top"><span>DEMO BANK</span><span>now</span></div>
+    <div class="ti">Debit Alert</div><div class="bd">NGN <b>4,500.00</b> sent · Acct ****0000</div></div></div>`);
+  const smp = el('<div class="sample">Sample notifications · not real accounts</div>');
+  A(n1, [{ opacity: 0, transform: 'translateY(-160px) scale(.96)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], tb - .05, .55, 'cubic-bezier(.2,1.2,.4,1)'); cue(tb - .05, 'notify');
+  A(n2, [{ opacity: 0, transform: 'translateY(-160px) scale(.96)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], td - .05, .55, 'cubic-bezier(.2,1.2,.4,1)'); cue(td - .05, 'notify');
+  show(smp, tb + .3, tn + .1, 6);
+  // "Nobody's at the bank typing" — the alerts step back, a struck-through 'typing' chip lands
+  [n1, n2].forEach((n, i) => A(n, [{ opacity: 1, transform: 'translateY(0) scale(1)' }, { opacity: .5, transform: `translateY(${-40 - i * 10}px) scale(.94)` }], tn, .4));
+  const nb = el(`<div class="nobody">${ICON.key}<span>Someone typing this?</span><div class="strike"></div></div>`);
+  nb.style.top = '600px';
+  A(nb, [{ opacity: 0, transform: 'translateX(-50%) translateY(20px)' }, { opacity: 1, transform: 'translateX(-50%) translateY(0)' }], tn + .05, .4); cue(tn + .05, 'pop');
+  A(nb.querySelector('.strike'), [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], at(5, 'typing'), .3, 'cubic-bezier(.4,0,.2,1)'); cue(at(5, 'typing'), 'tick');
+  // "It happens automatically when your transaction occurs" -> workflow
+  [n1, n2, nb].forEach(n => fadeOut(n, segStart(6) - .2, .25));
+  const f = flow([['card', 'Transaction'], ['eye', 'System detects'], ['bell', 'Alert sent']], 190);
+  A(f.c, [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'translateY(0)' }], segStart(6) - .05, .45); cue(segStart(6) - .1, 'whoosh');
+  light(f.ns[0], at(6, 'transaction')); cue(at(6, 'transaction'), 'tick');
+  draw(f.as[0], at(6, 'occurs') - .15); light(f.ns[1], at(6, 'occurs')); cue(at(6, 'occurs'), 'tick');
+  draw(f.as[1], at(6, 'occurs') + .3); light(f.ns[2], at(6, 'occurs') + .45); cue(at(6, 'occurs') + .45, 'notify');
+  const eq = el('<div class="eq" style="top:470px">= <span>Automation</span></div>');
+  popIn(eq, tz - .05); cue(tz - .05, 'impact');
+  fadeOut(f.c, end); fadeOut(eq, end);
+}
+
+/* ---------------- AI AUTOMATION: AI in the loop ---------------- */
+{
+  const s = segStart(8), tl = at(8, 'loop'), end = segEnd(9) + .3;
+  const f = flow([['msg', 'Message'], ['ai', 'AI'], ['reply', 'Reply']], 190);
+  A(f.c, [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'translateY(0)' }], s, .45); cue(s - .05, 'whoosh');
+  light(f.ns[0], s + .3);
+  draw(f.as[0], tl - .2); draw(f.as[1], tl - .05);
+  A(f.ns[1], [{ opacity: .35, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1.12)', offset: .6 }, { opacity: 1, transform: 'scale(1)' }], tl, .5, OUT); cue(tl, 'impact_soft');
+  f.ns[1].style.background = 'linear-gradient(150deg, #1d5fc0, #0b2f6b)'; f.ns[1].style.borderColor = 'rgba(143,193,255,.9)';
+  light(f.ns[2], tl + .35);
+  const st = el(`<div class="g" style="top:470px"><div class="steps"><div class="step">READ</div><div class="step">UNDERSTAND</div><div class="step">RESPOND</div></div></div>`);
+  show(st, at(9, 'information') - .2, end, 12);
+  [['read', 0], ['understood', 1], ['response', 2]].forEach(([w, i]) => {
+    const n = st.querySelectorAll('.step')[i], t = at(9, w);
+    A(n, [{ color: 'rgba(255,255,255,.4)', borderColor: 'rgba(160,196,240,.35)', transform: 'scale(1)' }, { color: '#ffffff', borderColor: '#8fc1ff', transform: 'scale(1.08)', offset: .5 },
+          { color: '#ffffff', borderColor: '#8fc1ff', transform: 'scale(1)' }], t, .4); cue(t, 'tick');
+  });
+  fadeOut(f.c, end);
+}
+
+/* ---------------- 9 PM CLIENT -> AI AGENT REPLIES ---------------- */
+{
+  const s = segStart(10), t9 = at(10, '9'), ts = at(10, 'sleeping'), tq = at(11, 'what'), tr = at(12, 'respond'), tp = at(12, 'prices'), end = segEnd(14) + .3;
+  const c = el(`<div class="card chat" style="top:130px"><div class="hd"><div class="av"></div><div><div class="nm">Customer</div><div class="tm">9:04 PM</div></div>
+    <div class="sleep">${ICON.moon}<span>You're asleep</span></div></div>
+    <div class="bub in">Hi! How much is this shoe in size 45?</div>
+    <div class="dots"><i></i><i></i><i></i></div>
+    <div class="bub out">Hi! It's ₦38,000 and size 45 is in stock. Should I reserve a pair for you?</div>
+    <div class="tag">AI AGENT · REPLIED INSTANTLY</div></div>`);
+  A(c, [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'translateY(0)' }], t9 - .25, .5); cue(t9 - .3, 'whoosh');
+  const sl = c.querySelector('.sleep'); popIn(sl, ts - .05); cue(ts - .05, 'pop');
+  const bin = c.querySelector('.bub.in'); A(bin, [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], tq - .1, .35); cue(tq - .1, 'msg_in');
+  const dots = c.querySelector('.dots'); A(dots, [{ opacity: 0 }, { opacity: 1 }], tr - .9, .2);
+  dots.querySelectorAll('i').forEach((d, i) => A(d, [{ opacity: .3 }, { opacity: 1 }, { opacity: .3 }], tr - .9 + i * .12, .45, 'linear'));
+  A(dots, [{ opacity: 1 }, { opacity: 0, display: 'none' }], tr - .05, .05, 'linear');
+  dots.style.position = 'absolute'; dots.style.right = '28px'; dots.style.top = '235px';
+  const bout = c.querySelector('.bub.out'); A(bout, [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], tr, .35); cue(tr, 'msg_out');
+  const tag = c.querySelector('.tag'); A(tag, [{ opacity: 0 }, { opacity: 1 }], tr + .4, .3);
+  const kn = el('<div class="knows">✓ Knows your prices</div>'); kn.style.top = '96px';
+  popIn(kn, tp - .1); cue(tp - .1, 'confirm');
+  // recap row while the AI "reads, understands, responds"
+  const st = el(`<div class="g" style="top:628px"><div class="steps"><div class="step">READ</div><div class="step">UNDERSTAND</div><div class="step">RESPOND</div></div></div>`);
+  show(st, segStart(13) - .1, end, 12);
+  [['reads', 0], ['understands', 1], ['respond', 2]].forEach(([w, i]) => {
+    const n = st.querySelectorAll('.step')[i], t = at(13, w);
+    A(n, [{ color: 'rgba(255,255,255,.4)', borderColor: 'rgba(160,196,240,.35)' }, { color: '#ffffff', borderColor: '#8fc1ff' }], t, .3); cue(t, 'tick');
+  });
+  fadeOut(c, end); fadeOut(kn, end);
+}
+
+/* ---------------- PAYOFF: repetitive tasks lifted off ---------------- */
+{
+  const s = segStart(15), tr = at(15, 'repetitive'), tk = at(15, 'take'), ts = at(15, 'shoulders'), end = segEnd(15) + .25;
+  const tasks = ['Copy data into the sheet', 'Reply the same DMs', 'Send payment reminders', 'Update the client list'];
+  const ns = tasks.map((t, i) => el(`<div class="task" style="top:${170 + i * 118}px"><div class="sq"></div>${t}<i>×${[40, 25, 18, 12][i]}/wk</i></div>`));
+  ns.forEach((n, i) => { const t = s + .15 + i * .16; A(n, [{ opacity: 0, transform: 'translateX(-40px)' }, { opacity: 1, transform: 'translateX(0)' }], t, .35); cue(t, 'tick'); });
+  ns.forEach((n, i) => { const t = tr + .25 + i * .22; A(n, [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(220px) translateY(-30px) rotate(4deg)' }], t, .4, IN); });
+  cue(tr + .25, 'whoosh');
+  const big = el('<div class="big" style="top:330px">Off your <span>shoulders.</span></div>');
+  A(big, [{ opacity: 0, transform: 'scale(.92)' }, { opacity: 1, transform: 'scale(1)' }], ts - .15, .4, OUT); cue(ts - .15, 'impact');
+  fadeOut(big, end);
+}
+
+/* ---------------- CTA ---------------- */
+{
+  const tt = at(16, 'save'), tn = at(16, 'never'), tf = at(17, 'follow'), end = E.duration;
+  const p1 = el(`<div class="pill light" style="top:230px">${ICON.clock}<span>Save hours every week</span></div>`);
+  popIn(p1, tt - .1, 'translateX(-50%)'); cue(tt - .1, 'pop');
+  A(p1.querySelector('#hand'), [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], tt, 1.6, 'cubic-bezier(.45,0,.55,1)');
+  p1.querySelector('#hand').style.transformOrigin = '12px 12px';
+  const p2 = el(`<div class="pill" style="top:350px">${ICON.check}<span>No coding experience needed</span></div>`);
+  popIn(p2, tn - .05, 'translateX(-50%)'); cue(tn - .05, 'pop');
+  fadeOut(p1, tf - .2); fadeOut(p2, tf - .2);
+  const p3 = el(`<div class="pill light" style="top:290px">${ICON.plus}<span>Follow for AI tools that save time</span></div>`);
+  popIn(p3, tf, 'translateX(-50%)'); cue(tf, 'confirm');
+}
+
+/* ---------------- CAPTIONS ---------------- */
+{
+  const KEY = new Set(['ai', 'automation', 'automatically', 'bank', 'alert', 'debit', 'credit', "nobody's", 'loop', '9', 'pm', 'sleeping', 'agent', 'behalf', 'prices',
+    'repetitive', 'tasks', 'save', 'time', 'follow', 'read', 'understood', 'understands', 'respond', 'response', 'itself', 'own']);
+  const groups = []; let g = [];
+  W.forEach((w, i) => {
+    const prev = W[i - 1];
+    const brk = g.length && (g.length >= 4 || (g.map(x => x.w).join(' ') + ' ' + w.w).length > 22 || /[.,?!]$/.test(prev.w) || w.t0 - prev.t1 > .3 || w.seg !== prev.seg);
+    if (brk) { groups.push(g); g = []; }
+    g.push(w);
+  });
+  groups.push(g);
+  groups.forEach((g, i) => {
+    const t0 = g[0].t0 - .04, nxt = groups[i + 1], t1 = nxt ? Math.min(nxt[0].t0 - .04, g[g.length - 1].t1 + .6) : E.duration;
+    const html = g.map(w => { const c = clean(w.w); const txt = w.w.replace(/[,.]$/, '');
+      return KEY.has(c) || (c === 'ai') ? `<span class="k">${txt}</span>` : txt; }).join(' ');
+    const n = el(`<div class="grp">${html}</div>`, $('#cap'));
+    A(n, [{ opacity: 0, transform: 'translateY(14px) scale(.98)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t0, .16, OUT);
+    A(n, [{ opacity: 1 }, { opacity: 0 }], t1 - .02, .04, 'linear');
+  });
+}
+window.__cues = CUES.sort((a, b) => a[0] - b[0]);
+window.__seek = () => {};
+</script>
+</body></html>
