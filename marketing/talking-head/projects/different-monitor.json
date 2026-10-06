@@ -1,0 +1,24 @@
+{
+  "name": "different-monitor",
+  "source": "src/IMG_4601.MOV",
+  "source_size": [3840, 2160],
+  "aspect": [4, 5],
+  "out_size": [1440, 1800],
+  "hdr": true,
+  "grade": "hqdn3d=1.2:1.2:3:3,lutyuv=y='clip(64+(val-64)*1.04,64,940)':u='512+(val-512)*0.93':v='512+(val-512)*0.93'",
+  "shots": [
+    {"in": 20.0, "out": 24.0, "speed": 2,   "cx": 0.32},
+    {"in": 12.0, "out": 17.0, "speed": 2.5, "cx": 0.58},
+    {"in": 31.0, "out": 36.0, "speed": 2,   "cx": 0.58},
+    {"in": 40.0, "out": 43.5, "speed": 1.5, "cx": 0.50}
+  ],
+  "text": {
+    "paragraph": [
+      "I used to spend night shifts watching monitors for patients.",
+      "Now I spend them watching a workflow, waiting for one green checkmark.",
+      "Different monitor. Same patience."
+    ],
+    "font": "Inter-500.ttf", "font_last": "Inter-700.ttf", "size": 54, "gap": 30, "top": 1080,
+    "white": 204, "scrim": 0.62, "animate": true, "in": 0.3, "stagger": 0.4
+  }
+}

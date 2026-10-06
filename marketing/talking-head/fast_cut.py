@@ -93,6 +93,28 @@ def main():
             sc = np.zeros((H, W, 4), np.uint8); sc[..., 3] = (np.repeat(ramp, W, 1) * 255).astype(np.uint8)
             Image.alpha_composite(Image.fromarray(sc, 'RGBA'), txt).save(card)
         dur = sum(durs); final = os.path.join(HERE, 'out', f'{name}.mp4')
+        if t.get('animate'):
+            # each paragraph fades in with a slight rise, staggered; the scrim sits underneath from frame 1
+            import numpy as np
+            scrim = os.path.join(work, 'scrim.png'); y = np.arange(H)[:, None]
+            ramp = np.clip((y - (t['top'] - 260)) / 360, 0, 1) ** 1.4 * t.get('scrim', 0)
+            sc = np.zeros((H, W, 4), np.uint8); sc[..., 3] = (np.repeat(ramp, W, 1) * 255).astype(np.uint8)
+            Image.fromarray(sc, 'RGBA').save(scrim)
+            blocks, yy = [], t['top']
+            for i, p in enumerate(t['paragraph']):
+                f = (t.get('font_last', t.get('font', 'Inter-600.ttf')) if i == len(t['paragraph']) - 1 else t.get('font', 'Inter-600.ttf'))
+                pth = os.path.join(work, f'para{i}.png'); text_card([(p, f, t.get('size', 46), 0)], pth, W, H, yy, white)
+                rows = Image.open(pth).getbbox(); blocks.append(pth); yy = rows[3] + t.get('gap', 22) + 6
+            ins = ['-i', joined, '-loop', '1', '-i', scrim] + sum([['-loop', '1', '-i', b] for b in blocks], [])
+            fc, last = '[0:v][1:v]overlay=format=yuv420p10[s0];', 's0'
+            for i in range(len(blocks)):
+                st = t.get('in', .3) + i * t.get('stagger', .35)
+                fc += (f"[{i + 2}:v]format=rgba,fade=t=in:st={st}:d=0.6:alpha=1[b{i}];"
+                       f"[{last}][b{i}]overlay=x=0:y='16*max(0\,1-(t-{st})/0.6)':eval=frame:format=yuv420p10[s{i + 1}];")
+                last = f's{i + 1}'
+            fc += f'[{last}]format={pix}[v]'
+            run([*ins, '-filter_complex', fc, '-map', '[v]', '-t', f'{dur:.3f}', *enc(11), *tags, '-movflags', '+faststart', final])
+            print(f'-> {final}  ({dur:.1f}s, {W}x{H}, {"HDR HLG" if hdr else "SDR"})'); return
         run(['-i', joined, '-loop', '1', '-i', card, '-filter_complex', f'[1:v]format=rgba[t];[0:v][t]overlay=format=yuv420p10,format={pix}[v]',
              '-map', '[v]', '-t', f'{dur:.3f}', *enc(11), *tags, '-movflags', '+faststart', final])
         print(f'-> {final}  ({dur:.1f}s, {W}x{H}, {"HDR HLG" if hdr else "SDR"})'); return
