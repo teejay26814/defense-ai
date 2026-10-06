@@ -1,0 +1,139 @@
+{
+ "name": "followup2",
+ "sources": {
+  "A": {
+   "video": "src/followup/IMG_4641.MOV",
+   "transcript": "work/followup/face_transcript.json",
+   "audio": "work/followup/face48k.wav"
+  },
+  "B": {
+   "video": "src/followup/IMG_4643.MOV",
+   "transcript": "work/followup/b_transcript.json",
+   "audio": "work/followup/b48k.wav"
+  }
+ },
+ "fix": {
+  "A": {
+   "0.92": "send",
+   "2.66:see": "send",
+   "37.34": "don't",
+   "127.50": "2pm."
+  },
+  "B": {
+   "56.38": "FOLLOWUP,",
+   "4.86": "3",
+   "7.22": "4"
+  }
+ },
+ "segments": [
+  {
+   "src": "A",
+   "range": [
+    0.72,
+    4.22
+   ],
+   "zoom": 1.04,
+   "beat": "hook"
+  },
+  {
+   "src": "A",
+   "range": [
+    4.48,
+    5.78
+   ],
+   "zoom": 1.16,
+   "beat": "punch"
+  },
+  {
+   "src": "A",
+   "range": [
+    34.14,
+    38.48
+   ],
+   "zoom": 1.0,
+   "beat": "problem"
+  },
+  {
+   "src": "A",
+   "range": [
+    83.94,
+    88.42
+   ],
+   "zoom": 1.12,
+   "beat": "remember"
+  },
+  {
+   "src": "A",
+   "range": [
+    119.7,
+    128.3
+   ],
+   "zoom": 1.0,
+   "beat": "task",
+   "drop": [
+    120.1
+   ],
+   "tail": 0.55
+  },
+  {
+   "src": "B",
+   "range": [
+    1.4,
+    16.54
+   ],
+   "zoom": 1.0,
+   "beat": "timeline"
+  },
+  {
+   "src": "B",
+   "range": [
+    18.42,
+    20.4
+   ],
+   "zoom": 1.06,
+   "beat": "replies"
+  },
+  {
+   "src": "B",
+   "range": [
+    34.32,
+    46.54
+   ],
+   "zoom": 1.0,
+   "beat": "rules",
+   "cutouts": [
+    [
+     37.95,
+     41.45
+    ]
+   ]
+  },
+  {
+   "src": "B",
+   "range": [
+    53.8,
+    58.34
+   ],
+   "zoom": 1.15,
+   "beat": "cta"
+  }
+ ],
+ "screens": [
+  [
+   "task",
+   14.167
+  ],
+  [
+   "gmail",
+   18.433
+  ],
+  [
+   "rules_days",
+   21.433
+  ],
+  [
+   "rules_once",
+   33.167
+  ]
+ ]
+}

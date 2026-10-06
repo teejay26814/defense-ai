@@ -17,13 +17,15 @@ sys.path.insert(0, os.path.join(HERE, 'explainer'))
 from build import srgb_to_hlg_cube, x265, HDR_TAGS, run    # shared with the explainer pipeline
 FF = imageio_ffmpeg.get_ffmpeg_exe()
 W, H, FPS = 1080, 1920, 30
-WORK = os.path.join(HERE, 'work/followup'); OUT = os.path.join(HERE, 'out/followup')
+CFG = next((a for a in sys.argv[1:] if a.endswith('.json')), 'followup/followup.json')
+_C = json.load(open(os.path.join(HERE, CFG)))
+WORK = os.path.join(HERE, 'work', _C['name']); OUT = os.path.join(HERE, 'out', _C['name'])
 FACE = {'A': (994, 1805), 'B': (950, 1640)}                 # face centre in each rotated 2160x3840 take
 LUT = {'A': 'looks/followup-A.cube', 'B': 'looks/followup-B.cube'}
-SCREENS = [('task', 13.933), ('rules', 21.2), ('gmail', 32.933)]
+SCREENS = [tuple(s) for s in _C.get('screens', [('task', 13.933), ('rules', 21.2), ('gmail', 32.933)])]
 
 def main():
-    C = json.load(open(os.path.join(HERE, 'followup/followup.json'))); E = json.load(open(os.path.join(WORK, 'edl.json')))
+    C = _C; E = json.load(open(os.path.join(WORK, 'edl.json')))
     os.makedirs(OUT, exist_ok=True)
     parts = []
     for k, c in enumerate(E['cuts']):

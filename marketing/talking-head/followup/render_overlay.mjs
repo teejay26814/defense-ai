@@ -15,7 +15,7 @@ const browser = await chromium.launch({ executablePath: exe, args: ['--no-sandbo
 async function open() {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', e => console.error('PAGE ERROR', e.message));
-  await page.goto(pathToFileURL(join(here, 'overlay.html')).href, { waitUntil: 'load' });
+  await page.goto(pathToFileURL(join(here, process.env.OVERLAY || 'overlay.html')).href, { waitUntil: 'load' });
   await page.evaluate(async () => { await document.fonts.ready; });
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Emulation.setDefaultBackgroundColorOverride', { color: probe && process.env.PROBE_BG ? { r: 90, g: 96, b: 110, a: 1 } : { r: 0, g: 0, b: 0, a: 0 } });

@@ -11,7 +11,8 @@ sys.path.insert(0, os.path.join(HERE, 'explainer'))
 import sound as S                                   # synth helpers shared with the explainer reel
 
 SR = S.SR
-WORK = os.path.join(HERE, 'work/followup')
+CFG = next((a for a in sys.argv[1:] if a.endswith('.json')), 'followup/followup.json')
+WORK = os.path.join(HERE, 'work', json.load(open(os.path.join(HERE, CFG)))['name'])
 
 def lofi(dur):
     """calm bed: the explainer's pad + plucks, warmer (lower cut-off) with soft tape hiss and a lazy hat"""
@@ -27,7 +28,7 @@ def lofi(dur):
     return x + hiss + np.stack([hat, hat], 1)
 
 def main():
-    C = json.load(open(os.path.join(HERE, 'followup/followup.json')))
+    C = json.load(open(os.path.join(HERE, CFG)))
     E = json.load(open(os.path.join(WORK, 'edl.json'))); dur = E['duration']; N = int(round(dur * SR))
     src = {k: S.decode(os.path.join(HERE, v['audio'])) for k, v in C['sources'].items()}
     parts = []
@@ -41,7 +42,8 @@ def main():
     vr = np.sqrt(np.mean(voice[np.abs(voice).max(1) > .01] ** 2))
     # sound effects on the graphics' cue times, quiet: loudest about a quarter of the voice's peak
     sfx = np.zeros((N, 2)); cues = json.load(open(os.path.join(WORK, 'ov', 'cues.json')))
-    gain = {'pop': .10, 'tick': .07, 'whoosh': .09}
+    gain = {'pop': .10, 'tick': .07, 'whoosh': .09, 'click': .06, 'notify': .10, 'confirm': .07, 'impact_soft': .10}
+    S.CUE.setdefault('click', lambda: (S.tick() * .8, .06))
     for t, kind in cues:
         x, _ = S.CUE[kind](); i = int(t * SR)
         if 0 <= i < N: x = S.st(x, .1); n = min(len(x), N - i); sfx[i:i + n] += x[:n] * gain[kind]

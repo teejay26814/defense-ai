@@ -76,24 +76,47 @@ def scroll_dy(a, b):
     return -(dy if dy < A.shape[0] / 2 else dy - A.shape[0])
 
 def ranges(seg):
-    return [tuple(r) for r in seg['src']] if isinstance(seg['src'][0], (list, tuple)) else [tuple(seg['src'])]
+    R = seg['src'] if isinstance(seg['src'][0], (list, tuple)) else [seg['src']]
+    return [tuple(r) for r in R]
 
 def frames(seg):
-    """frames at 30 fps over the output duration; several source ranges are joined (used where the
-    recording pauses between two scrolls and nothing on screen changes, so the join is seamless)"""
+    """frames at 30 fps over the output duration. Several source ranges are joined (seamless where the
+    screen is still between them); a range may carry its own output duration [a, b, dur] (e.g. a quick
+    scroll, then a hold on one frame), otherwise ranges share one speed."""
     R = ranges(seg); n = round((seg['out'][1] - seg['out'][0]) * FPS)
-    total = sum(b - a for a, b in R); speed = total / (seg['out'][1] - seg['out'][0])
-    counts = [round((b - a) / speed * FPS) for a, b in R]; counts[-1] = n - sum(counts[:-1])
+    fixed = sum(r[2] for r in R if len(r) == 3); free = [r for r in R if len(r) == 2]
+    free_len = sum(b - a for a, b in free); free_out = (seg['out'][1] - seg['out'][0]) - fixed
+    plan = [(r[0], r[1], r[2] if len(r) == 3 else (r[1] - r[0]) / free_len * free_out) for r in R]
+    counts = [round(d * FPS) for _, _, d in plan]; counts[-1] = n - sum(counts[:-1])
     i, last = 0, None
-    for (s0, s1), cnt in zip(R, counts):
+    for (s0, s1, d), cnt in zip(plan, counts):
+        speed = (s1 - s0) / d
         p = subprocess.Popen([FF, '-v', 'error', '-ss', str(s0), '-t', str(s1 - s0 + .5), '-i', SRC, '-vf', f'setpts=PTS/{speed},fps={FPS}',
                               '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], stdout=subprocess.PIPE)
         for j in range(cnt):
             buf = p.stdout.read(SW * SH * 3)
             if len(buf) == SW * SH * 3: last = Image.frombuffer('RGB', (SW, SH), buf, 'raw', 'RGB', 0, 1).copy()
-            yield i, n, last, round(s0 + j / FPS * speed, 2)
+            yield i, n, last, round(s0 + min(j / FPS * speed, s1 - s0), 2)
             i += 1
         p.kill()
+
+FOCUS = (143, 193, 255)
+def draw_marks(img, marks, t):
+    """focus boxes (source coordinates, absolute output times): soft-blue outline, the rest gently dimmed"""
+    act = []
+    for m in marks:
+        a = min(1, max(0, (t - m['t0']) / .25)) * min(1, max(0, (m['t1'] - t) / .2))
+        if a > 0: act.append((a, m['box']))
+    if not act: return img
+    arr = np.asarray(img).astype(np.float32); inside = np.zeros(arr.shape[:2], bool); amax = max(a for a, _ in act)
+    for a, (x0, y0, x1, y1) in act: inside[max(0, y0 - 6):y1 + 6, max(0, x0 - 10):x1 + 10] = True
+    arr[~inside] *= 1 - .38 * amax
+    out = Image.fromarray(arr.clip(0, 255).astype(np.uint8)).convert('RGBA')
+    ov = Image.new('RGBA', out.size, (0, 0, 0, 0)); d = ImageDraw.Draw(ov)
+    for a, (x0, y0, x1, y1) in act:
+        d.rounded_rectangle((x0 - 10, y0 - 6, x1 + 10, y1 + 6), 8, outline=FOCUS + (int(255 * a),), width=3)
+        d.rounded_rectangle((x0 - 10, y0 - 6, x1 + 10, y1 + 6), 8, fill=FOCUS + (int(28 * a),))
+    return Image.alpha_composite(out, ov).convert('RGB')
 
 def rounded(size, r):
     m = Image.new('L', size, 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, size[0] - 1, size[1] - 1), r, fill=255); return m
@@ -129,6 +152,7 @@ def render(seg, log):
             reg = bl.crop((x0, y0, x1, y1)).filter(ImageFilter.GaussianBlur(10)).filter(ImageFilter.GaussianBlur(10))
             bl.paste(reg, (x0, y0))
         t = round(seg['out'][0] + i / FPS, 3)
+        bl = draw_marks(bl, seg.get('marks', []), t)
         log.append({'clip': seg['name'], 'out_t': t, 'src_t': src_t, 'what': sorted({f'{h[0]}: {h[1]}' for h in keep} | {f'{k}' for k, _ in seg.get('fixed', [])})})
         # composition: blurred, darkened backdrop of the same frame + the card with a slow push-in
         p = i / max(1, n - 1); e = p * p * (3 - 2 * p)
@@ -150,7 +174,11 @@ def render(seg, log):
 
 if __name__ == '__main__':
     import sys
-    only = sys.argv[1:]
+    args = sys.argv[1:]
+    if args and args[0].endswith('.json'):
+        cfg = json.load(open(os.path.join(HERE, args[0]))); args = args[1:]
+        SEGS = cfg['segs']; WORK = os.path.join(HERE, cfg['work']); os.makedirs(WORK, exist_ok=True)
+    only = args
     log = []
     for seg in SEGS:
         if not only or seg['name'] in only: render(seg, log)

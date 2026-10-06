@@ -1,0 +1,147 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Follow-up reel v2 — graphics</title>
+<style>
+@font-face { font-family: 'Figtree'; font-weight: 300 900; src: url(../covers/figtree-1.woff2) format('woff2'); }
+:root { --navy: #0b2349; --navy2: #12336a; --soft: #9cc8ff; --soft2: #d6e8ff; --white: #ffffff; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: transparent; width: 1080px; height: 1920px; overflow: hidden; font-family: 'Figtree', 'Noto Color Emoji', sans-serif; -webkit-font-smoothing: antialiased; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+/* Instagram safe zone: nothing above y=250 or below y=1520; ~150px clear on the right for the buttons */
+.band { position: absolute; left: 60px; right: 150px; display: flex; justify-content: center; }
+.card { opacity: 0; display: flex; align-items: center; gap: 16px; padding: 18px 26px; border-radius: 22px; background: rgba(11, 35, 73, .94); color: #fff;
+  border: 1.5px solid rgba(156, 200, 255, .35); box-shadow: 0 2px 6px rgba(0,0,0,.2), 0 18px 40px -12px rgba(0,8,24,.55); font: 700 34px/1.15 'Figtree'; white-space: nowrap; }
+.card svg { width: 34px; height: 34px; flex: none; }
+#title { opacity: 0; text-align: center; font: 800 70px/1.02 'Figtree'; letter-spacing: -.02em; color: #fff; text-transform: uppercase;
+  text-shadow: 0 2px 6px rgba(0,0,0,.35), 0 10px 30px rgba(0,0,0,.45); white-space: nowrap; }
+#title span { color: var(--soft); }
+.arrow { opacity: 0; width: 30px; height: 3px; background: var(--soft); border-radius: 2px; position: relative; flex: none; }
+.arrow::after { content: ''; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 10px solid var(--soft); border-right: 0; }
+.tl { display: flex; align-items: center; gap: 10px; }
+.pill { opacity: 0; padding: 14px 18px; border-radius: 16px; background: rgba(11, 35, 73, .94); color: #fff; border: 1.5px solid rgba(156, 200, 255, .35);
+  font: 800 28px/1 'Figtree'; letter-spacing: .02em; white-space: nowrap; box-shadow: 0 12px 28px -10px rgba(0,8,24,.6); }
+.pill small { display: block; margin-top: 6px; font: 600 18px/1 'Figtree'; letter-spacing: .04em; color: var(--soft2); text-align: center; }
+.note { opacity: 0; margin-top: 12px; text-align: center; font: 600 24px/1 'Figtree'; color: var(--soft2); letter-spacing: .02em; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+#end { opacity: 0; padding: 24px 36px; border-radius: 26px; background: rgba(11, 35, 73, .95); color: #fff; text-align: center; border: 1.5px solid rgba(156, 200, 255, .4);
+  box-shadow: 0 2px 6px rgba(0,0,0,.2), 0 22px 50px -14px rgba(0,8,24,.6); }
+#end b { display: block; font: 800 50px/1.05 'Figtree'; letter-spacing: -.015em; }
+#end b span { color: var(--soft); }
+#end i { display: block; margin-top: 10px; font: 600 26px/1.1 'Figtree'; font-style: normal; color: var(--soft2); }
+/* captions: readable, not giant; phrases fade up; only key words tinted */
+#cap { position: absolute; left: 60px; right: 150px; top: 1340px; }
+.grp { position: absolute; left: 0; right: 0; top: 0; opacity: 0; text-align: center; font: 700 60px/1.12 'Figtree'; letter-spacing: -.01em; color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,.45), 0 6px 22px rgba(0,0,0,.5); }
+.grp .k { color: var(--soft); }
+</style></head>
+<body><div id="stage" data-fps="30">
+  <div class="band" style="top:300px"><div id="title">Still following<br>up <span>manually?</span></div></div>
+  <div id="gfx"></div>
+  <div id="cap"></div>
+</div>
+<script src="edl-data2.js"></script>
+<script>
+const E = window.EDL;
+document.getElementById('stage').dataset.duration = E.duration;
+const $ = s => document.querySelector(s);
+const OUT = 'cubic-bezier(.16,1,.3,1)', SOFT = 'cubic-bezier(.33,1,.68,1)';
+function A(el, kf, t, d, e = OUT) { const fill = el.__n ? 'forwards' : 'both'; el.__n = 1; return el.animate(kf, { delay: t * 1000, duration: d * 1000, easing: e, fill }); }
+const clean = s => s.toLowerCase().replace(/[^a-z0-9']/g, '');
+const W = [];
+E.words.forEach(w => { if (w.w.startsWith('-') && W.length) { W[W.length - 1].w += w.w; W[W.length - 1].t1 = w.t1; } else W.push({ ...w }); });
+function at(seg, word, n = 0) { const m = W.filter(w => w.seg === seg && clean(w.w).startsWith(word)); if (!m.length) throw new Error(`no ${word} in ${seg}`); return m[Math.min(n, m.length - 1)].t0; }
+const segStart = s => W.find(w => w.seg === s).t0, segEnd = s => { const m = W.filter(w => w.seg === s); return m[m.length - 1].t1; };
+const el = (html, parent = $('#gfx')) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; parent.appendChild(n); return n; };
+const CUES = []; const cue = (t, k) => CUES.push([+t.toFixed(3), k]);
+const rise = (n, t, d = .35) => A(n, [{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'translateY(0)' }], t, d, OUT);
+const fade = (n, t, d = .25) => A(n, [{ opacity: 1 }, { opacity: 0 }], t, d, 'linear');
+const ICON = {
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="#9cc8ff" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6 8.5-6"/></svg>',
+  stop: '<svg viewBox="0 0 24 24" fill="none" stroke="#9cc8ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>',
+  laptop: '<svg viewBox="0 0 40 28" fill="none" stroke="#d6e8ff" stroke-width="2" stroke-linejoin="round"><rect x="6" y="2" width="28" height="18" rx="2"/><path d="M2 24h36"/><rect id="scr" x="8.5" y="4.5" width="23" height="13" rx="1" fill="#9cc8ff" stroke="none"/></svg>',
+};
+// SEG indices in this cut: 0 hook, 1 punch, 2 problem, 3 remember, 4 task, 5 timeline, 6 replies, 7 rules, 8 cta
+/* hook: subtle title, out before the punch-in line lands */
+{
+  const t = $('#title'), end = segStart(1) - .05;
+  A(t, [{ opacity: 0, transform: 'translateY(16px) scale(.97)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], .15, .45, OUT);
+  fade(t, end - .2, .2);
+}
+cue(segStart(1) + .02, 'impact_soft');                               // "I think you're getting it all wrong"
+cue(segStart(4) - .12, 'whoosh');                                    // face -> screen
+cue(at(4, 'every') - .06, 'click');                                  // schedule highlighted
+cue(at(4, 'and') - .1, 'notify');                                    // the sent follow-up in Gmail
+cue(at(4, '2pm') - .15, 'click');                                    // 2:12 PM highlighted
+/* timeline under the rules card, one step per spoken step, in sync with the line highlights */
+{
+  const steps = [['DAY 3', '#1', at(5, '3')], ['DAY 7', '#2', at(5, '4')], ['DAY 14', '#3', at(5, 'week')], ['DAY 21', 'FINAL', at(5, 'last')]];
+  const wrap = el(`<div class="band" style="top:1188px;flex-direction:column;align-items:center"><div class="tl"></div><div class="note">then it stops</div></div>`);
+  const row = wrap.querySelector('.tl'), note = wrap.querySelector('.note'), end = segEnd(5) + .15;
+  steps.forEach(([d, n, t], i) => {
+    if (i) { const a = el('<div class="arrow"></div>', row); A(a, [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }], t - .14, .16); }
+    const p = el(`<div class="pill">${d}<small>${n}</small></div>`, row);
+    A(p, [{ opacity: 0, transform: 'translateY(10px)', background: 'rgba(11,35,73,.94)' }, { opacity: 1, transform: 'translateY(0)', background: 'rgba(36,92,170,.96)', offset: .5 },
+          { opacity: 1, transform: 'translateY(0)', background: 'rgba(11,35,73,.94)' }], t, .7, SOFT);
+    cue(t, 'tick');
+  });
+  rise(note, at(5, "that"), .4);
+  [...row.children, note].forEach(c => fade(c, end - .2, .2));
+}
+/* once someone replies -> follow-ups stop */
+{
+  const t0 = at(6, 'once'), t1 = at(6, 'replies') + .35, end = segEnd(6) + .02;
+  const b = el(`<div class="band" style="top:300px"><div class="tl">
+      <div class="card" id="r1">${ICON.mail}<span>Reply received</span></div><div class="arrow" id="ra"></div>
+      <div class="card" id="r2">${ICON.stop}<span>Follow-ups stop</span></div></div></div>`);
+  const r1 = b.querySelector('#r1'), r2 = b.querySelector('#r2'), ra = b.querySelector('#ra');
+  [r1, r2].forEach(c => { c.style.fontSize = '28px'; c.style.padding = '14px 20px'; });
+  rise(r1, t0, .3); cue(t0, 'notify');
+  A(ra, [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }], t1 - .1, .15);
+  rise(r2, t1, .3); cue(t1 + .05, 'confirm');
+  [r1, r2, ra].forEach(c => fade(c, Math.min(end, segStart(7)) - .18, .18));
+}
+cue(segStart(7) - .12, 'whoosh');                                    // to the rules for "I set the rules once"
+cue(segStart(7) + 1.4 - .1, 'whoosh');                               // back to face
+/* "it just runs without me": laptop closes, the task keeps going */
+{
+  const t0 = at(7, 'runs') - .1, end = t0 + 3.2;
+  const b = el(`<div class="band" style="top:300px"><div class="card" id="lap">${ICON.laptop}<span id="l1">Laptop off</span><span style="color:#9cc8ff">·</span><span id="l2">task still runs at 2pm</span><svg id="ok" viewBox="0 0 24 24" fill="none" stroke="#9cc8ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>`);
+  const c = b.firstChild; c.style.fontSize = '28px'; c.querySelector('svg').style.width = '44px';
+  rise(c, t0, .35);
+  A(c.querySelector('#scr'), [{ opacity: 1 }, { opacity: .08 }], t0 + .6, .5, 'ease-in-out');      // the screen switches off
+  A(c.querySelector('#ok'), [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1)' }], t0 + 1.3, .3); cue(t0 + 1.3, 'confirm');
+  fade(c, end - .25, .25);
+}
+/* CTA: calm end card for the last 3 seconds */
+{
+  const t0 = E.duration - 3.0;
+  const b = el(`<div class="band" style="top:300px"><div id="end"><b>Comment <span>FOLLOWUP</span></b><i>for the exact instructions</i></div></div>`).firstChild;
+  rise(b, t0, .45);
+}
+/* captions */
+{
+  const KEY = [['getting', 'it', 'all', 'wrong'], ['scheduled', 'task'], ['2pm'], ['3', 'days'], ['4', 'days'], ['week'], ['last', 'message'], ['replies'],
+               ['follow-up'], ['follow-ups'], ['followed-up'], ['follows-up'], ['followup']];
+  const toks = W.map(w => clean(w.w.replace(/-/g, '-')).replace(/[^a-z0-9'-]/g, ''));
+  const raw = W.map(w => w.w.toLowerCase().replace(/[^a-z0-9'-]/g, ''));
+  const isKey = new Array(W.length).fill(false);
+  KEY.forEach(p => { for (let i = 0; i + p.length <= raw.length; i++) if (p.every((x, j) => raw[i + j] === x)) for (let j = 0; j < p.length; j++) isKey[i + j] = true; });
+  const groups = []; let g = [];
+  W.forEach((w, i) => {
+    const prev = W[i - 1];
+    const brk = g.length && (g.length >= 5 || (g.map(x => W[x].w).join(' ') + ' ' + w.w).length > 24 || /[.?!]$/.test(prev.w) ||
+      (/,$/.test(prev.w) && g.length >= 2) || w.t0 - prev.t1 > .35 || w.seg !== prev.seg);
+    if (brk) { groups.push(g); g = []; }
+    g.push(i);
+  });
+  groups.push(g);
+  groups.forEach((g, gi) => {
+    const t0 = Math.max(0, W[g[0]].t0 - .06), nxt = groups[gi + 1];
+    const t1 = nxt ? Math.max(Math.min(W[nxt[0]].t0 - .06, W[g[g.length - 1]].t1 + .6), Math.min(t0 + .5, W[nxt[0]].t0 - .06)) : E.duration + 1;
+    const html = g.map(i => { const t = W[i].w.replace(/[,.]$/, ''); return isKey[i] ? `<span class="k">${t}</span>` : t; }).join(' ');
+    const n = el(`<div class="grp">${html}</div>`, $('#cap'));
+    A(n, [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }], t0, .16, OUT);
+    A(n, [{ opacity: 1 }, { opacity: 0 }], t1 - .02, .02, 'linear');      // clear before the next phrase fades in
+  });
+}
+window.__cues = CUES.sort((a, b) => a[0] - b[0]);
+</script>
+</body></html>
