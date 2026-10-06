@@ -80,7 +80,22 @@ def main():
     joined = os.path.join(work, 'joined.mov')
     run(['-f', 'concat', '-safe', '0', '-i', lst, '-c', 'copy', joined])
 
-    t = cfg['text']; white = 191 if hdr else 255
+    t = cfg['text']; white = t.get('white', 191 if hdr else 255)
+    if 'paragraph' in t:
+        # text-on-screen format: one block, on from the first frame to the last, no animation;
+        # a touch more to read than the clip is long, so people stay to finish it (and often replay)
+        card = os.path.join(work, 'paragraph.png')
+        text_card([(p, t.get('font', 'Inter-600.ttf'), t.get('size', 46), t.get('gap', 22)) for p in t['paragraph']], card, W, H, t['top'], white)
+        if t.get('scrim'):                       # soft dark fade under the text so it reads over a bright screen or paper
+            import numpy as np
+            txt = Image.open(card); y = np.arange(H)[:, None]
+            a0 = t['top'] - 260; ramp = np.clip((y - a0) / 360, 0, 1) ** 1.4 * t['scrim']
+            sc = np.zeros((H, W, 4), np.uint8); sc[..., 3] = (np.repeat(ramp, W, 1) * 255).astype(np.uint8)
+            Image.alpha_composite(Image.fromarray(sc, 'RGBA'), txt).save(card)
+        dur = sum(durs); final = os.path.join(HERE, 'out', f'{name}.mp4')
+        run(['-i', joined, '-loop', '1', '-i', card, '-filter_complex', f'[1:v]format=rgba[t];[0:v][t]overlay=format=yuv420p10,format={pix}[v]',
+             '-map', '[v]', '-t', f'{dur:.3f}', *enc(11), *tags, '-movflags', '+faststart', final])
+        print(f'-> {final}  ({dur:.1f}s, {W}x{H}, {"HDR HLG" if hdr else "SDR"})'); return
     s1, s2 = t.get('size1', 58), t.get('size2', 46)
     l1, l2, l3 = (os.path.join(work, f'text{i}.png') for i in (1, 2, 3))
     text_card([(t['line1'], 'Inter-700.ttf', s1, 16)], l1, W, H, t['top'], white)
