@@ -40,8 +40,10 @@ def refine(start, end, lo, hi, tight=False):
     return max(lo, s - .03), min(hi, e + .05)
 
 cuts, out_words, t_out = [], [], 0.0
+cur_beat = None
 for si, seg in enumerate(cfg['segments']):
     src = seg.get('src', next(iter(SRC))); words, db, thr = LOADED[src]
+    cur_beat = seg.get('beat', cur_beat)
     fsrc = cfg.get('fix', {}).get(src, {}) if 'sources' in cfg else cfg.get('fix', {})
     fix = {round(float(k), 2): v for k, v in fsrc.items() if ':' not in k}
     fixw = {k.split(':')[0] + ':' + k.split(':')[1].lower(): v for k, v in fsrc.items() if ':' in k}
@@ -90,7 +92,7 @@ for si, seg in enumerate(cfg['segments']):
         for k, (ps, pe) in enumerate(pieces):
             ps, pe = round(ps * FPS) / FPS, round(pe * FPS) / FPS          # frame-aligned
             if pe - ps < 2 / FPS: continue
-            cuts.append({'in': ps, 'out': pe, 'src': src, 'zoom': seg['zoom'], 'seg': si, 'beat': seg.get('beat') if ri == 0 and k == 0 else None, 't': round(t_out, 4)})
+            cuts.append({'in': ps, 'out': pe, 'src': src, 'zoom': seg['zoom'], 'seg': si, 'beat': seg.get('beat') if ri == 0 and k == 0 else None, 'section': cur_beat, 't': round(t_out, 4)})
             mapped.append((ps, pe, t_out)); t_out += pe - ps
         def m(t):                                                   # raw-take time -> edited time
             for ps, pe, to in mapped:
@@ -98,7 +100,7 @@ for si, seg in enumerate(cfg['segments']):
             ps, pe, to = mapped[-1]; return to + pe - ps
         for w in r:
             fx = fixw.get(f'{w[0]:.2f}:{w[2].lower()}', fix.get(round(w[0], 2), w[2]))
-            out_words.append({'t0': round(m(w[0]), 3), 't1': round(m(w[1]), 3), 'w': fx, 'seg': si})
+            out_words.append({'t0': round(m(w[0]), 3), 't1': round(m(w[1]), 3), 'w': fx, 'seg': si, 'section': cur_beat})
 work = os.path.join(HERE, 'work', cfg['name']); os.makedirs(work, exist_ok=True)
 json.dump({'cuts': cuts, 'words': out_words, 'duration': round(t_out, 3)}, open(os.path.join(work, 'edl.json'), 'w'), indent=1)
 print(f'{len(cuts)} cuts, {t_out:.1f}s')

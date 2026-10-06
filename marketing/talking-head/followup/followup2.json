@@ -8,7 +8,7 @@
   },
   "B": {
    "video": "src/followup/IMG_4643.MOV",
-   "transcript": "work/followup/b_transcript.json",
+   "transcript": "work/followup/b_transcript_fixed.json",
    "audio": "work/followup/b48k.wav"
   }
  },
@@ -20,9 +20,7 @@
    "127.50": "2pm."
   },
   "B": {
-   "56.38": "FOLLOWUP,",
-   "4.86": "3",
-   "7.22": "4"
+   "56.38": "FOLLOWUP,"
   }
  },
  "segments": [
@@ -78,8 +76,36 @@
   {
    "src": "B",
    "range": [
-    1.4,
-    16.54
+    3.66,
+    5.4
+   ],
+   "zoom": 1.0,
+   "beat": "timeline"
+  },
+  {
+   "src": "B",
+   "range": [
+    9.22,
+    10.8
+   ],
+   "zoom": 1.0,
+   "beat": "timeline"
+  },
+  {
+   "src": "B",
+   "range": [
+    10.92,
+    11.62
+   ],
+   "zoom": 1.0,
+   "beat": "timeline",
+   "tight": true
+  },
+  {
+   "src": "B",
+   "range": [
+    14.28,
+    16.04
    ],
    "zoom": 1.0,
    "beat": "timeline"
@@ -133,7 +159,7 @@
   ],
   [
    "rules_once",
-   33.167
+   29.533
   ]
  ]
 }

@@ -47,8 +47,8 @@ function A(el, kf, t, d, e = OUT) { const fill = el.__n ? 'forwards' : 'both'; e
 const clean = s => s.toLowerCase().replace(/[^a-z0-9']/g, '');
 const W = [];
 E.words.forEach(w => { if (w.w.startsWith('-') && W.length) { W[W.length - 1].w += w.w; W[W.length - 1].t1 = w.t1; } else W.push({ ...w }); });
-function at(seg, word, n = 0) { const m = W.filter(w => w.seg === seg && clean(w.w).startsWith(word)); if (!m.length) throw new Error(`no ${word} in ${seg}`); return m[Math.min(n, m.length - 1)].t0; }
-const segStart = s => W.find(w => w.seg === s).t0, segEnd = s => { const m = W.filter(w => w.seg === s); return m[m.length - 1].t1; };
+function at(seg, word, n = 0) { const m = W.filter(w => w.section === seg && clean(w.w).startsWith(word)); if (!m.length) throw new Error(`no ${word} in ${seg}`); return m[Math.min(n, m.length - 1)].t0; }
+const segStart = s => W.find(w => w.section === s).t0, segEnd = s => { const m = W.filter(w => w.section === s); return m[m.length - 1].t1; };
 const el = (html, parent = $('#gfx')) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; parent.appendChild(n); return n; };
 const CUES = []; const cue = (t, k) => CUES.push([+t.toFixed(3), k]);
 const rise = (n, t, d = .35) => A(n, [{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'translateY(0)' }], t, d, OUT);
@@ -61,20 +61,20 @@ const ICON = {
 // SEG indices in this cut: 0 hook, 1 punch, 2 problem, 3 remember, 4 task, 5 timeline, 6 replies, 7 rules, 8 cta
 /* hook: subtle title, out before the punch-in line lands */
 {
-  const t = $('#title'), end = segStart(1) - .05;
+  const t = $('#title'), end = segStart('punch') - .05;
   A(t, [{ opacity: 0, transform: 'translateY(16px) scale(.97)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], .15, .45, OUT);
   fade(t, end - .2, .2);
 }
-cue(segStart(1) + .02, 'impact_soft');                               // "I think you're getting it all wrong"
-cue(segStart(4) - .12, 'whoosh');                                    // face -> screen
-cue(at(4, 'every') - .06, 'click');                                  // schedule highlighted
-cue(at(4, 'and') - .1, 'notify');                                    // the sent follow-up in Gmail
-cue(at(4, '2pm') - .15, 'click');                                    // 2:12 PM highlighted
+cue(segStart('punch') + .02, 'impact_soft');                               // "I think you're getting it all wrong"
+cue(segStart('task') - .12, 'whoosh');                                    // face -> screen
+cue(at('task', 'every') - .06, 'click');                                  // schedule highlighted
+cue(at('task', 'and') - .1, 'notify');                                    // the sent follow-up in Gmail
+cue(at('task', '2pm') - .15, 'click');                                    // 2:12 PM highlighted
 /* timeline under the rules card, one step per spoken step, in sync with the line highlights */
 {
-  const steps = [['DAY 3', '#1', at(5, '3')], ['DAY 7', '#2', at(5, '4')], ['DAY 14', '#3', at(5, 'week')], ['DAY 21', 'FINAL', at(5, 'last')]];
+  const steps = [['DAY 3', '#1', at('timeline', '3')], ['DAY 7', '#2', at('timeline', '4')], ['DAY 14', '#3', at('timeline', 'week')], ['DAY 21', 'FINAL', at('timeline', 'last')]];
   const wrap = el(`<div class="band" style="top:1188px;flex-direction:column;align-items:center"><div class="tl"></div><div class="note">then it stops</div></div>`);
-  const row = wrap.querySelector('.tl'), note = wrap.querySelector('.note'), end = segEnd(5) + .15;
+  const row = wrap.querySelector('.tl'), note = wrap.querySelector('.note'), end = segEnd('timeline') + .15;
   steps.forEach(([d, n, t], i) => {
     if (i) { const a = el('<div class="arrow"></div>', row); A(a, [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }], t - .14, .16); }
     const p = el(`<div class="pill">${d}<small>${n}</small></div>`, row);
@@ -82,12 +82,12 @@ cue(at(4, '2pm') - .15, 'click');                                    // 2:12 PM 
           { opacity: 1, transform: 'translateY(0)', background: 'rgba(11,35,73,.94)' }], t, .7, SOFT);
     cue(t, 'tick');
   });
-  rise(note, at(5, "that"), .4);
+  rise(note, at('timeline', "that"), .4);
   [...row.children, note].forEach(c => fade(c, end - .2, .2));
 }
 /* once someone replies -> follow-ups stop */
 {
-  const t0 = at(6, 'once'), t1 = at(6, 'replies') + .35, end = segEnd(6) + .02;
+  const t0 = at('replies', 'once'), t1 = at('replies', 'replies') + .35, end = segEnd('replies') + .02;
   const b = el(`<div class="band" style="top:300px"><div class="tl">
       <div class="card" id="r1">${ICON.mail}<span>Reply received</span></div><div class="arrow" id="ra"></div>
       <div class="card" id="r2">${ICON.stop}<span>Follow-ups stop</span></div></div></div>`);
@@ -96,13 +96,13 @@ cue(at(4, '2pm') - .15, 'click');                                    // 2:12 PM 
   rise(r1, t0, .3); cue(t0, 'notify');
   A(ra, [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }], t1 - .1, .15);
   rise(r2, t1, .3); cue(t1 + .05, 'confirm');
-  [r1, r2, ra].forEach(c => fade(c, Math.min(end, segStart(7)) - .18, .18));
+  [r1, r2, ra].forEach(c => fade(c, Math.min(end, segStart('rules')) - .18, .18));
 }
-cue(segStart(7) - .12, 'whoosh');                                    // to the rules for "I set the rules once"
-cue(segStart(7) + 1.4 - .1, 'whoosh');                               // back to face
+cue(segStart('rules') - .12, 'whoosh');                                    // to the rules for "I set the rules once"
+cue(segStart('rules') + 1.4 - .1, 'whoosh');                               // back to face
 /* "it just runs without me": laptop closes, the task keeps going */
 {
-  const t0 = at(7, 'runs') - .1, end = t0 + 3.2;
+  const t0 = at('rules', 'runs') - .1, end = t0 + 3.2;
   const b = el(`<div class="band" style="top:300px"><div class="card" id="lap">${ICON.laptop}<span id="l1">Laptop off</span><span style="color:#9cc8ff">·</span><span id="l2">task still runs at 2pm</span><svg id="ok" viewBox="0 0 24 24" fill="none" stroke="#9cc8ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>`);
   const c = b.firstChild; c.style.fontSize = '28px'; c.querySelector('svg').style.width = '44px';
   rise(c, t0, .35);
