@@ -19,9 +19,10 @@ def oetf(L):
     L = np.clip(L, 0, 1)
     return np.where(L <= 1 / 12, np.sqrt(3 * L), a * np.log(np.maximum(12 * L - b, 1e-9)) + c)
 
+WB = [0.995, 1.0, 1.025]
 def grade(rgb):
     L = inv(rgb)
-    L = L * np.array([0.995, 1.0, 1.025])                                  # 1. white balance
+    L = L * np.array(WB)                                                    # 1. white balance (per take: python3 hlg_lut.py out.cube R B)
     Y = L @ np.array([0.2627, 0.6780, 0.0593])
     k, top = 0.15, 0.50                                                     # 2. highlight knee
     Yk = np.where(Y < k, Y, k + (top - k) * np.tanh((Y - k) / (top - k)))
@@ -35,6 +36,7 @@ def grade(rgb):
     return np.clip(s, 0, 1)
 
 if __name__ == '__main__':
+    if len(sys.argv) > 3: WB = [float(sys.argv[2]), 1.0, float(sys.argv[3])]
     N = 33
     g = np.linspace(0, 1, N)
     B_, G_, R_ = np.meshgrid(g, g, g, indexing='ij')                        # .cube: red varies fastest

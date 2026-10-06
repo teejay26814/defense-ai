@@ -1,0 +1,121 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Follow-up reel — graphics</title>
+<style>
+@font-face { font-family: 'Figtree'; font-weight: 300 900; src: url(../covers/figtree-1.woff2) format('woff2'); }
+@font-face { font-family: 'Emoji'; src: local('Noto Color Emoji'); }
+:root { --yellow: #FFD84D; --ink: #111111; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: transparent; width: 1080px; height: 1920px; overflow: hidden; font-family: 'Figtree', 'Noto Color Emoji', sans-serif; -webkit-font-smoothing: antialiased; }
+#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+/* Instagram safe zone: nothing in y<250 or y>1520; keep ~150px clear on the right for the buttons */
+.band { position: absolute; left: 60px; right: 150px; display: flex; justify-content: center; }
+.callout { opacity: 0; padding: 22px 34px; border-radius: 26px; background: #fff; color: var(--ink); font: 800 44px/1.15 'Figtree', 'Noto Color Emoji'; letter-spacing: -.01em; text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,.18), 0 18px 40px -10px rgba(0,0,0,.45); }
+#title { opacity: 0; text-align: center; font: 900 88px/1.0 'Figtree'; letter-spacing: -.03em; white-space: nowrap; color: #fff; text-transform: uppercase;
+  text-shadow: 0 3px 6px rgba(0,0,0,.35), 0 10px 34px rgba(0,0,0,.5); }
+#title span { color: var(--yellow); }
+.tl { display: flex; align-items: center; gap: 10px; }
+.pill { opacity: 0; padding: 16px 20px; border-radius: 18px; background: #fff; color: var(--ink); font: 800 34px/1 'Figtree'; white-space: nowrap; box-shadow: 0 12px 30px -8px rgba(0,0,0,.5); }
+.pill.stop { background: var(--ink); color: #fff; border: 3px solid var(--yellow); }
+.arr { opacity: 0; width: 22px; height: 4px; background: #fff; border-radius: 2px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+.arr::after { content: ''; position: absolute; right: -3px; top: -6px; border: 8px solid transparent; border-left: 10px solid #fff; border-right: 0; }
+#end { opacity: 0; padding: 30px 44px 28px; border-radius: 30px; background: #fff; color: var(--ink); text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,.18), 0 22px 50px -12px rgba(0,0,0,.5); }
+#end b { display: block; font: 900 64px/1.05 'Figtree', 'Noto Color Emoji'; letter-spacing: -.02em; }
+#end b span { background: var(--yellow); padding: 0 10px; border-radius: 10px; }
+#end i { display: block; margin-top: 12px; font: 700 32px/1.1 'Figtree'; font-style: normal; color: #444; }
+/* captions */
+#cap { position: absolute; left: 60px; right: 150px; top: 1330px; }
+.grp { position: absolute; left: 0; right: 0; top: 0; text-align: center; font: 800 76px/1.08 'Figtree'; letter-spacing: -.015em; color: #fff; text-transform: none; }
+.grp .w { display: inline-block; opacity: 0; text-shadow: 0 3px 6px rgba(0,0,0,.45), 0 8px 26px rgba(0,0,0,.55); margin: 0 .12em; }
+.grp .w.k { color: var(--yellow); }
+</style></head>
+<body><div id="stage" data-fps="30">
+  <div class="band" style="top:282px"><div id="title">Still following<br>up <span>manually?</span></div></div>
+  <div id="gfx"></div>
+  <div id="cap"></div>
+</div>
+<script src="edl-data.js"></script>
+<script>
+const E = window.EDL;
+document.getElementById('stage').dataset.duration = E.duration;
+const $ = s => document.querySelector(s);
+const OUT = 'cubic-bezier(.16,1,.3,1)', POP = 'cubic-bezier(.34,1.56,.64,1)';
+function A(el, kf, t, d, e = OUT) { const fill = el.__n ? 'forwards' : 'both'; el.__n = 1; return el.animate(kf, { delay: t * 1000, duration: d * 1000, easing: e, fill }); }
+const clean = s => s.toLowerCase().replace(/[^a-z0-9']/g, '');
+// whisper splits hyphenated words ("follow" + "-up"): join them back for display
+const W = [];
+E.words.forEach(w => { if (w.w.startsWith('-') && W.length) { W[W.length - 1].w += w.w; W[W.length - 1].t1 = w.t1; } else W.push({ ...w }); });
+function at(seg, word, n = 0) { const m = W.filter(w => w.seg === seg && clean(w.w).startsWith(word)); if (!m.length) throw new Error(`no ${word} in ${seg}`); return m[Math.min(n, m.length - 1)].t0; }
+const segStart = s => W.find(w => w.seg === s).t0, segEnd = s => { const m = W.filter(w => w.seg === s); return m[m.length - 1].t1; };
+const el = (html, parent = $('#gfx')) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; parent.appendChild(n); return n; };
+const CUES = []; const cue = (t, k) => CUES.push([+t.toFixed(3), k]);
+const SAFE_TOP = 282, BELOW_CARD = 1190;
+function callout(text, t0, dur, y) {
+  const b = el(`<div class="band" style="top:${y}px"><div class="callout">${text}</div></div>`), c = b.firstChild;
+  A(c, [{ opacity: 0, transform: 'translateY(18px) scale(.92)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t0, .32, POP); cue(t0, 'pop');
+  A(c, [{ opacity: 1, transform: 'translateY(0) scale(1)' }, { opacity: 0, transform: 'translateY(-8px) scale(.98)' }], t0 + dur - .22, .22, 'linear');
+}
+
+/* 1. hook title: quick scale pop in the first second */
+{
+  const t = $('#title'), end = segEnd(0) - .2;
+  A(t, [{ opacity: 0, transform: 'scale(.55)' }, { opacity: 1, transform: 'scale(1.07)', offset: .65 }, { opacity: 1, transform: 'scale(1)' }], .12, .38, OUT); cue(.12, 'pop');
+  A(t, [{ opacity: 1, transform: 'scale(1)' }, { opacity: 1, transform: 'scale(1.03)' }], .5, end - .5, 'linear');
+  A(t, [{ opacity: 1 }, { opacity: 0 }], end, .2, 'linear');
+}
+/* 2. "who did I follow up with again?" */
+callout('Who did I follow up with again? 🤔', at(2, 'remember') - .1, 2.8, SAFE_TOP);
+/* 3. screen: the task + schedule */
+cue(segStart(3) - .12, 'whoosh');
+callout('Runs every weekday at 2pm', at(3, 'every'), 3.0, BELOW_CARD);
+/* 4. timeline, one step per spoken step */
+{
+  const steps = [['Day 3', at(4, '3')], ['Day 7', at(4, '4')], ['Day 14', at(4, 'week')], ['Day 21', at(4, 'last')], ['Stop', at(4, 'that')]];
+  const row = el(`<div class="band" style="top:${BELOW_CARD + 6}px"><div class="tl"></div></div>`).firstChild, end = segEnd(4) + .1;
+  steps.forEach(([label, t], i) => {
+    if (i) { const a = el('<div class="arr"></div>', row); A(a, [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }], t - .12, .14); }
+    const p = el(`<div class="pill${label === 'Stop' ? ' stop' : ''}">${label}</div>`, row);
+    A(p, [{ opacity: 0, transform: 'translateY(14px) scale(.85)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t, .28, POP); cue(t, 'tick');
+  });
+  [...row.children].forEach(c => A(c, [{ opacity: 1 }, { opacity: 0 }], end - .2, .2, 'linear'));
+}
+/* 5. replies */
+callout('Reply = no more follow-ups ✅', at(5, 'once'), Math.min(2.6, segStart(6) - at(5, 'once') - .02), SAFE_TOP);
+/* 6. gmail for 3 s, then face */
+cue(segStart(6) - .12, 'whoosh');
+const GMAIL_END = segStart(6) + 3.0;
+callout('Laptop off. Emails still going out.', GMAIL_END + .1, 3.0, SAFE_TOP);
+/* 7. end card, last 3 seconds */
+{
+  const t0 = E.duration - 3.0;
+  const b = el(`<div class="band" style="top:${SAFE_TOP}px"><div id="end"><b>Comment <span>FOLLOWUP</span> 👇</b><i>for the exact instructions</i></div></div>`).firstChild;
+  A(b, [{ opacity: 0, transform: 'translateY(24px) scale(.9)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t0, .4, POP); cue(t0, 'pop');
+}
+/* captions: 2-4 words, each word appears as it's spoken; key phrases in yellow */
+{
+  const KEY = ['getting it all wrong', 'scheduled task', '2pm', '3 days', 'replies', 'bottleneck'];
+  const toks = W.map(w => clean(w.w));
+  const isKey = W.map(w => /^FOLLOWUP/.test(w.w));                // the CTA keyword, exactly as written
+  KEY.forEach(k => { const p = k.split(' '); for (let i = 0; i + p.length <= toks.length; i++) if (p.every((x, j) => toks[i + j] === x)) for (let j = 0; j < p.length; j++) isKey[i + j] = true; });
+  const groups = []; let g = [];
+  W.forEach((w, i) => {
+    const prev = W[i - 1];
+    const brk = g.length && (g.length >= 4 || (g.map(x => W[x].w).join(' ') + ' ' + w.w).length > 18 || /[.?!]$/.test(prev.w) || (/,$/.test(prev.w) && g.length >= 2) || w.t0 - prev.t1 > .35 || w.seg !== prev.seg);
+    if (brk) { groups.push(g); g = []; }
+    g.push(i);
+  });
+  groups.push(g);
+  groups.forEach((g, gi) => {
+    const nxt = groups[gi + 1], t1 = nxt ? W[nxt[0]].t0 - .03 : E.duration;
+    const n = el(`<div class="grp"></div>`, $('#cap'));
+    g.forEach(i => {
+      const s = el(`<span class="w${isKey[i] ? ' k' : ''}">${W[i].w.replace(/[,.]$/, '')}</span>`, n);
+      A(s, [{ opacity: 0, transform: 'translateY(10px) scale(.9)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], Math.max(0, W[i].t0 - .03), .12, OUT);
+    });
+    [...n.children].forEach(s => A(s, [{ opacity: 1 }, { opacity: 0 }], t1, .03, 'linear'));
+  });
+}
+window.__cues = CUES.sort((a, b) => a[0] - b[0]);
+window.__meta = { gmailEnd: GMAIL_END };
+</script>
+</body></html>
