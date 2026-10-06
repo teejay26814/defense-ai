@@ -1,0 +1,57 @@
+<!doctype html><html><head><meta charset="utf-8"><title>What is AI automation — cover</title>
+<style>
+@font-face { font-family: 'Figtree'; font-weight: 300 900; src: url(figtree-1.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 600; src: url(../fonts/Inter-600.ttf); }
+@font-face { font-family: 'Barlow'; font-weight: 800; src: url(../fonts/BarlowCondensed-ExtraBold.ttf); }
+:root { --navy: #0a2a5e; --blue: #1f5fc4; --soft: #8db8f0; --line: #d5e3f6; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1080px; height: 1920px; background: #fcfdff; overflow: hidden; -webkit-font-smoothing: antialiased; }
+.stage { position: relative; width: 1080px; height: 1920px; }
+/* barely-there wash so the white isn't flat screen-white */
+.stage::before { content: ''; position: absolute; inset: 0; background: radial-gradient(900px 700px at 80% 18%, rgba(141,184,240,.10), transparent 70%), radial-gradient(800px 700px at 10% 90%, rgba(141,184,240,.07), transparent 70%); }
+.block { position: absolute; left: 96px; right: 72px; top: 600px; }
+.k { font: 600 34px/1 'Inter'; letter-spacing: .32em; color: var(--blue); display: flex; align-items: center; gap: 20px; }
+.k::before { content: ''; width: 64px; height: 3px; background: var(--blue); border-radius: 2px; }
+svg.flow { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+/* variant A: geometric sans, AI on its own line */
+.A .what { font: 800 96px/1 'Figtree'; letter-spacing: -.02em; color: var(--blue); margin-top: 48px; }
+.A .ai { font: 900 318px/.84 'Figtree'; letter-spacing: -.05em; color: var(--navy); margin: 26px 0 0 -10px; }
+.A .auto { font: 900 150px/.95 'Figtree'; letter-spacing: -.04em; color: var(--navy); margin-top: 22px; white-space: nowrap; display: inline-block; }
+.A .q { color: var(--blue); font-size: 1.38em; line-height: 0; display: inline-block; transform: translateY(.045em); margin-left: .03em; letter-spacing: 0; }
+/* variant B: condensed display, AI AUTOMATION stacked big */
+.B .what { font: 800 150px/1 'Barlow'; letter-spacing: .01em; color: var(--blue); margin-top: 40px; }
+.B .ai, .B .auto { font: 800 270px/.86 'Barlow'; letter-spacing: -.005em; color: var(--navy); white-space: nowrap; }
+.B .ai { margin-top: 10px; }
+.B .q { color: var(--blue); font-size: 1.25em; line-height: 0; display: inline-block; transform: translateY(.03em); }
+</style></head>
+<body><div class="stage" id="s">
+  <svg class="flow" id="flow"></svg>
+  <div class="block">
+    <div class="k">EXPLAINED</div>
+    <div class="what">WHAT IS</div>
+    <div class="ai">AI</div>
+    <div class="auto">AUTOMATION<span class="q" id="q">?</span></div>
+  </div>
+</div>
+<script>
+const v = new URLSearchParams(location.search).get('v') || 'A';
+document.getElementById('s').classList.add(v);
+// a thin workflow line: two quiet nodes leading into the question mark's dot
+document.fonts.ready.then(() => {
+  const auto = document.querySelector('.auto'), col = document.querySelector('.block').clientWidth;
+  let fs = 150; auto.style.fontSize = fs + 'px';
+  while (auto.getBoundingClientRect().width < col && fs < 260) auto.style.fontSize = (fs += 1) + 'px';
+  while (auto.getBoundingClientRect().width > col) auto.style.fontSize = (fs -= 1) + 'px';
+  const q = document.getElementById('q').getBoundingClientRect();
+  const dotX = q.left + q.width * .47, dotY = q.top + q.height * .80;
+  const y = dotY + 170, x0 = 96;
+  const nodes = [x0 + 40, x0 + 300, dotX];
+  const s = document.getElementById('flow');
+  s.innerHTML = `
+    <path d="M ${x0} ${y} H ${dotX - 56} Q ${dotX} ${y} ${dotX} ${y - 56} V ${dotY + 64}" fill="none" stroke="#d5e3f6" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${nodes[0]}" cy="${y}" r="11" fill="#fcfdff" stroke="#b9d0ef" stroke-width="3"/>
+    <circle cx="${nodes[1]}" cy="${y}" r="11" fill="#fcfdff" stroke="#b9d0ef" stroke-width="3"/>
+    <circle cx="${nodes[1] + 260}" cy="${y}" r="7" fill="#8db8f0"/>`;
+  document.body.dataset.ready = 1;
+});
+</script></body></html>
