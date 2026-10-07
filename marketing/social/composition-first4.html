@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>4 things to automate first</title>
+    <link rel="stylesheet" href="./fonts.css" />
+
+    <!--
+      Wednesday (middle of funnel) cheat sheet, 4:5 (1080x1350), rendered by render.mjs.
+      Same editorial system as composition.html, on pure white with navy-blue type: Fraunces
+      headline over Figtree, one blue accent. Each task reads as a before -> after pair so it
+      scans at a glance in the feed. No em dashes.
+        node render.mjs composition-first4.html first4.png
+    -->
+    <style>
+      :root {
+        --paper: #ffffff;
+        --tint: #f4f7fc;
+        --navy: #0b2a5b;
+        --ink: #102544;
+        --slate: #5d6b82;
+        --faint: #8592a6;
+        --accent: #2563eb;
+        --soft: #dbe7fb;
+        --rule: rgb(11 42 91 / 0.10);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { background: #e7e9ee; display: flex; justify-content: center; padding: 40px; }
+
+      .card {
+        position: relative; width: 1080px; height: 1350px; overflow: hidden;
+        background: var(--paper); color: var(--navy);
+        font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
+        padding: 70px 76px 54px; display: flex; flex-direction: column;
+      }
+      /* a barely-there wash so the white has depth without reading as colour */
+      .card::before {
+        content: ''; position: absolute; inset: 0; pointer-events: none;
+        background:
+          radial-gradient(620px 420px at 92% 4%, rgb(37 99 235 / 0.06), transparent 70%),
+          radial-gradient(520px 420px at 0% 100%, rgb(37 99 235 / 0.04), transparent 70%);
+      }
+      .card > * { position: relative; flex: none; }
+
+      .accentbar { width: 54px; height: 4px; border-radius: 2px; background: var(--accent); margin-bottom: 20px; }
+      .header { display: flex; align-items: center; justify-content: space-between; }
+      .eyebrow { font-size: 20px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--slate); }
+      .tag {
+        font-size: 17px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
+        padding: 9px 16px 8px; border-radius: 999px; background: var(--soft);
+      }
+
+      .hero {
+        font-family: Fraunces, ui-serif, Georgia, serif; font-weight: 600;
+        font-size: 78px; line-height: 1.0; letter-spacing: -0.02em; color: var(--navy);
+        margin-top: 24px;
+      }
+      .hero em { font-style: italic; font-weight: 500; color: var(--accent); }
+      .sub { margin-top: 20px; font-size: 25px; font-weight: 500; line-height: 1.35; color: var(--slate); }
+
+      .cols {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; margin: 44px 0 14px; padding: 0 28px 0 142px;
+        font-size: 15px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+      }
+      .cols .b { color: var(--faint); }
+      .cols .a { color: var(--accent); }
+
+      .list { display: flex; flex-direction: column; gap: 18px; }
+      .item {
+        display: grid; grid-template-columns: 64px 1fr; gap: 0 26px; align-items: center;
+        padding: 32px 28px 32px 26px; border-radius: 20px; background: var(--tint);
+        border: 1px solid var(--rule);
+        box-shadow: 0 1px 2px rgb(11 42 91 / 0.04), 0 14px 30px -24px rgb(11 42 91 / 0.30);
+      }
+      .num {
+        grid-row: 1 / span 2; width: 64px; height: 64px; border-radius: 16px; background: var(--navy); color: #fff;
+        display: grid; place-items: center; font-size: 28px; font-weight: 800; letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums; box-shadow: 0 10px 20px -12px rgb(11 42 91 / 0.6);
+      }
+      .title { font-size: 31px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.1; color: var(--navy); }
+      .ba { grid-column: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; margin-top: 14px; position: relative; }
+      /* the arrow sits in the gutter between before and after */
+      .ba::after {
+        content: ''; position: absolute; left: calc(50% - 9px); top: 13px; width: 18px; height: 2px; background: var(--accent); opacity: .55;
+      }
+      .ba::before {
+        content: ''; position: absolute; left: calc(50% + 3px); top: 9px; width: 0; height: 0;
+        border: 5px solid transparent; border-left: 7px solid var(--accent); opacity: .55;
+      }
+      .ba p { display: flex; gap: 10px; font-size: 21px; line-height: 1.3; white-space: nowrap; }
+      .ba p i { flex: none; width: 20px; height: 20px; margin-top: 3.5px; border-radius: 50%; position: relative; }
+      .ba .before { color: var(--slate); font-weight: 500; }
+      .ba .before i { border: 2px solid #c3cbd8; }
+      .ba .before i::after { content: ''; position: absolute; left: 4px; right: 4px; top: 7px; height: 2px; background: #c3cbd8; border-radius: 1px; }
+      .ba .after { color: var(--ink); font-weight: 700; }
+      .ba .after i { background: var(--accent); }
+      .ba .after i::after {
+        content: ''; position: absolute; left: 6px; top: 3.5px; width: 5px; height: 9px;
+        border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+      }
+
+      .close {
+        margin-top: 46px; font-family: Fraunces, ui-serif, Georgia, serif; font-style: italic; font-weight: 500;
+        font-size: 28px; line-height: 1.35; color: var(--navy); text-align: center;
+      }
+      .close b { font-style: normal; font-weight: 600; }
+
+      .foot { margin-top: auto; padding-top: 22px; border-top: 1px solid var(--rule); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+      .foot .name { font-size: 25px; font-weight: 800; letter-spacing: -0.01em; color: var(--navy); }
+      .foot .role { margin-top: 4px; font-size: 17px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); }
+      .foot .save { font-size: 18px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+      .foot .save svg { width: 20px; height: 22px; }
+    </style>
+  </head>
+
+  <body>
+    <div class="card" id="card">
+      <div class="accentbar"></div>
+      <div class="header">
+        <div class="eyebrow">Small business cheat sheet</div>
+        <div class="tag">Start here</div>
+      </div>
+
+      <div class="hero">4 things to<br />automate <em>first.</em></div>
+      <div class="sub">No robots. No complex software. Just the jobs your team repeats every day.</div>
+
+      <div class="cols"><span class="b">Before</span><span class="a">After</span></div>
+
+      <div class="list">
+        <div class="item">
+          <div class="num">01</div>
+          <div class="title">Answering repeat enquiries</div>
+          <div class="ba">
+            <p class="before"><i></i>Same questions, answered by hand</p>
+            <p class="after"><i></i>Instant replies, any time of day</p>
+          </div>
+        </div>
+        <div class="item">
+          <div class="num">02</div>
+          <div class="title">Following up with leads</div>
+          <div class="ba">
+            <p class="before"><i></i>Leads go cold. No one followed up.</p>
+            <p class="after"><i></i>Goes out on time, stops on reply</p>
+          </div>
+        </div>
+        <div class="item">
+          <div class="num">03</div>
+          <div class="title">Appointment reminders</div>
+          <div class="ba">
+            <p class="before"><i></i>No-shows that cost you money</p>
+            <p class="after"><i></i>Day-before reminder + reschedule</p>
+          </div>
+        </div>
+        <div class="item">
+          <div class="num">04</div>
+          <div class="title">Moving information between tools</div>
+          <div class="ba">
+            <p class="before"><i></i>Copying forms into spreadsheets</p>
+            <p class="after"><i></i>The data moves on its own</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="close">None of these need anything fancy.<br /><b>Just someone to spot where time is leaking.</b></div>
+
+      <div class="foot">
+        <div>
+          <div class="name">Tolulope Fatoyinbo</div>
+          <div class="role">AI Automation Specialist</div>
+        </div>
+        <div class="save">
+          <svg viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 2h14v18l-7-5-7 5z" /></svg>
+          Save for later
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
