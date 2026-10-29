@@ -41,7 +41,7 @@ def affine(img, s=1.0, cx=W / 2, cy=H / 2, dx=0.0, dy=0.0, rot=0.0, border=cv2.B
 # regions
 BAND_TOP = 945                                                    # portraits start here
 upper = smooth((BAND_TOP + 10 - yy) / 60)                         # 1 above the portrait band, fades out over it
-band = smooth((yy - (BAND_TOP - 150)) / 190)                     # the lower picture, softly, from above the heads down
+band = smooth((yy - 925) / 45)                     # the lower picture, softly, from above the heads down
 lower = smooth((yy - 1262) / 22)                                  # below the names: the event-details strip
 
 # 1. the rings: centre and band-pass structure of the existing concentric arcs
@@ -72,7 +72,12 @@ TITLE_FIELD = cv2.GaussianBlur(cv2.dilate((A['title'] > 0.03).astype(np.float32)
 # 4. portraits: eight soft columns, revealed from the host outward
 PX = [40, 178, 318, 470, 620, 765, 900, 1032]
 cols = np.stack([np.exp(-((xx[0] - c) / 62.0) ** 2) for c in PX]); cols /= cols.sum(0, keepdims=True)
-ORDER = [4, 3, 5, 2, 6, 1, 7, 0]                                  # Minister Joel (host, centre) first
+ORDER = [4, 3, 5, 2, 6, 1, 7, 0]
+mids = [-200] + [(PX[i] + PX[i + 1]) / 2 for i in range(7)] + [W + 200]
+COLM = [smooth((xx - mids[i] + 14) / 28) * smooth((mids[i + 1] - xx + 14) / 28) * smooth((yy - 915) / 45) for i in range(8)]
+CLIP = smooth((1262 - yy) / 4)                                    # ministers rise from behind the details strip
+def back_out(x):
+    x = min(max(x, 0.0), 1.0); c1 = 1.5; return 1 + (c1 + 1) * (x - 1) ** 3 + c1 * (x - 1) ** 2                                  # Minister Joel (host, centre) first
 
 DOVE_A, DOVE_C = A['dove'], FG
 DOVE_GLOW = cv2.GaussianBlur(DOVE_A, (0, 0), 16)
@@ -105,15 +110,20 @@ def frame(t):
         echo = affine(RING_LAYER, s=1 + 0.035 * ease_out(ph), cx=RC[0], cy=RC[1], border=cv2.BORDER_CONSTANT)
         bg = screen(bg, echo * (0.32 * (1 - ph) * smooth(ph * 6)))
     # portraits: dark until each is lit in turn, with a brief, restrained catch of light
-    lvl = np.zeros(W, np.float32)
-    for n, ci in enumerate(ORDER):
-        p = ease_out((t - 4.1 - n * 0.16) / 0.8)
-        catch = 0.10 * math.sin(math.pi * np.clip((t - 4.1 - n * 0.16) / 0.9, 0, 1))
-        lvl += cols[ci] * (0.22 + 0.78 * p + catch)
+    # portraits: the band rests in shadow; each minister rises into place with a soft spring
     strip = 0.22 + 0.78 * ease_out((t - 5.6) / 1.0)
-    lvl2 = lvl[None, :] * (1 - lower) + strip * lower
-    gain = 1 + (lvl2 - 1) * band
-    img = bg * gain[..., None]
+    shade = (0.12 * (1 - lower) + strip * lower)
+    img = bg * (1 + (shade - 1) * band)[..., None]
+    for n, ci in enumerate(ORDER):
+        q = (t - 4.0 - n * 0.17) / 0.75
+        if q <= 0: continue
+        p = back_out(q)
+        cx = PX[ci]
+        args = dict(s=0.90 + 0.10 * p, cx=cx, cy=1262, dy=70 * (1 - p))
+        lay = affine(bg, **args)
+        m = affine(COLM[ci], border=cv2.BORDER_CONSTANT, **args) * CLIP * min(1.0, q * 2.2)
+        catch = 1 + 0.12 * math.sin(math.pi * min(1.0, q))
+        img = over(img, lay * catch, m)
     # a faint ember light rising behind the portraits as they come up
     rise = smooth((t - 3.8) / 1.6) * (1 - 0.35 * smooth((t - 6.5) / 2))
     img = screen(img, EMBER * (0.10 * rise * np.exp(-((yy - 1000) / 90) ** 2) * (1 - band * 0.6))[..., None])
