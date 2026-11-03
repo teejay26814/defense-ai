@@ -18,7 +18,7 @@ function findChromium() {
   try {
     for (const name of readdirSyncFs(base)) {
       if (name.startsWith('chromium-')) {
-        const p = join(base, name, 'chrome-linux', 'chrome');
+        const p = [join(base, name, 'chrome-linux', 'chrome'), join(base, name, 'chrome-linux64', 'chrome')].find(existsSync) || '';
         if (existsSync(p)) return p;
       }
     }
