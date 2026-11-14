@@ -13,7 +13,7 @@ import {
   IconSpark,
 } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { signOut } from "../(auth)/actions";
 
 /**
@@ -36,10 +36,7 @@ import { signOut } from "../(auth)/actions";
  * exist; one who sees it greyed out knows what to do next.
  */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getUser()]);
 
   if (!user) redirect("/login");
 
@@ -52,9 +49,14 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     // The same "current project" as the dashboard: most recently created. Sidebar
     // study-mode links jump straight there, which is the whole point of putting them
     // somewhere that is never more than one click away.
+    //
+    // The indexed-chunk count rides along as an embedded aggregate, filtered to embedded
+    // rows, rather than as a second query that had to wait for this one's id. One
+    // round-trip instead of two, on every signed-in page.
     supabase
       .from("projects")
-      .select("id")
+      .select("id, chunks(count)")
+      .eq("chunks.embedded", true)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
@@ -69,15 +71,8 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       .join("")
       .toUpperCase() || "?";
 
-  let hasIndexedText = false;
-  if (current) {
-    const { count } = await supabase
-      .from("chunks")
-      .select("id", { count: "exact", head: true })
-      .eq("project_id", current.id)
-      .eq("embedded", true);
-    hasIndexedText = (count ?? 0) > 0;
-  }
+  const chunkCount = (current?.chunks as { count: number }[] | undefined)?.[0]?.count ?? 0;
+  const hasIndexedText = chunkCount > 0;
 
   const studyBase = current ? `/projects/${current.id}` : null;
 
@@ -136,7 +131,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <button
               type="submit"
               className="flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium text-white/60
-                transition-colors duration-150 hover:bg-white/5 hover:text-white"
+                transition-[transform,background-color,color] duration-150 hover:bg-white/5 hover:text-white active:scale-[0.98]"
             >
               <IconSignOut className="size-[18px] shrink-0" />
               Sign out
@@ -146,25 +141,36 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       </aside>
 
       {/* --- top bar, mobile only --- */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-navy-100/70 bg-navy-050/90 px-5 py-3.5 backdrop-blur-xl lg:hidden">
-        <Link href="/dashboard" className="text-brand">
+      <header className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-navy-100/70 bg-navy-050/90 px-4 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] backdrop-blur-xl sm:px-5 lg:hidden">
+        <Link
+          href="/dashboard"
+          aria-label="Overview"
+          className="rounded-control p-1 text-brand transition-opacity duration-150 hover:opacity-85 active:opacity-70"
+        >
           <LogoMark className="h-7 w-auto" />
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
-          <Link href="/dashboard" className="rounded-control px-2.5 py-1.5 font-medium text-ink-muted hover:bg-surface hover:text-ink">
+        <nav aria-label="Main" className="flex items-center gap-0.5 text-sm">
+          <Link href="/dashboard" className={MOBILE_LINK}>
             Overview
           </Link>
-          <Link href="/projects" className="rounded-control px-2.5 py-1.5 font-medium text-ink-muted hover:bg-surface hover:text-ink">
+          <Link href="/projects" className={MOBILE_LINK}>
             Projects
           </Link>
-          <Link href="/billing" className="rounded-control px-2.5 py-1.5 font-medium text-ink-muted hover:bg-surface hover:text-ink">
+          <Link href="/billing" className={MOBILE_LINK}>
             Plans
           </Link>
         </nav>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <ThemeToggle className="text-ink-muted hover:bg-surface hover:text-ink" />
           <form action={signOut}>
-            <button type="submit" className="rounded-control p-2 text-ink-muted hover:bg-surface hover:text-ink">
+            <button
+              type="submit"
+              aria-label="Sign out"
+              title="Sign out"
+              className="flex size-10 items-center justify-center rounded-control text-ink-muted
+                transition-[transform,background-color,color] duration-150
+                hover:bg-surface hover:text-ink active:scale-95"
+            >
               <IconSignOut className="size-[18px]" />
             </button>
           </form>
@@ -193,6 +199,11 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     </div>
   );
 }
+
+/** Mobile top-bar links: a 40px tap target with hover, focus (global ring) and press states. */
+const MOBILE_LINK =
+  "rounded-control px-2.5 py-2 font-medium text-ink-muted transition-[transform,background-color,color] duration-150 " +
+  "hover:bg-surface hover:text-ink active:scale-95";
 
 function SidebarSection({
   title,
@@ -245,7 +256,7 @@ function SidebarLink({
     <Link
       href={href}
       className="flex items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium text-white/75
-        transition-colors duration-150 hover:bg-white/8 hover:text-white"
+        transition-[transform,background-color,color] duration-150 hover:bg-white/8 hover:text-white active:scale-[0.98]"
     >
       <Icon className="size-[18px] shrink-0" />
       {label}

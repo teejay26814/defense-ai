@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProjectNav } from "@/components/project-nav";
+import { getProjectHeading } from "@/lib/project-heading";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -25,8 +26,8 @@ export default async function ProjectLayout({
   // Neither query needs the other's result - both only need the route's id - so they run
   // together and the not-found check happens after, rather than gating the second query on
   // the first for no reason.
-  const [{ data: project }, { count }] = await Promise.all([
-    supabase.from("projects").select("id, title").eq("id", id).maybeSingle(),
+  const [project, { count }] = await Promise.all([
+    getProjectHeading(id),
     // head:true returns the count without the rows, which is all this needs.
     supabase
       .from("chunks")

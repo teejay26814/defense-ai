@@ -12,7 +12,7 @@ import {
   IconSpark,
   IconUpload,
 } from "@/components/icons";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { CHAPTERS, type DocumentStatus, type Project } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -39,10 +39,7 @@ type ProjectWithDocs = Project & {
  * before anything has tested the student would be the one lie this product cannot afford.
  */
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getUser()]);
 
   // Neither query depends on the other's result - both only need the session already
   // established above - so they run together rather than as a waterfall.
@@ -60,32 +57,11 @@ export default async function DashboardPage() {
 
   const docs = current?.documents ?? [];
 
-  // Which documents actually made it into the index. A document can be extracted but not
-  // yet embedded, and only embedded text is askable - so the two are tracked separately.
+  // Which documents actually made it into the index (a document can be extracted but not
+  // yet embedded, and only embedded text is askable), plus the counts behind the toolkit
+  // and the readiness breakdown. All independent of one another, so fetched in a single
+  // parallel batch - the chunk lookup used to run on its own first, for no reason.
   const embeddedDocs = new Set<string>();
-  if (current) {
-    const { data: chunkRows } = await supabase
-      .from("chunks")
-      .select("document_id, embedded")
-      .eq("project_id", current.id)
-      .eq("embedded", true);
-
-    for (const row of chunkRows ?? []) embeddedDocs.add(row.document_id as string);
-  }
-
-  const uploadedChapters = new Set(docs.filter((d) => d.chapter !== null).map((d) => d.chapter));
-  const indexedChapters = new Set(
-    docs.filter((d) => d.chapter !== null && embeddedDocs.has(d.id)).map((d) => d.chapter),
-  );
-  const failed = docs.filter((d) => d.status === "failed").length;
-  const missing = CHAPTERS.filter((c) => !uploadedChapters.has(c.value));
-  const words = docs.reduce((s, d) => s + (d.word_count ?? 0), 0);
-
-  const indexed = indexedChapters.size;
-  const coverage = (indexed / CHAPTERS.length) * 100;
-
-  // The counts behind the toolkit and the readiness breakdown. Independent of one another,
-  // so fetched together rather than one after another.
   let questionCount = 0;
   let quizReadyCount = 0;
   let reviewedCount = 0;
@@ -94,8 +70,20 @@ export default async function DashboardPage() {
   let readiness: number | null = null;
 
   if (current) {
-    const [questionsRes, quizRes, reviewedRes, mnemonicsRes, sittingsRes, lastSittingRes] =
-      await Promise.all([
+    const [
+      chunksRes,
+      questionsRes,
+      quizRes,
+      reviewedRes,
+      mnemonicsRes,
+      sittingsRes,
+      lastSittingRes,
+    ] = await Promise.all([
+        supabase
+          .from("chunks")
+          .select("document_id")
+          .eq("project_id", current.id)
+          .eq("embedded", true),
         supabase
           .from("questions")
           .select("id", { count: "exact", head: true })
@@ -132,6 +120,7 @@ export default async function DashboardPage() {
           .maybeSingle(),
       ]);
 
+    for (const row of chunksRes.data ?? []) embeddedDocs.add(row.document_id as string);
     questionCount = questionsRes.count ?? 0;
     quizReadyCount = quizRes.count ?? 0;
     reviewedCount = reviewedRes.count ?? 0;
@@ -139,6 +128,17 @@ export default async function DashboardPage() {
     sittingCount = sittingsRes.count ?? 0;
     readiness = (lastSittingRes.data?.readiness as number | null) ?? null;
   }
+
+  const uploadedChapters = new Set(docs.filter((d) => d.chapter !== null).map((d) => d.chapter));
+  const indexedChapters = new Set(
+    docs.filter((d) => d.chapter !== null && embeddedDocs.has(d.id)).map((d) => d.chapter),
+  );
+  const failed = docs.filter((d) => d.status === "failed").length;
+  const missing = CHAPTERS.filter((c) => !uploadedChapters.has(c.value));
+  const words = docs.reduce((s, d) => s + (d.word_count ?? 0), 0);
+
+  const indexed = indexedChapters.size;
+  const coverage = (indexed / CHAPTERS.length) * 100;
 
   const recallPractice = questionCount > 0 ? (reviewedCount / questionCount) * 100 : null;
   const ringValue = readiness ?? coverage;

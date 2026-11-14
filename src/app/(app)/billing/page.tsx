@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PlanButton } from "./plan-button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { PLANS, PRICES_KOBO, remainingForPlan } from "@/lib/plans";
 
 export const metadata: Metadata = { title: "Plans" };
@@ -20,10 +20,7 @@ const naira = (kobo: number) =>
  * who has one defense and limited money.
  */
 export default async function BillingPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getUser()]);
 
   const { plan, remaining } = await remainingForPlan(supabase, user!.id);
 

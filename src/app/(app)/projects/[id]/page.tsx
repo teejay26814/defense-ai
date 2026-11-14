@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { buttonStyles } from "@/components/ui/button";
+import { getProjectHeading } from "@/lib/project-heading";
 import { createClient } from "@/lib/supabase/server";
 import { CHAPTERS, DEGREE_LABELS, type DocumentSummary, type Project } from "@/lib/types";
 import { DeleteProjectButton } from "./delete-project-button";
@@ -13,13 +14,8 @@ export async function generateMetadata({
   params,
 }: PageProps<"/projects/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("projects")
-    .select("title")
-    .eq("id", id)
-    .maybeSingle();
-  return { title: data?.title ?? "Project" };
+  const project = await getProjectHeading(id);
+  return { title: project?.title ?? "Project" };
 }
 
 export default async function ProjectPage({ params }: PageProps<"/projects/[id]">) {
