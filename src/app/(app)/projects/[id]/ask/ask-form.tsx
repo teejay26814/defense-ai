@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import { askProject, type AskState } from "./actions";
 import { FormMessage, SubmitButton } from "@/components/ui/form";
+import { RichAnswer } from "@/components/ui/rich-answer";
 import { AnswerSkeleton } from "@/components/ui/skeleton";
 
 const initialState: AskState = {};
@@ -119,9 +120,10 @@ export function AskForm({ projectId }: { projectId: string }) {
           */}
           <div>
             <p className="label-eyebrow text-navy-500">Answer</p>
-            <div className="measure mt-4 whitespace-pre-wrap font-display text-lg leading-[1.7] text-ink">
-              {state.answer}
-            </div>
+            <RichAnswer
+              text={state.answer}
+              className="measure mt-4 font-display text-lg leading-[1.7] text-ink"
+            />
           </div>
 
           {state.sources && state.sources.length > 0 && (
