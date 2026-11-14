@@ -85,10 +85,18 @@ const THEME_INIT_SCRIPT = `
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
-      <head>
+      {/*
+        The theme script sits at the top of <body>, not in <head>. Netlify injects a
+        promotional HTML comment into the <head> of every production page; React then found
+        that comment where it expected this script, failed hydration (error #418) and
+        re-rendered every page from scratch on the client. Nothing of ours in <head> means
+        nothing for that comment to collide with. A blocking inline script at the start of
+        <body> still runs before any content is parsed, so there is still no theme flash.
+      */}
+      <body>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
-      <body>{children}</body>
+        {children}
+      </body>
     </html>
   );
 }
