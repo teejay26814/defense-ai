@@ -52,7 +52,7 @@ const STEPS = [
   },
   {
     title: "Prepare until you are ready",
-    body: "Ask, drill, quiz and sit mock defenses. Your readiness score tells you when to stop.",
+    body: "Ask, drill, quiz and sit mock defenses. Your readiness score tells you when you are ready.",
   },
 ];
 
@@ -77,10 +77,10 @@ const TIERS: Tier[] = [
     price: naira(0),
     term: "no card needed",
     points: [
-      `${PLANS.free.chapters} chapter indexed`,
+      "Chapter 1 indexed",
       `${PLANS.free.answer} questions to your project`,
-      `${PLANS.free.questions} examiner question sets`,
-      "See it work on your own chapter",
+      `${PLANS.free.questions} sets of examiner questions`,
+      `A ${PLANS.free.sittingLength}-question mock defense`,
     ],
   },
   {
@@ -89,9 +89,9 @@ const TIERS: Tier[] = [
     term: `one payment · ${PLANS.proposal.days} days`,
     points: [
       `Chapters 1 to ${PLANS.proposal.chapters}`,
-      "Unlimited asks, flashcards and quizzes",
-      "Unlimited memory aids",
-      "Mock defense with a readiness score",
+      `${PLANS.proposal.answer} questions to your project`,
+      `${PLANS.proposal.questions} question sets, with flashcards and quizzes`,
+      `${PLANS.proposal.defense} mock defenses with a readiness score`,
     ],
   },
   {
@@ -100,10 +100,10 @@ const TIERS: Tier[] = [
     term: `one payment · ${PLANS.full.days} days`,
     featured: true,
     points: [
-      `All ${PLANS.full.chapters} chapters`,
-      `Up to ${PLANS.full.projects} projects`,
-      "Unlimited asks, flashcards and quizzes",
-      "Unlimited mock defenses",
+      `All ${PLANS.full.chapters} chapters, findings included`,
+      `${PLANS.full.answer} questions to your project`,
+      `${PLANS.full.questions} question sets, with flashcards and quizzes`,
+      `${PLANS.full.defense} mock defenses with a readiness score`,
     ],
   },
 ];
@@ -241,8 +241,8 @@ export default function Home() {
             You defend once, so you pay once.
           </h2>
           <p className="measure mt-4 text-ink-muted">
-            No subscription to remember to cancel. Pick the window that covers your
-            preparation.
+            No subscription to remember to cancel. Each plan covers the last few weeks
+            before your defense - buy when it is about three weeks away.
           </p>
 
           <ul className="mt-12 grid gap-5 lg:grid-cols-3">
@@ -258,7 +258,7 @@ export default function Home() {
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="font-display text-xl text-ink">{PLANS[tier.plan].label}</h3>
                   {tier.featured && (
-                    <span className="label-eyebrow text-navy-500">Most complete</span>
+                    <span className="label-eyebrow text-navy-500">For your final</span>
                   )}
                 </div>
                 <p className="figures-display mt-5 font-sans text-4xl font-semibold text-ink">

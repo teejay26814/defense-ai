@@ -16,7 +16,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * precisely when something is wrong.
  */
 
-export type AiOperation = "answer" | "questions" | "mnemonics" | "embed";
+/**
+ * "evaluate" is mock-defense marking. It used to be logged as "answer", which meant every
+ * marked answer quietly used up one of the student's Ask allowance.
+ */
+export type AiOperation = "answer" | "questions" | "mnemonics" | "evaluate" | "embed";
 
 export type UsageRecord = {
   userId: string;

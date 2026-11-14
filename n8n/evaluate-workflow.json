@@ -52,7 +52,10 @@
     {
       "parameters": {
         "model": "anthropic/claude-sonnet-5.5",
-        "options": {}
+        "options": {
+          "maxTokens": 3000,
+          "maxRetries": 2
+        }
       },
       "id": "a2000000-0000-4000-8000-000000000004",
       "name": "OpenRouter Model",
@@ -62,7 +65,7 @@
         260,
         200
       ],
-      "notes": "Attach the existing 'OpenRouter account' credential. Primary model: Claude Sonnet 5.5 (Sonnet 4.5 retires 30 Nov 2026)."
+      "notes": "Primary: Claude Sonnet 5.5. Replies capped at 3000 tokens (includes any model thinking) so one call cannot run away with cost."
     },
     {
       "parameters": {
@@ -109,8 +112,11 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.5",
-        "options": {}
+        "model": "openai/gpt-5.6-terra",
+        "options": {
+          "maxTokens": 3000,
+          "maxRetries": 2
+        }
       },
       "id": "07c76797-8eb2-4ff6-b9b8-c80b0b722f7b",
       "name": "OpenRouter Fallback",
@@ -120,7 +126,7 @@
         436,
         200
       ],
-      "notes": "Fallback only, used if the primary model errors. Sonnet 4.5 retires 30 Nov 2026 - remove or replace after that."
+      "notes": "Fallback from a different company (OpenAI), used only if Claude errors after its retries. Same reply cap."
     }
   ],
   "connections": {

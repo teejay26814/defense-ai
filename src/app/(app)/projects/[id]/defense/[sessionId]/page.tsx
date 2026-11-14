@@ -6,10 +6,10 @@ import { Sitting } from "./sitting";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { ProjectExcerpt } from "@/components/ui/project-excerpt";
+import { currentPlan, PLANS } from "@/lib/plans";
 import { createClient } from "@/lib/supabase/server";
 import {
   DEFENSE_SCOPES,
-  DEFENSE_SITTING_LENGTH,
   readinessBand,
   type DefenseAnswer,
   type DefenseSession,
@@ -165,17 +165,23 @@ export default async function SittingPage({
   const chapters = DEFENSE_SCOPES.find((s) => s.value === session.scope)!.chapters;
   const answered = new Set(answers.map((a) => a.question_id));
 
-  const { data: questionRows } = await supabase
-    .from("questions")
-    .select("*")
-    .eq("project_id", id)
-    .in("chapter", chapters)
-    .order("confidence", { ascending: true, nullsFirst: true })
-    .order("last_seen_at", { ascending: true, nullsFirst: true });
+  // Sitting length comes from the plan: a free sitting is a short taste. submitAnswer
+  // enforces the same number, so this only decides what is shown.
+  const [{ data: questionRows }, plan] = await Promise.all([
+    supabase
+      .from("questions")
+      .select("*")
+      .eq("project_id", id)
+      .in("chapter", chapters)
+      .order("confidence", { ascending: true, nullsFirst: true })
+      .order("last_seen_at", { ascending: true, nullsFirst: true }),
+    currentPlan(supabase),
+  ]);
+  const sittingLength = PLANS[plan].sittingLength;
 
   const queue = ((questionRows ?? []) as Question[])
     .filter((q) => !answered.has(q.id))
-    .slice(0, Math.max(0, DEFENSE_SITTING_LENGTH - answers.length));
+    .slice(0, Math.max(0, sittingLength - answers.length));
 
   return (
     <Sitting
@@ -183,7 +189,7 @@ export default async function SittingPage({
       sessionId={sessionId}
       queue={queue}
       alreadyAnswered={answers.length}
-      total={Math.min(DEFENSE_SITTING_LENGTH, answers.length + queue.length)}
+      total={Math.min(sittingLength, answers.length + queue.length)}
     />
   );
 }

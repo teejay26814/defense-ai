@@ -21,7 +21,8 @@ export type QuestionsState = {
 const generateSchema = z.object({
   projectId: z.string().uuid(),
   scope: z.enum(["chapter", "proposal", "final"]),
-  count: z.coerce.number().int().min(3).max(30).default(12),
+  // 20 matches the largest option the form offers; the server is the limit, not the form.
+  count: z.coerce.number().int().min(3).max(20).default(12),
 });
 
 /**

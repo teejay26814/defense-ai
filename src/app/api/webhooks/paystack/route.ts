@@ -84,8 +84,24 @@ export async function POST(request: NextRequest) {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  const days = PLANS[plan].days ?? 90;
-  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+  // Buying again extends access from the current end date rather than from today, so a
+  // student who bought early (or tops up for a defense that moved) never loses days they
+  // already paid for. The allowance itself starts fresh with the new window.
+  const days = PLANS[plan].days ?? 30;
+  const { data: latest } = await admin
+    .from("subscriptions")
+    .select("expires_at")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString())
+    .order("expires_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const base = Math.max(
+    Date.now(),
+    latest?.expires_at ? new Date(latest.expires_at as string).getTime() : 0,
+  );
+  const expiresAt = new Date(base + days * 24 * 60 * 60 * 1000).toISOString();
 
   const { error } = await admin.from("subscriptions").insert({
     user_id: userId,
