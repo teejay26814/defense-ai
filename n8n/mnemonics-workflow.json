@@ -38,7 +38,8 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}",
         "messages": {},
-        "batching": {}
+        "batching": {},
+        "needsFallback": true
       },
       "id": "f1000000-0000-4000-8000-000000000003",
       "name": "Generate",
@@ -51,7 +52,7 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.5",
+        "model": "anthropic/claude-sonnet-5.5",
         "options": {}
       },
       "id": "f1000000-0000-4000-8000-000000000004",
@@ -61,7 +62,8 @@
       "position": [
         260,
         200
-      ]
+      ],
+      "notes": "Attach the existing 'OpenRouter account' credential. Primary model: Claude Sonnet 5.5 (Sonnet 4.5 retires 30 Nov 2026)."
     },
     {
       "parameters": {
@@ -105,6 +107,21 @@
         -240,
         220
       ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "id": "ebd469ad-b20f-4328-8e11-6da18a5c1f88",
+      "name": "OpenRouter Fallback",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        436,
+        200
+      ],
+      "notes": "Fallback only, used if the primary model errors. Sonnet 4.5 retires 30 Nov 2026 - remove or replace after that."
     }
   ],
   "connections": {
@@ -159,6 +176,17 @@
             "node": "Respond",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate",
+            "type": "ai_languageModel",
+            "index": 1
           }
         ]
       ]

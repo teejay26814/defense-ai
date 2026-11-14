@@ -37,7 +37,8 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}",
         "messages": {},
-        "batching": {}
+        "batching": {},
+        "needsFallback": true
       },
       "id": "a2000000-0000-4000-8000-000000000003",
       "name": "Mark",
@@ -50,7 +51,7 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.5",
+        "model": "anthropic/claude-sonnet-5.5",
         "options": {}
       },
       "id": "a2000000-0000-4000-8000-000000000004",
@@ -61,7 +62,7 @@
         260,
         200
       ],
-      "notes": "Sonnet: this runs once per answer, so it is the most frequent AI call in a sitting."
+      "notes": "Attach the existing 'OpenRouter account' credential. Primary model: Claude Sonnet 5.5 (Sonnet 4.5 retires 30 Nov 2026)."
     },
     {
       "parameters": {
@@ -105,23 +106,89 @@
         -240,
         220
       ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "id": "07c76797-8eb2-4ff6-b9b8-c80b0b722f7b",
+      "name": "OpenRouter Fallback",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        436,
+        200
+      ],
+      "notes": "Fallback only, used if the primary model errors. Sonnet 4.5 retires 30 Nov 2026 - remove or replace after that."
     }
   ],
   "connections": {
     "Webhook": {
-      "main": [[{ "node": "Build Prompt", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Build Prompt": {
-      "main": [[{ "node": "Mark", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Mark",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "OpenRouter Model": {
-      "ai_languageModel": [[{ "node": "Mark", "type": "ai_languageModel", "index": 0 }]]
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mark",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Mark": {
-      "main": [[{ "node": "Parse Mark", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Parse Mark",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Mark": {
-      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mark",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
     }
   },
   "settings": {
