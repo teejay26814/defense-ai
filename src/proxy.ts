@@ -42,6 +42,14 @@ const PUBLIC_ROUTES = [
  */
 const SIGNED_OUT_ONLY_ROUTES = ["/login", "/signup", "/forgot-password"];
 
+/**
+ * Public pages that are prerendered and never read the session. Running the auth check on
+ * them would cost every visitor a round-trip to Supabase Auth for nothing - the landing
+ * page is served static, so there is nothing for a refreshed cookie to change. Matched
+ * exactly, not by prefix.
+ */
+const STATIC_PUBLIC_ROUTES = ["/"];
+
 /** Where a signed-in student lands when they have no more specific destination. */
 const APP_HOME = "/dashboard";
 
@@ -52,6 +60,10 @@ function matches(pathname: string, routes: string[]) {
 }
 
 export async function proxy(request: NextRequest) {
+  if (STATIC_PUBLIC_ROUTES.includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
   // This response is threaded through the Supabase client so refreshed auth cookies land
   // on it. It must be the object that gets returned, or the refreshed session is dropped
   // and the student is silently logged out on the next navigation.
@@ -107,9 +119,11 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Every path except static assets and image files. Auth cookies need refreshing on
-     * real navigations, not on every icon request.
+     * Every path except static assets, image files, and the metadata files crawlers and
+     * link previews fetch with no session (robots, sitemap, manifest, the social card).
+     * Auth cookies need refreshing on real navigations, not on every icon request - and
+     * without these exclusions a crawler asking for robots.txt would be sent to /login.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|opengraph-image|twitter-image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)",
   ],
 };

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Figtree, Plus_Jakarta_Sans } from "next/font/google";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 /**
@@ -28,18 +29,39 @@ const body = Figtree({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Academia Scribes - Defense Coach",
-    template: "%s · Academia Scribes",
+    default: `${SITE_NAME} - Defense Coach`,
+    template: `%s · ${SITE_NAME}`,
   },
-  description:
-    "Turn your final-year project into a defense you are ready for. Upload your chapters, " +
-    "understand them deeply, practice the questions, and walk in prepared.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  // The social card itself is app/opengraph-image.tsx; Next wires its URL in here.
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} - Defense Coach`,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    locale: "en_NG",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} - Defense Coach`,
+    description: SITE_DESCRIPTION,
+  },
+  // Students share links over WhatsApp and SMS; a bare number in a project title must not
+  // turn into a "call" link on iOS.
+  formatDetection: { telephone: false },
 };
 
 // Tints the phone's status bar and browser chrome to the page, so the app does not sit under
 // a white strip on a dark canvas. Follows the system theme; these match --color-parchment.
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Lets content draw under the notch and home indicator; padding uses safe-area insets.
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fdfbf7" },
     { media: "(prefers-color-scheme: dark)", color: "#0d1830" },

@@ -38,7 +38,8 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}",
         "messages": {},
-        "batching": {}
+        "batching": {},
+        "needsFallback": true
       },
       "id": "f1000000-0000-4000-8000-000000000003",
       "name": "Generate",
@@ -51,8 +52,11 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.5",
-        "options": {}
+        "model": "anthropic/claude-sonnet-5.5",
+        "options": {
+          "maxTokens": 5000,
+          "maxRetries": 2
+        }
       },
       "id": "f1000000-0000-4000-8000-000000000004",
       "name": "OpenRouter Model",
@@ -61,7 +65,8 @@
       "position": [
         260,
         200
-      ]
+      ],
+      "notes": "Primary: Claude Sonnet 5.5. Replies capped at 5000 tokens (includes any model thinking) so one call cannot run away with cost."
     },
     {
       "parameters": {
@@ -105,6 +110,24 @@
         -240,
         220
       ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5.6-terra",
+        "options": {
+          "maxTokens": 5000,
+          "maxRetries": 2
+        }
+      },
+      "id": "ebd469ad-b20f-4328-8e11-6da18a5c1f88",
+      "name": "OpenRouter Fallback",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        436,
+        200
+      ],
+      "notes": "Fallback from a different company (OpenAI), used only if Claude errors after its retries. Same reply cap."
     }
   ],
   "connections": {
@@ -159,6 +182,17 @@
             "node": "Respond",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate",
+            "type": "ai_languageModel",
+            "index": 1
           }
         ]
       ]

@@ -179,3 +179,21 @@ bare vectors via `/vectors/upsert`, at the cost of another API key.
 - **Input cap:** `llama-text-embed-v2` takes 2048 tokens. The app chunks to roughly 800,
   and the embed workflow rejects anything over the cap with a reason rather than failing
   the whole batch.
+
+## Models, fallback and cost caps
+
+Every AI workflow (Answer, Questions, Mnemonics, Evaluate) has the same shape:
+
+| Node | Model | Why |
+| --- | --- | --- |
+| **OpenRouter Model** | `anthropic/claude-sonnet-5.5` | Primary. OpenRouter already spreads it across Anthropic, Amazon Bedrock, Google and Azure, so one cloud going down is absorbed. |
+| **OpenRouter Fallback** | `openai/gpt-5.6-terra` | Wired to the chain's fallback input (`needsFallback: true`). A different company, so a Claude-wide problem does not take the app down. Same price class. |
+
+Both nodes carry `maxTokens` (Answer 4000, Questions 12000, Mnemonics 5000, Evaluate 3000)
+and `maxRetries` (1 on Answer, which runs inside a synchronous request; 2 elsewhere). The
+cap includes any model "thinking", so it is set generously: it exists to stop one runaway
+reply, not to trim normal ones.
+
+The app side of cost control lives in `src/lib/plans.ts` (allowances, daily limits) and the
+`take_ai_slot()` Postgres function (speed limit, hourly ceiling). The last line of defence
+is the spending limit on the OpenRouter API key itself.

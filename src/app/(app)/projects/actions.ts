@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { splitByChapter, wordCount } from "@/lib/chapter-split";
 import { extractText, ExtractionError } from "@/lib/extract";
 import { indexDocument } from "@/lib/indexing";
+import { currentPlan, PLANS, type Plan } from "@/lib/plans";
 import { CHAPTERS, STORAGE_BUCKET } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 import {
@@ -49,6 +50,19 @@ export async function createProject(
 
   const { supabase, user } = await requireUser();
   const d = parsed.data;
+
+  // One project per plan. Enforced here rather than only hidden in the UI.
+  const plan = await currentPlan(supabase);
+  const { count: existing } = await supabase
+    .from("projects")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+  if ((existing ?? 0) >= PLANS[plan].projects) {
+    return {
+      error:
+        "Your plan covers one project. Open your existing project, or delete it to start a new one.",
+    };
+  }
 
   const { data, error } = await supabase
     .from("projects")
@@ -186,6 +200,27 @@ export async function uploadDocument(
 
   if (!project) return { error: "That project could not be found." };
 
+  // Chapter limits. Every indexed chapter feeds the AI features, so this is part of what
+  // the plan buys: Free covers Chapter 1, Proposal 1-3, Final 1-5.
+  const plan = await currentPlan(supabase);
+  const maxChapter = PLANS[plan].chapters;
+  const chosen = meta.data.chapter;
+
+  if (chosen !== undefined && chosen > maxChapter) {
+    return { error: chapterLimitMessage(plan, maxChapter) };
+  }
+  // A whole-project upload (no chapter picked) is split into chapters below, and any beyond
+  // the plan are skipped. On free that would still let the entire project in as one
+  // unsplit document whenever no chapter breaks are found, so free uploads must name their
+  // chapter.
+  if (chosen === undefined && maxChapter < 2) {
+    return {
+      fieldErrors: {
+        chapter: ["On the free plan, choose Chapter 1. Upgrade to upload more chapters."],
+      },
+    };
+  }
+
   const cleanName = safeFileName(file.name);
   const ext = cleanName.includes(".") ? cleanName.split(".").pop() : "bin";
   // The first path segment must be the user id - the storage policies pivot on it.
@@ -239,7 +274,19 @@ export async function uploadDocument(
     // one chapter" - so look for real chapter breaks before treating it as one document.
     // If nothing confident is found, split is null and everything below behaves exactly as
     // it did before this existed: one row, the whole text, chapter left blank.
-    const split = meta.data.chapter === undefined ? splitByChapter(result.text) : null;
+    const fullSplit = meta.data.chapter === undefined ? splitByChapter(result.text) : null;
+    // Chapters beyond the plan are dropped before anything is stored or indexed.
+    const split = fullSplit?.filter((part) => part.chapter <= maxChapter) ?? null;
+    const skippedChapters = (fullSplit?.length ?? 0) - (split?.length ?? 0);
+    if (fullSplit && split && split.length === 0) {
+      await supabase
+        .from("documents")
+        .update({ status: "failed", error_message: chapterLimitMessage(plan, maxChapter) })
+        .eq("id", doc.id)
+        .eq("user_id", user.id);
+      revalidatePath(`/projects/${projectId}`);
+      return { error: chapterLimitMessage(plan, maxChapter) };
+    }
 
     if (!split) {
       await supabase
@@ -362,7 +409,10 @@ export async function uploadDocument(
         (failures > 0 ? `, ${failures} could not be saved` : "") +
         (anySkipped
           ? ` - ${chunkTotal} sections saved, some not yet searchable.`
-          : ` - ${embeddedTotal} of ${chunkTotal} sections are searchable.`);
+          : ` - ${embeddedTotal} of ${chunkTotal} sections are searchable.`) +
+        (skippedChapters > 0
+          ? ` ${skippedChapters} later chapter${skippedChapters === 1 ? " was" : "s were"} left out - your plan covers Chapters 1 to ${maxChapter}.`
+          : "");
     }
   } catch (err) {
     const message =
@@ -501,4 +551,14 @@ export async function retryExtraction(formData: FormData) {
   }
 
   revalidatePath(`/projects/${projectId}`);
+}
+
+function chapterLimitMessage(plan: Plan, maxChapter: number): string {
+  if (plan === "free") {
+    return "The free plan covers Chapter 1. Upgrade to add more chapters.";
+  }
+  if (plan === "proposal") {
+    return `Your Proposal plan covers Chapters 1 to ${maxChapter}. Upgrade to Final defense for Chapters 4 and 5.`;
+  }
+  return `Your plan covers Chapters 1 to ${maxChapter}.`;
 }

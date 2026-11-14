@@ -21,23 +21,39 @@ export type Plan = "free" | "proposal" | "full";
 
 export type PlanLimits = {
   label: string;
-  /** Chapters this plan will index and draw on. */
+  /** Highest chapter number this plan will index: 1 means Chapter 1 only, 3 means 1-3. */
   chapters: number;
   projects: number;
   /** Null means no limit. */
   answer: number | null;
   questions: number | null;
   mnemonics: number | null;
-  /** Mock defense sittings. Null means no limit; 0 means the feature is not included. */
-  defense: number | null;
+  /** Mock defense sittings in the window. 0 means the feature is not included. */
+  defense: number;
+  /** Questions per mock defense sitting. */
+  sittingLength: number;
   /** Days of access bought. Null for free, which does not expire. */
   days: number | null;
 };
 
+/**
+ * Every allowance is finite, on every plan, on purpose.
+ *
+ * Each figure is an AI call that costs real money (see docs/monetisation-plan.md and the
+ * ai_cost_estimate view). The paid allowances are sized so that a student who uses every
+ * last one costs roughly what they paid, and a typical student - who uses perhaps a third -
+ * leaves a healthy margin. "Unlimited" at these prices would mean the most engaged
+ * students lose money on every sale.
+ *
+ * Windows are short because preparation is: students get serious in the last two to four
+ * weeks before a defense. Buying again extends access from the current end date (see the
+ * Paystack webhook), so a student who bought early is not punished for it.
+ */
 export const PLANS: Record<Plan, PlanLimits> = {
   /**
    * Free has one job: get the student's own chapter indexed and put a real examiner
-   * question from it in front of them. That is the moment they believe it. It is
+   * question from it in front of them - plus one short mock defense, because sitting one
+   * is the moment the product stops being a study tool and becomes a rehearsal. It is
    * deliberately not enough to prepare a whole defense on.
    */
   free: {
@@ -47,30 +63,54 @@ export const PLANS: Record<Plan, PlanLimits> = {
     answer: 5,
     questions: 2,
     mnemonics: 1,
-    defense: 0,
+    defense: 1,
+    sittingLength: 5,
     days: null,
   },
   proposal: {
     label: "Proposal defense",
     chapters: 3,
     projects: 1,
-    answer: null,
-    questions: null,
-    mnemonics: null,
-    defense: null,
-    days: 60,
+    answer: 40,
+    questions: 4,
+    mnemonics: 2,
+    defense: 2,
+    sittingLength: 8,
+    days: 21,
   },
   full: {
-    label: "Full defense",
+    label: "Final defense",
     chapters: 5,
-    projects: 3,
-    answer: null,
-    questions: null,
-    mnemonics: null,
-    defense: null,
-    days: 90,
+    projects: 1,
+    answer: 70,
+    questions: 6,
+    mnemonics: 3,
+    defense: 4,
+    sittingLength: 8,
+    days: 30,
   },
 };
+
+/**
+ * Daily caps, per kind of request, over a rolling 24 hours, on every plan.
+ *
+ * The plan allowance bounds the total; this bounds the pace, so an allowance meant for a
+ * few weeks cannot be burned - by a student or a script - in one night. Enforced in
+ * Postgres by take_ai_slot(), which also applies a speed limit (one AI request every five
+ * seconds) and an hourly ceiling of 40 across everything.
+ */
+export const DAILY_LIMITS: Record<SlotOperation, number> = {
+  answer: 15,
+  questions: 3,
+  mnemonics: 2,
+  // Marking one answer is one request. Three full sittings a day is far beyond what anyone
+  // preparing seriously would do.
+  evaluate: 24,
+  defense: 3,
+};
+
+/** Every kind of request that has to claim a slot before it reaches a model. */
+export type SlotOperation = "answer" | "questions" | "mnemonics" | "evaluate" | "defense";
 
 /**
  * Prices, in kobo.
@@ -78,19 +118,13 @@ export const PLANS: Record<Plan, PlanLimits> = {
  * Kobo rather than naira because Paystack charges in the smallest unit, and holding money
  * as a float anywhere is how rounding errors become refunds.
  *
- * These are placeholders until ai_usage has enough history to give a real cost per student.
- * Setting them from a guess would be pricing with nothing behind it.
- *
- * Priced deliberately low - impulse-buy territory for a final-year student, not a decision
- * they have to think over. The real risk this creates: both paid plans grant unlimited
- * metered usage for their whole window (see PLANS above - answer/questions/mnemonics/defense
- * are all null, meaning uncapped), so a heavy user at these prices could plausibly cost more
- * in AI calls than they paid. Worth capping paid-plan usage or revisiting price once
- * ai_usage has real numbers behind it - not a problem to solve blind right now.
+ * Set against the allowances above at Claude Sonnet 5.5 rates: a student who uses every
+ * allowance costs roughly the price in AI calls; a typical one costs about a third of it.
+ * Revisit once ai_cost_estimate (and the OpenRouter dashboard) has real history.
  */
 export const PRICES_KOBO: Record<Exclude<Plan, "free">, number> = {
-  proposal: 100_000, // ₦1,000
-  full: 200_000, // ₦2,000
+  proposal: 200_000, // ₦2,000
+  full: 350_000, // ₦3,500
 };
 
 /** Which AI operations are metered. Embedding is not: it is cheap and it is the on-ramp. */
@@ -169,16 +203,103 @@ export async function assertWithinPlan(
     throw new PlanLimitError(
       plan === "free"
         ? `You have used all ${limit} of these on the free plan. Upgrade to keep going.`
-        : `You have reached the limit of ${limit} for this plan.`,
+        : `You have used all ${limit} of these on your plan.`,
       plan,
     );
   }
 
+  await takeAiSlot(supabase, operation as SlotOperation, plan);
   return plan;
 }
 
+const SLOT_MESSAGES: Record<string, string> = {
+  too_fast: "One moment - please wait a few seconds before the next request.",
+  hourly: "You have made a lot of requests in the last hour. Take a short break, then carry on.",
+  daily: "You have reached today's limit for this. It frees up again over the next 24 hours.",
+  unauthenticated: "Your session has ended. Please sign in again.",
+};
+
+/**
+ * Claim a slot for one AI request, or refuse it.
+ *
+ * Called after the plan allowance check and immediately before the AI call, so a refused
+ * plan check never uses up a slot. The speed, hourly and daily rules live in Postgres
+ * (take_ai_slot), where they can be applied atomically - two clicks in the same instant
+ * cannot both get through.
+ */
+export async function takeAiSlot(
+  supabase: SupabaseClient,
+  operation: SlotOperation,
+  plan: Plan,
+): Promise<void> {
+  const { data, error } = await supabase.rpc("take_ai_slot", {
+    op: operation,
+    daily_limit: DAILY_LIMITS[operation],
+  });
+
+  if (error) {
+    // Fail open, matching the allowance check above: a database hiccup must not lock a
+    // student out the night before their defense. The plan allowance and the OpenRouter
+    // spending cap still bound the cost.
+    console.error("[takeAiSlot] failed", error);
+    return;
+  }
+
+  if (data) {
+    throw new PlanLimitError(SLOT_MESSAGES[data as string] ?? SLOT_MESSAGES.too_fast, plan);
+  }
+}
+
+/**
+ * May this student start another mock defense sitting? Returns the plan and how many
+ * questions the sitting gets, or throws PlanLimitError.
+ *
+ * Sittings are counted from defense_sessions in the current window (lifetime on free).
+ * Each answer in a sitting is marked by a model call, so the number of sittings times
+ * their length is what bounds mock-defense cost.
+ */
+export async function assertDefenseAllowance(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<{ plan: Plan; sittingLength: number }> {
+  const plan = await currentPlan(supabase);
+  const { defense: limit, sittingLength } = PLANS[plan];
+
+  if (limit === 0) {
+    throw new PlanLimitError("Mock defense is not included in your plan.", plan);
+  }
+
+  const count = await sittingsUsed(supabase, userId, plan);
+  if (count >= limit) {
+    throw new PlanLimitError(
+      plan === "free"
+        ? "You have used your free mock defense. Upgrade to sit more."
+        : `You have used all ${limit} mock defenses on your plan.`,
+      plan,
+    );
+  }
+
+  return { plan, sittingLength };
+}
+
+/** Mock defense sittings started in the current window. */
+export async function sittingsUsed(
+  supabase: SupabaseClient,
+  userId: string,
+  plan: Plan,
+): Promise<number> {
+  const windowStart = await planWindowStart(supabase, plan);
+  let query = supabase
+    .from("defense_sessions")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId);
+  if (windowStart) query = query.gte("started_at", windowStart);
+  const { count } = await query;
+  return count ?? 0;
+}
+
 /** When the current paid window began. Null on free, where counts are lifetime. */
-async function planWindowStart(
+export async function planWindowStart(
   supabase: SupabaseClient,
   plan: Plan,
 ): Promise<string | null> {

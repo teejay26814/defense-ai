@@ -90,12 +90,13 @@ const handler = async (request: Request): Promise<Response> => {
       result_count: 1,
     }).eq("id", payload.jobId);
 
-    // Recorded as "answer", not "evaluate" - the same operation label Ask My Project uses,
-    // matching what the old synchronous path logged and what plans.ts already meters.
+    // Recorded as "evaluate", its own operation. It used to be logged as "answer", which
+    // made every marked answer use up one of the student's Ask allowance. Marking is
+    // bounded by sittings x sitting length instead (plans.ts).
     await admin.from("ai_usage").insert({
       user_id: payload.userId,
       project_id: payload.projectId,
-      operation: "answer",
+      operation: "evaluate",
       chunks_sent: 1,
       items_returned: 1,
       duration_ms: Date.now() - started,
@@ -115,7 +116,7 @@ const handler = async (request: Request): Promise<Response> => {
     await admin.from("ai_usage").insert({
       user_id: payload.userId,
       project_id: payload.projectId,
-      operation: "answer",
+      operation: "evaluate",
       chunks_sent: 1,
       duration_ms: Date.now() - started,
       succeeded: false,

@@ -36,7 +36,7 @@ export default async function BillingCallbackPage() {
               You are on {PLANS[plan].label}
             </h1>
             <p className="mx-auto mt-2 max-w-prose text-sm leading-relaxed text-ink-muted">
-              {PLANS[plan].days} days of access, starting now. Everything is unlocked.
+              {PLANS[plan].days} more days of access have been added, with a fresh set of allowances.
             </p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-2">

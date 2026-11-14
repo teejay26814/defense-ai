@@ -37,7 +37,8 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}",
         "messages": {},
-        "batching": {}
+        "batching": {},
+        "needsFallback": true
       },
       "id": "a2000000-0000-4000-8000-000000000003",
       "name": "Mark",
@@ -50,8 +51,11 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.5",
-        "options": {}
+        "model": "anthropic/claude-sonnet-5.5",
+        "options": {
+          "maxTokens": 3000,
+          "maxRetries": 2
+        }
       },
       "id": "a2000000-0000-4000-8000-000000000004",
       "name": "OpenRouter Model",
@@ -61,7 +65,7 @@
         260,
         200
       ],
-      "notes": "Sonnet: this runs once per answer, so it is the most frequent AI call in a sitting."
+      "notes": "Primary: Claude Sonnet 5.5. Replies capped at 3000 tokens (includes any model thinking) so one call cannot run away with cost."
     },
     {
       "parameters": {
@@ -105,23 +109,92 @@
         -240,
         220
       ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5.6-terra",
+        "options": {
+          "maxTokens": 3000,
+          "maxRetries": 2
+        }
+      },
+      "id": "07c76797-8eb2-4ff6-b9b8-c80b0b722f7b",
+      "name": "OpenRouter Fallback",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        436,
+        200
+      ],
+      "notes": "Fallback from a different company (OpenAI), used only if Claude errors after its retries. Same reply cap."
     }
   ],
   "connections": {
     "Webhook": {
-      "main": [[{ "node": "Build Prompt", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Build Prompt": {
-      "main": [[{ "node": "Mark", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Mark",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "OpenRouter Model": {
-      "ai_languageModel": [[{ "node": "Mark", "type": "ai_languageModel", "index": 0 }]]
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mark",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Mark": {
-      "main": [[{ "node": "Parse Mark", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Parse Mark",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Mark": {
-      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mark",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
     }
   },
   "settings": {

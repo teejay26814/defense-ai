@@ -6,6 +6,14 @@ import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
 import { fireBackgroundJob } from "@/lib/background-job";
+import {
+  assertDefenseAllowance,
+  currentPlan,
+  PlanLimitError,
+  PLANS,
+  planWindowStart,
+  takeAiSlot,
+} from "@/lib/plans";
 import { DEFENSE_SCOPES } from "@/lib/types";
 import { toFieldErrors } from "@/lib/validation/auth";
 
@@ -47,6 +55,16 @@ export async function startDefense(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  // Plan first, then pace. Starting a sitting is what commits the AI spend for marking it,
+  // so this is where mock-defense cost is bounded - not in the UI.
+  try {
+    const { plan } = await assertDefenseAllowance(supabase, user.id);
+    await takeAiSlot(supabase, "defense", plan);
+  } catch (err) {
+    if (err instanceof PlanLimitError) return { error: err.message };
+    throw err;
+  }
 
   const chapters = DEFENSE_SCOPES.find((s) => s.value === scope)!.chapters;
 
@@ -131,6 +149,45 @@ export async function submitAnswer(
 
   if (!question) return { error: "That question could not be found." };
 
+  // Every answer is a paid marking call, so the sitting itself is checked here, not only
+  // when it was opened: it must be this student's, still open, within the sittings their
+  // plan allows (a session inserted straight through the API would otherwise get marked),
+  // and not already holding as many answers as the plan's sitting length.
+  const { data: session } = await supabase
+    .from("defense_sessions")
+    .select("id, status, started_at")
+    .eq("id", sessionId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!session) return { error: "That sitting could not be found." };
+  if (session.status !== "in_progress") return { error: "This sitting is already closed." };
+
+  const plan = await currentPlan(supabase);
+  const { defense: sittingLimit, sittingLength } = PLANS[plan];
+
+  const windowStart = await planWindowStart(supabase, plan);
+  let earlier = supabase
+    .from("defense_sessions")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .lte("started_at", session.started_at as string);
+  if (windowStart) earlier = earlier.gte("started_at", windowStart);
+  const [{ count: sittingNumber }, { count: answered }] = await Promise.all([
+    earlier,
+    supabase
+      .from("defense_answers")
+      .select("id", { count: "exact", head: true })
+      .eq("session_id", sessionId),
+  ]);
+
+  if ((sittingNumber ?? 0) > sittingLimit) {
+    return { error: "This sitting is outside your plan's mock defenses." };
+  }
+  if ((answered ?? 0) >= sittingLength) {
+    return { notice: "This sitting is complete." };
+  }
+
   // Already answered in this sitting? Answers are a record of what was said under pressure,
   // so a second submission is ignored rather than allowed to overwrite the first.
   const { data: existing } = await supabase
@@ -144,6 +201,13 @@ export async function submitAnswer(
 
   if (!process.env.N8N_EVALUATE_WEBHOOK_URL) {
     return { error: "Marking is not connected yet." };
+  }
+
+  try {
+    await takeAiSlot(supabase, "evaluate", plan);
+  } catch (err) {
+    if (err instanceof PlanLimitError) return { error: err.message };
+    throw err;
   }
 
   const { data: job, error: jobError } = await supabase

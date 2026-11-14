@@ -38,7 +38,8 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}",
         "messages": {},
-        "batching": {}
+        "batching": {},
+        "needsFallback": true
       },
       "id": "c1000000-0000-4000-8000-000000000003",
       "name": "Answer",
@@ -52,8 +53,11 @@
     },
     {
       "parameters": {
-        "model": "anthropic/claude-sonnet-4.5",
-        "options": {}
+        "model": "anthropic/claude-sonnet-5.5",
+        "options": {
+          "maxTokens": 4000,
+          "maxRetries": 1
+        }
       },
       "id": "c1000000-0000-4000-8000-000000000004",
       "name": "OpenRouter Model",
@@ -63,7 +67,7 @@
         260,
         200
       ],
-      "notes": "Sonnet, not Opus. Ask is the most-used feature, so it was the largest line on the bill; Sonnet's answers held up across questions, marking and mnemonics. One field to revert if quality ever slips."
+      "notes": "Primary: Claude Sonnet 5.5. Replies capped at 4000 tokens (includes any model thinking) so one call cannot run away with cost."
     },
     {
       "parameters": {
@@ -107,6 +111,24 @@
         -240,
         220
       ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5.6-terra",
+        "options": {
+          "maxTokens": 4000,
+          "maxRetries": 1
+        }
+      },
+      "id": "45a46a01-235b-4929-aaab-dd08c3f74dc4",
+      "name": "OpenRouter Fallback",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        436,
+        200
+      ],
+      "notes": "Fallback from a different company (OpenAI), used only if Claude errors after its retries. Same reply cap."
     }
   ],
   "connections": {
@@ -161,6 +183,17 @@
             "node": "Respond",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Fallback": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 1
           }
         ]
       ]
