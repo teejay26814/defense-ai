@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LogoMark } from "@/components/logo";
+import { MobileDrawer } from "@/components/mobile-drawer";
 import { MobileNav } from "@/components/mobile-nav";
 import {
   IconBook,
@@ -90,90 +91,72 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     { href: "/projects", label: "My projects", icon: IconFolder },
   ];
 
+  const greeting = greetingFor(displayName);
+
+  const logoLink = (
+    <Link
+      href="/dashboard"
+      className="flex items-center gap-2.5 rounded px-1 transition-opacity duration-150 hover:opacity-85 active:opacity-70"
+    >
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-navy-500 text-white">
+        <LogoMark className="h-5 w-auto" />
+      </span>
+      <span className="font-display text-base leading-tight">
+        <span className="block font-semibold">Academia</span>
+        <span className="block font-light text-white/70">Scribes</span>
+      </span>
+    </Link>
+  );
+
+  const sidebarBody = (
+    <>
+      <SidebarSection title="Workspace" className="mt-10">
+        {workspace.map((item) => (
+          <SidebarLink key={item.href} {...item} />
+        ))}
+      </SidebarSection>
+
+      <SidebarSection title="Study modes" className="mt-8">
+        {studyModes.map((item) => (
+          <SidebarLink
+            key={item.label}
+            href={item.href}
+            label={item.label}
+            icon={item.icon}
+            locked={!item.href || !hasIndexedText}
+          />
+        ))}
+      </SidebarSection>
+
+      <div className="mt-auto pt-6">
+        <SidebarLink href="/billing" label="Plans" icon={IconShield} />
+        <ThemeToggle variant="row" className="mt-1 text-white/60 hover:bg-white/5 hover:text-white" />
+        <form action={signOut} className="mt-1">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium text-white/60
+              transition-[transform,background-color,color] duration-150 hover:bg-white/5 hover:text-white active:scale-[0.98]"
+          >
+            <IconSignOut className="size-[18px] shrink-0" />
+            Sign out
+          </button>
+        </form>
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-dvh bg-canvas lg:flex">
       {/* --- sidebar, desktop --- */}
       <aside className="hidden w-64 shrink-0 flex-col bg-navy-900 px-5 py-6 text-white lg:flex">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-2.5 rounded px-1 transition-opacity duration-150 hover:opacity-85"
-        >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-navy-500 text-white">
-            <LogoMark className="h-5 w-auto" />
-          </span>
-          <span className="font-display text-base leading-tight">
-            <span className="block font-semibold">Academia</span>
-            <span className="block font-light text-white/70">Scribes</span>
-          </span>
-        </Link>
-
-        <SidebarSection title="Workspace" className="mt-10">
-          {workspace.map((item) => (
-            <SidebarLink key={item.href} {...item} />
-          ))}
-        </SidebarSection>
-
-        <SidebarSection title="Study modes" className="mt-8">
-          {studyModes.map((item) => (
-            <SidebarLink
-              key={item.label}
-              href={item.href}
-              label={item.label}
-              icon={item.icon}
-              locked={!item.href || !hasIndexedText}
-            />
-          ))}
-        </SidebarSection>
-
-        <div className="mt-auto pt-6">
-          <SidebarLink href="/billing" label="Plans" icon={IconShield} />
-          <ThemeToggle variant="row" className="mt-1 text-white/60 hover:bg-white/5 hover:text-white" />
-          <form action={signOut} className="mt-1">
-            <button
-              type="submit"
-              className="flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium text-white/60
-                transition-[transform,background-color,color] duration-150 hover:bg-white/5 hover:text-white active:scale-[0.98]"
-            >
-              <IconSignOut className="size-[18px] shrink-0" />
-              Sign out
-            </button>
-          </form>
-        </div>
+        {logoLink}
+        {sidebarBody}
       </aside>
 
-      {/* --- top bar, mobile only --- */}
-      <header className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-navy-100/70 bg-navy-050/90 px-4 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] backdrop-blur-xl sm:px-5 lg:hidden">
-        <Link
-          href="/dashboard"
-          aria-label="Overview"
-          className="rounded-control p-1 text-brand transition-opacity duration-150 hover:opacity-85 active:opacity-70"
-        >
-          <LogoMark className="h-7 w-auto" />
-        </Link>
-        <nav aria-label="Main" className="flex items-center gap-0.5 text-sm">
-          <Link href="/projects" className={MOBILE_LINK}>
-            Projects
-          </Link>
-          <Link href="/billing" className={MOBILE_LINK}>
-            Plans
-          </Link>
-        </nav>
-        <div className="flex items-center gap-0.5">
-          <ThemeToggle className="text-ink-muted hover:bg-surface hover:text-ink" />
-          <form action={signOut}>
-            <button
-              type="submit"
-              aria-label="Sign out"
-              title="Sign out"
-              className="flex size-10 items-center justify-center rounded-control text-ink-muted
-                transition-[transform,background-color,color] duration-150
-                hover:bg-surface hover:text-ink active:scale-95"
-            >
-              <IconSignOut className="size-[18px]" />
-            </button>
-          </form>
-        </div>
-      </header>
+      {/* --- phone: header with a menu that slides the same sidebar in --- */}
+      <MobileDrawer greeting={greeting} initials={initials} logo={logoLink}>
+        {sidebarBody}
+      </MobileDrawer>
 
       {/* --- main content --- */}
       <div className="min-w-0 flex-1">
@@ -181,7 +164,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <div>
             <p className="label-eyebrow">Workspace</p>
             <p className="mt-0.5 font-display text-lg text-ink">
-              {displayName ? `Good to see you, ${displayName}` : "Good to see you"}
+              {greeting}
             </p>
           </div>
           <div className="flex size-9 items-center justify-center rounded-full bg-navy-700 text-xs font-semibold text-white">
@@ -200,11 +183,6 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     </div>
   );
 }
-
-/** Mobile top-bar links: a 40px tap target with hover, focus (global ring) and press states. */
-const MOBILE_LINK =
-  "rounded-control px-2.5 py-2 font-medium text-ink-muted transition-[transform,background-color,color] duration-150 " +
-  "hover:bg-surface hover:text-ink active:scale-95";
 
 function SidebarSection({
   title,
@@ -263,4 +241,16 @@ function SidebarLink({
       {label}
     </Link>
   );
+}
+
+/**
+ * "Good morning, Tolulope" - by the clock in Nigeria, where the students are, not the
+ * server's UTC. Rendered on the server per request, so it is right on first paint.
+ */
+function greetingFor(name?: string): string {
+  const hour = Number(
+    new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Africa/Lagos" }).format(new Date()),
+  );
+  const part = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  return name ? `${part}, ${name}` : part;
 }
