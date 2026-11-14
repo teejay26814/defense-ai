@@ -140,6 +140,8 @@ export default async function DashboardPage() {
   const indexed = indexedChapters.size;
   const coverage = (indexed / CHAPTERS.length) * 100;
 
+  const defensePassed = current?.defense_date ? isPast(current.defense_date) : false;
+
   const recallPractice = questionCount > 0 ? (reviewedCount / questionCount) * 100 : null;
   const ringValue = readiness ?? coverage;
   const ringLabel = readiness !== null ? "Ready" : "Indexed";
@@ -238,14 +240,14 @@ export default async function DashboardPage() {
           <span className="label-eyebrow inline-flex items-center gap-2 rounded-full bg-navy-100/70 px-3 py-1.5 text-brand">
             Your defense command centre
           </span>
-          <h1 className="measure mt-4 font-display text-4xl leading-[1.1] text-ink sm:text-5xl">
+          <h1 className="measure mt-4 font-display text-3xl leading-[1.1] text-ink sm:text-5xl">
             {firstName ? `Welcome back, ${firstName}.` : "Turn your research into answers you can defend."}
           </h1>
           <p className="measure mt-3 text-ink-muted">{next.body}</p>
         </div>
 
         <div className="shrink-0 border-t border-navy-100 pt-4 sm:border-t-0 sm:border-l sm:pl-6 sm:pt-0">
-          <p className="label-eyebrow">Your next defense</p>
+          <p className="label-eyebrow">{defensePassed ? "Your defense date" : "Your next defense"}</p>
           <p className="mt-1 font-display text-lg text-ink">
             {current?.defense_date
               ? new Date(current.defense_date).toLocaleDateString(undefined, {
@@ -259,6 +261,15 @@ export default async function DashboardPage() {
             <p className="text-xs text-ink-muted">
               {current ? "Add one from your project" : "Start with a project"}
             </p>
+          )}
+          {/* A date in the past is not "next". Say so, and give the way to fix it. */}
+          {defensePassed && current && (
+            <Link
+              href={`/projects/${current.id}/edit`}
+              className="text-xs font-medium text-brand underline-offset-4 hover:underline active:text-ink"
+            >
+              That date has passed - update it
+            </Link>
           )}
         </div>
       </header>
@@ -486,4 +497,9 @@ export default async function DashboardPage() {
       )}
     </div>
   );
+}
+
+/** A date-only string ("2026-09-17") is in the past once that whole day has gone by. */
+function isPast(date: string): boolean {
+  return new Date(`${date.slice(0, 10)}T23:59:59`).getTime() < Date.now();
 }

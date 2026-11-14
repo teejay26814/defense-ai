@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProjectBackLink } from "@/components/project-back-link";
 import { ProjectNav } from "@/components/project-nav";
 import { getProjectHeading } from "@/lib/project-heading";
 import { createClient } from "@/lib/supabase/server";
@@ -42,19 +42,25 @@ export default async function ProjectLayout({
   return (
     <div className="space-y-6">
       <div>
-        <Link
-          href="/projects"
-          className="rounded text-sm text-ink-muted underline-offset-4
-            transition-colors duration-150 hover:text-brand hover:underline"
+        <ProjectBackLink projectId={project.id} />
+        {/*
+          Long titles are the norm - thesis titles run to twenty words, often in capitals.
+          At full size on a phone that filled the whole first screen of every project page,
+          so it is smaller and clamped to three lines there; the full title stays in the
+          tooltip and on larger screens.
+        */}
+        <h1
+          title={project.title}
+          className="mt-1.5 line-clamp-3 font-display text-xl leading-snug text-ink sm:text-2xl lg:line-clamp-none lg:text-3xl lg:leading-tight"
         >
-          ← All projects
-        </Link>
-        <h1 className="mt-1.5 font-display text-3xl leading-tight text-ink">
           {project.title}
         </h1>
       </div>
 
-      <ProjectNav projectId={project.id} hasIndexedText={(count ?? 0) > 0} />
+      {/* On phones the bottom tab bar (components/mobile-nav.tsx) replaces this strip. */}
+      <div className="hidden lg:block">
+        <ProjectNav projectId={project.id} hasIndexedText={(count ?? 0) > 0} />
+      </div>
 
       {children}
     </div>
