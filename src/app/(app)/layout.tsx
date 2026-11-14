@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LogoMark } from "@/components/logo";
+import { MobileNav } from "@/components/mobile-nav";
 import {
   IconBook,
   IconBulb,
@@ -150,9 +151,6 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <LogoMark className="h-7 w-auto" />
         </Link>
         <nav aria-label="Main" className="flex items-center gap-0.5 text-sm">
-          <Link href="/dashboard" className={MOBILE_LINK}>
-            Overview
-          </Link>
           <Link href="/projects" className={MOBILE_LINK}>
             Projects
           </Link>
@@ -191,11 +189,14 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           </div>
         </div>
 
-        <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 lg:py-10">
+        {/* Bottom padding on phones keeps the last of the page clear of the tab bar. */}
+        <main className="mx-auto max-w-6xl px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-8 lg:py-10">
           <p className="sr-only">Signed in as {displayName ?? user.email}</p>
           {children}
         </main>
       </div>
+
+      <MobileNav projectBase={studyBase} hasIndexedText={hasIndexedText} />
     </div>
   );
 }
