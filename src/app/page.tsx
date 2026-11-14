@@ -136,9 +136,12 @@ export default function Home() {
           >
             Sign in
           </Link>
-          <Link href="/signup" className={`${buttonStyles({ size: "sm" })} hidden sm:inline-flex`}>
-            Get started
-          </Link>
+          {/* Hidden on phones, where the hero's own call to action sits right below. */}
+          <span className="hidden sm:block">
+            <Link href="/signup" className={buttonStyles({ size: "sm" })}>
+              Get started
+            </Link>
+          </span>
         </nav>
       </header>
 
@@ -351,7 +354,9 @@ function HeroPreview() {
           <div className="h-2.5 w-3/5 rounded-full bg-navy-100/80" />
         </div>
         <div className="mt-7 flex items-center gap-5 border-t border-navy-100 pt-6">
-          <ReadinessRing value={78} size={88} strokeWidth={9} label="Ready" />
+          <div className="shrink-0">
+            <ReadinessRing value={78} size={132} strokeWidth={11} label="Ready" />
+          </div>
           <div className="min-w-0">
             <p className="font-display text-lg text-ink">Strong answer</p>
             <p className="mt-1 text-sm leading-relaxed text-ink-muted">
