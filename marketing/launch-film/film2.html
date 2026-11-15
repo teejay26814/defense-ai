@@ -1,0 +1,463 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Figtree:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+:root{--navy:#052659;--deep:#010b1d;--ice:#cfe0f3;--paper:#fdfbf7;--ink:#121722}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--deep)}
+body{font-family:Figtree,sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
+.stage{position:absolute;inset:0;overflow:hidden;background:var(--deep)}
+#cam{position:absolute;inset:0;will-change:transform}
+.bg{position:absolute;inset:-12%}
+.blob{position:absolute;border-radius:50%;filter:blur(calc(9 * var(--u)));will-change:transform}
+.grid{position:absolute;inset:-10%;opacity:.07;background-image:linear-gradient(rgba(255,255,255,.9) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.9) 1px,transparent 1px);background-size:calc(8 * var(--u)) calc(8 * var(--u));
+ -webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 50%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 60% 55% at 50% 50%,#000 20%,transparent 75%)}
+.mote{position:absolute;border-radius:50%;background:#fff}
+.grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;pointer-events:none;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse 72% 68% at 50% 50%,transparent 50%,rgba(0,0,0,.7));pointer-events:none}
+.scene{position:absolute;inset:0;visibility:hidden;will-change:transform,opacity}
+.serif{text-wrap:balance;font-family:Fraunces,serif;font-weight:600;letter-spacing:-.025em;line-height:1.04}
+.it{font-style:italic;font-weight:500;color:var(--ice)}
+.eyebrow{font:700 calc(1.9 * var(--u)) Figtree;letter-spacing:.42em;text-transform:uppercase;color:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;gap:calc(1.8 * var(--u))}
+.eyebrow::before,.eyebrow::after{content:"";width:calc(6 * var(--u));height:max(2px,.22vmin);background:linear-gradient(90deg,transparent,#fff)}
+.eyebrow::after{background:linear-gradient(90deg,#fff,transparent)}
+.eyebrow.left{justify-content:flex-start}.eyebrow.left::after{display:none}.eyebrow.left::before{background:#fff}
+/* crisp mask reveal: a clipping box with the word sliding up inside it */
+.w{display:inline-block;overflow:hidden;vertical-align:bottom;padding:.1em .05em .16em;margin:-.1em -.05em -.16em}
+.w>span{display:inline-block;will-change:transform}
+.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center}
+.qcard{position:absolute;padding:calc(2 * var(--u)) calc(2.8 * var(--u));border-radius:calc(1.6 * var(--u));background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.22);
+ box-shadow:0 calc(3 * var(--u)) calc(6 * var(--u)) calc(-2 * var(--u)) rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.18);font:600 calc(2.9 * var(--u)) Figtree;white-space:nowrap;display:flex;align-items:center;gap:calc(1.4 * var(--u))}
+.qcard b{display:inline-flex;align-items:center;justify-content:center;width:calc(4 * var(--u));height:calc(4 * var(--u));border-radius:50%;background:#fff;color:#052659;font:700 calc(2.4 * var(--u)) Fraunces}
+.chap{position:absolute;width:calc(24 * var(--u));height:calc(32 * var(--u));border-radius:calc(1.2 * var(--u));background:var(--paper);color:var(--ink);padding:calc(2.6 * var(--u));box-shadow:0 calc(4 * var(--u)) calc(8 * var(--u)) calc(-2 * var(--u)) rgba(0,0,0,.65);transform-origin:50% 120%}
+.chap small{font:700 calc(1.45 * var(--u)) Figtree;letter-spacing:.24em;color:#1155a8}
+.chap h4{font:600 calc(3 * var(--u)) Fraunces;margin-top:calc(1.4 * var(--u));line-height:1.08;letter-spacing:-.015em}
+.chap i{display:block;height:.9vmin;border-radius:.5vmin;background:#dce7f4;margin-top:calc(1.3 * var(--u))}
+.mark svg{width:100%;height:100%;fill:#fff;display:block}
+.chip{position:absolute;padding:calc(1.4 * var(--u)) calc(2.4 * var(--u));border-radius:calc(5 * var(--u));background:var(--paper);color:var(--navy);font:700 calc(2.5 * var(--u)) Figtree;box-shadow:0 calc(2.4 * var(--u)) calc(5 * var(--u)) calc(-1 * var(--u)) rgba(0,0,0,.55);display:flex;gap:calc(1 * var(--u));align-items:center;white-space:nowrap}
+.chip em{font-style:normal;background:#052659;color:#fff;padding:.25vmin calc(1 * var(--u));border-radius:calc(1 * var(--u));font-size:calc(1.7 * var(--u));letter-spacing:.08em;text-transform:uppercase}
+.shot{position:absolute;border-radius:calc(1.6 * var(--u));overflow:hidden;box-shadow:0 calc(6 * var(--u)) calc(12 * var(--u)) calc(-3 * var(--u)) rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.14);background:#fff}
+.shot img{display:block;width:100%;height:auto}
+.flip{position:absolute;perspective:calc(200 * var(--u))}
+.face{position:absolute;inset:0;border-radius:calc(2 * var(--u));padding:calc(4.4 * var(--u));backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;box-shadow:0 calc(5 * var(--u)) calc(10 * var(--u)) calc(-2 * var(--u)) rgba(0,0,0,.65)}
+.front{background:var(--paper);color:var(--ink)}
+.back{background:linear-gradient(160deg,#0b3f86,#052659 60%,#03173a);color:#fff;transform:rotateY(180deg);border:1px solid rgba(255,255,255,.2)}
+.tag{align-self:flex-start;font:700 calc(1.7 * var(--u)) Figtree;letter-spacing:.06em;padding:.7vmin calc(1.4 * var(--u));border-radius:calc(.8 * var(--u));background:#052659;color:#fff;margin-bottom:calc(2.6 * var(--u))}
+.fb{position:absolute;padding:calc(1.2 * var(--u)) calc(2.2 * var(--u));border-radius:calc(1.2 * var(--u));background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font:600 calc(2.3 * var(--u)) Figtree;white-space:nowrap}
+.url{display:inline-block;padding:calc(2.2 * var(--u)) calc(4.4 * var(--u));border-radius:calc(1.4 * var(--u));background:#fff;color:var(--navy);font:700 calc(3.1 * var(--u)) Figtree;letter-spacing:.01em;box-shadow:0 calc(3 * var(--u)) calc(8 * var(--u)) calc(-2 * var(--u)) rgba(143,180,220,.45)}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.rays{position:absolute;left:50%;top:50%;width:calc(260 * var(--u));height:calc(260 * var(--u));margin:calc(-130 * var(--u)) 0 0 calc(-130 * var(--u));
+ background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.075) 0deg 2.2deg,transparent 2.2deg 11deg);
+ -webkit-mask-image:radial-gradient(circle,#000 4%,transparent 48%);mask-image:radial-gradient(circle,#000 4%,transparent 48%);opacity:0;will-change:transform,opacity}
+.glow{position:absolute;left:50%;top:50%;width:calc(120 * var(--u));height:calc(120 * var(--u));margin:calc(-60 * var(--u)) 0 0 calc(-60 * var(--u));border-radius:50%;
+ background:radial-gradient(circle,rgba(150,190,240,.42),rgba(40,100,190,.18) 35%,transparent 68%);opacity:0;will-change:transform,opacity}
+.flare{position:absolute;left:-10%;width:120%;height:calc(.5 * var(--u));margin-top:calc(-.25 * var(--u));opacity:0;
+ background:linear-gradient(90deg,transparent,rgba(160,200,255,.4) 25%,#fff 50%,rgba(160,200,255,.4) 75%,transparent);
+ box-shadow:0 0 calc(2 * var(--u)) rgba(170,205,255,.8);will-change:transform,opacity}
+.bar{position:absolute;left:0;right:0;background:#000;z-index:5;will-change:transform}
+.gleam{position:absolute;top:-20%;bottom:-20%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);mix-blend-mode:overlay;will-change:transform}
+</style></head>
+<body><div class="stage" id="stage">
+ <div class="bg" id="bg">
+  <div class="blob" id="b1" style="width:calc(95 * var(--u));height:calc(95 * var(--u));background:rgba(17,85,168,.5);left:-12%;top:-22%"></div>
+  <div class="blob" id="b2" style="width:calc(70 * var(--u));height:calc(70 * var(--u));background:rgba(143,180,220,.14);right:-6%;top:8%"></div>
+  <div class="blob" id="b3" style="width:calc(110 * var(--u));height:calc(80 * var(--u));background:rgba(5,38,89,.95);left:18%;bottom:-42%"></div>
+  <div class="grid" id="grid"></div>
+  <div id="motes" style="position:absolute;inset:0"></div>
+ </div>
+ <div class="glow" id="glow"></div>
+ <div class="rays" id="rays"></div>
+
+ <div id="cam">
+  <!-- A: the panel has read it -->
+  <div class="scene" id="A">
+   <div id="lines" style="position:absolute;inset:0"></div>
+   <div id="scan" style="position:absolute;left:0;right:0;height:calc(.3 * var(--u));background:linear-gradient(90deg,transparent,rgba(190,215,250,.9),transparent);box-shadow:0 0 calc(3 * var(--u)) rgba(150,190,250,.7)"></div>
+   <div class="center serif" id="Atext"></div>
+  </div>
+
+  <!-- B: every choice is a question -->
+  <div class="scene" id="B">
+   <div id="Bhead" style="position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:calc(2.2 * var(--u))">
+    <div class="eyebrow" id="Beye">Your panel will ask</div>
+    <div class="serif" id="Btitle" style="text-align:center"></div>
+   </div>
+   <div id="cards"></div>
+  </div>
+
+  <!-- C: prepare against your own work -->
+  <div class="scene" id="C">
+   <div id="Chead" class="serif" style="position:absolute;left:5vw;right:5vw;text-align:center"></div>
+   <div id="chaps"></div>
+  </div>
+
+  <!-- D: logo -->
+  <div class="scene" id="D">
+   <div id="shock" style="position:absolute;left:50%;border-radius:50%;border:max(2px,.3vmin) solid #fff"></div>
+   <div id="shock2" style="position:absolute;left:50%;border-radius:50%;border:1px solid rgba(255,255,255,.6)"></div>
+   <div class="mark" id="Dmark" style="position:absolute;left:50%"></div>
+   <div id="Dwordbox" style="position:absolute;left:0;right:0;text-align:center;overflow:hidden">
+    <div id="Dword" class="serif" style="display:inline-block;position:relative;font-weight:700"></div>
+   </div>
+   <div id="Drule" style="position:absolute;left:50%;height:max(2px,.2vmin);background:linear-gradient(90deg,transparent,#fff,transparent)"></div>
+   <div id="Dsub" style="position:absolute;left:0;right:0;text-align:center;font:600 calc(2.4 * var(--u)) Figtree;letter-spacing:.5em;text-transform:uppercase;color:rgba(255,255,255,.85)"></div>
+  </div>
+
+  <!-- E: ask -->
+  <div class="scene" id="E">
+   <div id="Ehead" style="position:absolute">
+    <div class="eyebrow" id="Eeye">Ask my project</div>
+    <div class="serif" id="Etitle" style="margin-top:calc(2.4 * var(--u))"></div>
+    <div id="Ebody" style="font:500 calc(2.5 * var(--u)) Figtree;color:rgba(255,255,255,.74);margin-top:calc(2.4 * var(--u));line-height:1.45">Every answer cites the chapter it came from.</div>
+   </div>
+   <div class="shot" id="Eshot"><img src="assets/ask_crop.png"></div>
+   <div class="chip" id="c1">Chapter 3 · Methodology <em>cited</em></div>
+   <div class="chip" id="c2">Chapter 5 · Discussion <em>cited</em></div>
+   <div class="chip" id="c3">Chapter 4 · Results <em>cited</em></div>
+  </div>
+
+  <!-- F: flashcards -->
+  <div class="scene" id="F">
+   <div id="Fhead" style="position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:calc(2.2 * var(--u))">
+    <div class="eyebrow" id="Feye">Flashcards &amp; quizzes</div>
+    <div class="serif" id="Ftitle" style="text-align:center"></div>
+   </div>
+   <div class="flip" id="flip"><div id="card" style="position:absolute;inset:0;transform-style:preserve-3d">
+    <div class="face front"><span class="tag">CHAPTER 3 · METHODOLOGY</span><div class="serif" style="font-size:calc(4.3 * var(--u))">Why did you choose a descriptive cross-sectional design?</div><div style="font:600 calc(1.9 * var(--u)) Figtree;color:#5a6377;margin-top:calc(3 * var(--u));letter-spacing:.04em">Say it out loud, then flip.</div></div>
+    <div class="face back"><div class="eyebrow left" style="font-size:calc(1.7 * var(--u))">From your project</div><div style="font:500 calc(3.2 * var(--u)) Figtree;line-height:1.45;margin-top:calc(2.4 * var(--u))">It let us measure knowledge, perceived risk factors and sources of information at a single point in time.</div></div>
+   </div></div>
+  </div>
+
+  <!-- G: readiness -->
+  <div class="scene" id="G">
+   <div id="Ghead" style="position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:calc(2.2 * var(--u))">
+    <div class="eyebrow" id="Geye">Mock defense</div>
+    <div class="serif" id="Gtitle" style="text-align:center"></div>
+   </div>
+   <svg id="ringsvg" viewBox="0 0 220 220" style="position:absolute;left:50%;overflow:visible">
+    <g id="ticks"></g>
+    <circle cx="110" cy="110" r="86" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="10"/>
+    <circle id="arc" cx="110" cy="110" r="86" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-dasharray="540.35" stroke-dashoffset="540.35" transform="rotate(-90 110 110)" style="filter:drop-shadow(0 0 4px rgba(170,205,255,.9))"/>
+   </svg>
+   <div id="readout" style="position:absolute;left:50%;transform:translate(-50%,-50%);text-align:center">
+    <div class="serif" style="font-weight:700"><span id="num">0</span><span id="pct">%</span></div>
+    <div id="ready" style="font:700 calc(2.8 * var(--u)) Figtree;letter-spacing:.44em;text-transform:uppercase;margin-top:.6vmin;padding-left:.44em">Ready</div>
+   </div>
+   <div class="fb" id="f1">✓ Objectives covered</div>
+   <div class="fb" id="f2">✓ Method defended</div>
+   <div class="fb" id="f3">→ Add your population size</div>
+  </div>
+
+  <!-- H: would you be ready -->
+  <div class="scene" id="H">
+   <svg id="clock" viewBox="0 0 200 200" style="position:absolute;left:50%;top:50%;opacity:.16">
+    <g id="cticks"></g>
+    <line id="hand" x1="100" y1="100" x2="100" y2="14" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="100" cy="100" r="2.4" fill="#fff"/>
+   </svg>
+   <div class="center serif" id="Hbox">
+    <div id="H1"></div>
+    <div id="H2" class="it" style="margin-top:calc(1.6 * var(--u));color:#fff"></div>
+   </div>
+  </div>
+
+  <!-- I: end -->
+  <div class="scene" id="I">
+   <div class="center" id="Ibox" style="width:92vw">
+    <div class="mark" id="Imark" style="margin:0 auto"></div>
+    <div id="Iwordbox" style="overflow:hidden;margin-top:calc(2.8 * var(--u))"><div id="Iword" class="serif" style="font-weight:700;position:relative;display:inline-block"></div></div>
+    <div id="Iline" class="serif" style="margin-top:calc(3.4 * var(--u));font-weight:500"></div>
+    <div id="Iurl" style="margin-top:calc(4.2 * var(--u))"><span class="url">academia-scribes.netlify.app</span></div>
+    <div id="Iprice" style="margin-top:calc(3.4 * var(--u));font:600 calc(2.2 * var(--u)) Figtree;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66)">Free to start · Proposal ₦2,000 · Final ₦3,500</div>
+   </div>
+  </div>
+ </div>
+
+ <div class="flare" id="flare"></div>
+ <div class="vignette" id="vig"></div>
+ <div class="bar" id="barT" style="top:0"></div>
+ <div class="bar" id="barB" style="bottom:0"></div>
+ <div class="flash" id="flash"></div>
+ <div class="grain"></div>
+ <div id="black" style="position:absolute;inset:0;background:#000;opacity:0;z-index:9"></div>
+</div>
+<script>
+const MARK = `__MARK__`;
+document.querySelectorAll('.mark').forEach(m => m.innerHTML = MARK);
+const P = innerHeight > innerWidth;
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const ex = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));            // expo out: fast and decisive
+const eio = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const back = (x) => { const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const W = innerWidth, H = innerHeight, U = Math.min(W, H) / 100 * (P ? 1.38 : 1);
+document.documentElement.style.setProperty('--u', U + 'px');
+const set = (el, o) => { for (const k in o) el.style[k] = o[k]; };
+const px = (v) => v + 'px';
+
+// slow camera push-in per scene, and the scene's visibility
+function show(id, t, a, b, push = .045) {
+  const on = t >= a && t < b, el = $(id);
+  el.style.visibility = on ? 'visible' : 'hidden';
+  if (on) el.style.transform = `scale(${1 + push * prog(t, a, b)})`;
+  return on;
+}
+function fadeOut(el, t, a, b) { const p = eio(prog(t, a, b)); el.style.opacity = 1 - p; return p; }
+
+// text with each word in a clipping box
+function words(el, parts) {
+  el.innerHTML = parts.map(([w, c]) => `<span class="w"><span${c ? ` class="${c}"` : ''}>${w}</span></span>`).join(' ');
+}
+const plain = (s) => s.split(' ').map((w) => [w]);
+function maskIn(el, t, start, step, dur = .6) {
+  [...el.children].filter((c) => c.classList.contains("w")).forEach((w, i) => {
+    const p = ex(prog(t, start + i * step, start + i * step + dur));
+    w.firstChild.style.transform = `translateY(${(1 - p) * 112}%) rotate(${(1 - p) * 5}deg)`;
+  });
+}
+function lineIn(el, t, start, dur = .7) { maskIn(el, t, start, 0, dur); }
+
+// ---- sizes and layout per orientation
+const S = P
+  ? { A: 7.0, title: 4.9, C: 5.0, D: 9.2, H: 7.4, I: 6.6 }
+  : { A: 8.6, title: 6.2, C: 7.0, D: 9.6, H: 8.8, I: 6.4 };
+['Btitle', 'Ftitle', 'Gtitle', 'Etitle'].forEach((id) => $(id).style.fontSize = px(S.title * U));
+$('Atext').style.fontSize = px(S.A * U); $('Atext').style.width = P ? '88vw' : '78vw';
+$('Chead').style.fontSize = px(S.C * U);
+$('Hbox').style.fontSize = px(S.H * U); $('Hbox').style.width = P ? '90vw' : '84vw';
+
+// ---- build
+words($('Atext'), plain('Your panel has already read your project.'));
+for (let i = 0; i < 22; i++) {
+  const d = document.createElement('div');
+  d.style.cssText = `position:absolute;left:${P ? 8 : 20}%;height:${.8 * U}px;border-radius:${U}px;background:rgba(220,231,244,.075);width:${(P ? 62 : 44) + (i * 37 % 30)}%;top:${i * 5.6}%`;
+  $('lines').appendChild(d);
+}
+words($('Btitle'), plain('Every choice is a question.'));
+const QS = ['Why purposive sampling?', 'What were your objectives?', 'Why a cross-sectional design?', 'What did your Chi-square test show?', 'What are your limitations?'];
+const QP = P ? [[.5, .4], [.44, .5], [.56, .6], [.47, .7], [.53, .8]] : [[.26, .42], [.73, .38], [.31, .64], [.71, .62], [.5, .83]];
+QS.forEach((q) => { const d = document.createElement('div'); d.className = 'qcard'; d.innerHTML = `<b>?</b>${q}`; $('cards').appendChild(d); });
+words($('Chead'), [['Prepare'], ['against'], ['your', 'it'], ['own', 'it'], ['work.']]);
+const CH = [['Chapter one', 'Introduction'], ['Chapter two', 'Literature review'], ['Chapter three', 'Methodology'], ['Chapter four', 'Results'], ['Chapter five', 'Discussion']];
+CH.forEach(([a, b]) => { const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `<small>${a.toUpperCase()}</small><h4>${b}</h4><i style="width:90%"></i><i style="width:70%"></i><i style="width:84%"></i><i style="width:60%"></i><i style="width:76%"></i>`; $('chaps').appendChild(d); });
+$('Dword').innerHTML = [...'Academia Scribes'].map((c) => `<span class="w"><span>${c === ' ' ? '&nbsp;' : c}</span></span>`).join('') ;
+$('Dsub').innerHTML = 'Your private defense coach';
+words($('Etitle'), [['Answers'], ['from'], ['your', 'it'], ['own', 'it'], ['chapters.']]);
+words($('Ftitle'), [['Drill'], ['what'], ["they'll"], ['really', 'it'], ['ask.']]);
+words($('Gtitle'), plain('Know exactly where you stand.'));
+words($('H1'), plain('If your defense was tomorrow,'));
+words($('H2'), plain('would you be ready?'));
+$('Iword').innerHTML = [...'Academia Scribes'].map((c) => `<span class="w"><span>${c === ' ' ? '&nbsp;' : c}</span></span>`).join('') ;
+words($('Iline'), [['Start'], ['free'], ['tonight.', 'it']]);
+
+// dial ticks for the score ring and the clock
+const tickSvg = (g, cx, r1, r2, n, major) => {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const a = i / n * Math.PI * 2, M = i % major === 0, rr = M ? r1 - 4 : r1;
+    s += `<line x1="${cx + Math.sin(a) * rr}" y1="${cx - Math.cos(a) * rr}" x2="${cx + Math.sin(a) * r2}" y2="${cx - Math.cos(a) * r2}" stroke="#fff" stroke-opacity="${M ? .55 : .22}" stroke-width="${M ? 1.4 : .8}"/>`;
+  }
+  $(g).innerHTML = s;
+};
+tickSvg('ticks', 110, 100, 106, 60, 5);
+tickSvg('cticks', 100, 88, 96, 60, 5);
+
+// floating dust for depth
+const motes = [];
+for (let i = 0; i < 70; i++) {
+  const d = document.createElement('div'); d.className = 'mote';
+  const s = (((i * 7919) % 100) / 100) * .45 + .12;
+  d.style.width = d.style.height = px(s * U);
+  $('motes').appendChild(d);
+  motes.push({ d, x: ((i * 2654435761) % 1000) / 1000, y: ((i * 40503) % 1000) / 1000, sp: .006 + ((i * 97) % 10) / 1000, ph: i * 1.7, s });
+}
+
+// big hits: camera kick + flare
+const HITS = [[12.4, 1.0], [28.6, .45], [33.8, .7], [36.0, 1.0]];
+function shake(t) {
+  let x = 0, y = 0, s = 0;
+  for (const [h, m] of HITS) {
+    const d = t - h; if (d < 0 || d > .5) continue;
+    const k = Math.exp(-d * 11) * m;
+    x += Math.sin(d * 90) * k * .9 * U; y += Math.cos(d * 70) * k * .7 * U; s += k * .025;
+  }
+  return { x, y, s };
+}
+
+window.render = function (t) {
+  // background
+  $('b1').style.transform = `translate(${Math.sin(t * .17) * 6 * U}px,${Math.cos(t * .13) * 5 * U}px)`;
+  $('b2').style.transform = `translate(${Math.cos(t * .11) * 8 * U}px,${Math.sin(t * .15) * 6 * U}px) scale(${1 + .08 * Math.sin(t * .2)})`;
+  $('b3').style.transform = `translate(${Math.sin(t * .09) * 5 * U}px,0)`;
+  $('grid').style.transform = `translate(${(t * .9 % 8) * U}px,${(t * .5 % 8) * U}px)`;
+  for (const m of motes) {
+    const yy = ((m.y - t * m.sp) % 1 + 1) % 1, xx = m.x + Math.sin(t * .3 + m.ph) * .01;
+    set(m.d, { transform: `translate(${xx * W}px,${yy * H}px)`, opacity: (.25 + .35 * Math.sin(t * 1.3 + m.ph) ** 2) * m.s * 1.6 });
+  }
+  const k = shake(t);
+  $('cam').style.transform = `translate(${k.x}px,${k.y}px) scale(${1 + k.s})`;
+
+  // darker room for the cold open and the final question
+  const dark = Math.max(1 - prog(t, 12.3, 12.6), prog(t, 30.1, 30.8) * (1 - prog(t, 35.9, 36.0)));
+  $('vig').style.opacity = .75 + dark * .25;
+  $('bg').style.opacity = 1 - dark * .45;
+
+  // letterbox (landscape only): closed in, opens on the logo, closes for the question
+  const bar = P ? 0 : .095 * Math.max(1 - ex(prog(t, 12.4, 13.2)), eio(prog(t, 30.1, 30.9)) * (1 - ex(prog(t, 36.0, 36.6))));
+  $('barT').style.height = $('barB').style.height = px(H * .095);
+  $('barT').style.transform = `translateY(${-(1 - bar / .095) * 100}%)`;
+  $('barB').style.transform = `translateY(${(1 - bar / .095) * 100}%)`;
+
+  // flash and flare on the big hits
+  let fl = 0;
+  for (const [h, a, d] of [[12.4, .75, .32], [33.8, .2, .3], [36.0, .6, .35]]) if (t >= h && t < h + d) fl += a * (1 - eo(prog(t, h, h + d)));
+  $('flash').style.opacity = fl;
+  let fo = 0, fy = .5;
+  for (const [h, y] of [[12.4, P ? .42 : .38], [28.6, P ? .5 : .54], [33.8, .56], [36.0, P ? .38 : .3]]) {
+    if (t >= h - .05 && t < h + 1.4) { const p = prog(t, h - .05, h + 1.4); fo = Math.max(fo, Math.sin(Math.min(1, p * 6) * Math.PI / 2) * (1 - p) ** 1.5); fy = y; }
+  }
+  set($('flare'), { top: px(H * fy), opacity: fo, transform: `scaleX(${.4 + fo * .8}) scaleY(${.6 + fo})` });
+
+  // glow + rays behind the logo and end card
+  const g = Math.max(prog(t, 12.35, 12.6) * (1 - prog(t, 16.4, 17.0)), prog(t, 35.95, 36.3) * (1 - prog(t, 41.2, 42)));
+  const gy = t < 20 ? (P ? .42 : .38) : (P ? .38 : .3);
+  set($('glow'), { opacity: g, transform: `translateY(${(gy - .5) * H}px) scale(${.9 + .1 * Math.sin(t * 1.4)})` });
+  set($('rays'), { opacity: g * .9, transform: `translateY(${(gy - .5) * H}px) rotate(${t * 4}deg) scale(${1 + g * .1})` });
+
+  // black cut before the final hit
+  $('black').style.opacity = t >= 35.75 && t < 36.0 ? 1 : (t >= 41.3 ? prog(t, 41.3, 42) : 0);
+
+  // ---- A  0–4.6
+  if (show('A', t, 0, 4.6, .07)) {
+    maskIn($('Atext'), t, 1.45, .34, .55);
+    [...$('lines').children].forEach((l, i) => { l.style.transform = `translateY(${-t * 2 * U}px)`; l.style.opacity = eo(prog(t, .2 + i * .04, .9 + i * .04)); });
+    const sp = prog(t, .4, 3.6);
+    set($('scan'), { top: px(H * (.04 + sp * .92)), opacity: Math.sin(sp * Math.PI) * .9 });
+    fadeOut($('A'), t, 4.25, 4.6);
+  }
+  // ---- B  4.5–8.9
+  if (show('B', t, 4.5, 8.9)) {
+    $('Bhead').style.top = P ? '11%' : '14%';
+    $('Beye').style.opacity = eo(prog(t, 4.55, 5.0));
+    lineIn($('Btitle'), t, 4.6, .7); maskIn($('Btitle'), t, 4.6, .07, .6);
+    [...$('cards').children].forEach((c, i) => {
+      const at = 5.2 + i * .55, p = prog(t, at, at + .4), s = p <= 0 ? 0 : back(p);
+      const [x, y] = QP[i], drift = Math.sin(t * 1.1 + i) * .7;
+      const out = eio(prog(t, 8.45, 8.9)), dx = (x - .5) * out * 70, dy = (y - .5) * out * 70;
+      set(c, { left: px(x * W), top: px(y * H), opacity: clamp(p * 4) * (1 - out), transform: `translate(calc(-50% + ${dx * U}px),calc(-50% + ${(dy + drift) * U}px)) scale(${(P ? .8 : 1) * s * (1 + out * .3)}) rotate(${(i % 2 ? 1 : -1) * (1 - p) * 6}deg)` });
+    });
+    $('Bhead').style.opacity = 1 - eio(prog(t, 8.45, 8.85));
+  }
+  // ---- C  8.8–12.4
+  if (show('C', t, 8.8, 12.4, .06)) {
+    $('Chead').style.top = P ? '14%' : '15%';
+    maskIn($('Chead'), t, 9.05, .1, .6);
+    $('Chead').style.opacity = 1 - prog(t, 11.6, 11.95);
+    const collapse = eio(prog(t, 11.55, 12.35));
+    [...$('chaps').children].forEach((c, i) => {
+      const at = 9.6 + i * .3, p = ex(prog(t, at, at + .6));
+      const kk = i - 2, rot = kk * (P ? 9 : 10) * (1 - collapse);
+      const x = W / 2 + kk * (P ? 7.5 : 17) * U * (1 - collapse), y = H * (P ? .58 : .6) + Math.abs(kk) * 2.2 * U * (1 - collapse) - collapse * H * (P ? .16 : .22);
+      set(c, { left: px(x), top: px(y), opacity: clamp(p * 2) * (1 - prog(t, 12.15, 12.35)), transform: `translate(-50%,-50%) translateY(${(1 - p) * 45 * U}px) rotate(${rot}deg) scale(${(1 - collapse * .75) * (P ? .78 : 1)})` });
+    });
+  }
+  // ---- D  12.35–17.0
+  if (show('D', t, 12.35, 17.0, .05)) {
+    const my = H * (P ? .42 : .38), mh = (P ? 17 : 19) * U, mw = mh * .749;
+    const p = prog(t, 12.4, 12.75), sc = 1.7 - .7 * ex(p);
+    set($('Dmark'), { top: px(my - mh / 2), width: px(mw), height: px(mh), marginLeft: px(-mw / 2), opacity: clamp(p * 5), transform: `scale(${sc * (1 + prog(t, 12.75, 17) * .03)})` });
+    const r = ex(prog(t, 12.4, 13.6)), r2 = eo(prog(t, 12.5, 14.2)), rs = 30 * U;
+    set($('shock'), { top: px(my - rs / 2), width: px(rs), height: px(rs), marginLeft: px(-rs / 2), opacity: (1 - r) * .9, transform: `scale(${.3 + r * 3.2})` });
+    set($('shock2'), { top: px(my - rs / 2), width: px(rs), height: px(rs), marginLeft: px(-rs / 2), opacity: (1 - r2) * .6, transform: `scale(${.3 + r2 * 4.5})` });
+    $('Dword').style.fontSize = px(S.D * U);
+    $('Dwordbox').style.top = px(my + mh * .62);
+    maskIn($('Dword'), t, 12.62, .035, .6);
+    const rl = ex(prog(t, 14.4, 15.2)), rw = (P ? 60 : 44) * U;
+    set($('Drule'), { top: px(my + mh * .62 + S.D * U * 1.42), width: px(rw), marginLeft: px(-rw / 2), transform: `scaleX(${rl})`, opacity: rl });
+    const s = ex(prog(t, 14.6, 15.5));
+    set($('Dsub'), { top: px(my + mh * .62 + S.D * U * 1.42 + 3 * U), opacity: s, letterSpacing: `${.9 - s * .4}em`, transform: `translateY(${(1 - s) * 1.5 * U}px)` });
+    if (P) $('Dsub').style.fontSize = px(2.1 * U);
+    fadeOut($('D'), t, 16.6, 17.0);
+  }
+  // ---- E  16.9–21.4
+  if (show('E', t, 16.9, 21.4, .035)) {
+    const shotW = P ? W * .88 : W * .5, shotH = shotW * 950 / 1340;
+    if (P) set($('Ehead'), { left: px(W * .07), top: px(H * .1), width: px(W * .86), textAlign: 'center' });
+    else set($('Ehead'), { left: px(W * .06), top: px(H * .3), width: px(W * .36) });
+    $('Eeye').classList.toggle('left', !P);
+    $('Eeye').style.opacity = eo(prog(t, 17.0, 17.4));
+    maskIn($('Etitle'), t, 17.05, .08, .6);
+    const bp = eo(prog(t, 17.6, 18.2)); set($('Ebody'), { opacity: bp, transform: `translateY(${(1 - bp) * 2 * U}px)` });
+    const sp = ex(prog(t, 17.25, 18.2)), push = prog(t, 18.2, 21.4);
+    const sx = P ? W * .06 : W * .45, sy = P ? H * .37 : H * .5 - shotH / 2;
+    set($('Eshot'), { width: px(shotW), left: px(sx), top: px(sy), opacity: clamp(sp * 2), transform: `perspective(${150 * U}px) rotateX(${(1 - sp) * 24 + 3}deg) rotateY(${P ? 0 : -7 * (1 - push * .6)}deg) translateY(${(1 - sp) * 20 * U}px) scale(${1 + push * .05})`, transformOrigin: '50% 100%' });
+    [['c1', 19.1], ['c2', 19.5], ['c3', 19.9]].forEach(([id, at], i) => {
+      const p = prog(t, at, at + .38), s = p <= 0 ? 0 : back(p);
+      const cx = P ? [W * .05, W * .36, W * .12][i] : [sx - 4 * U, sx + shotW * .6, sx + shotW * .3][i];
+      const cy = P ? sy + shotH + [3, 9, 15][i] * U : [sy + shotH * .42, sy - 3.5 * U, sy + shotH + 1.5 * U][i];
+      set($(id), { left: px(cx), top: px(cy), opacity: clamp(p * 4), transform: `scale(${s})` });
+    });
+    fadeOut($('E'), t, 21.0, 21.4);
+  }
+  // ---- F  21.3–25.2
+  if (show('F', t, 21.3, 25.2)) {
+    $('Fhead').style.top = P ? '11%' : '9%';
+    $('Feye').style.opacity = eo(prog(t, 21.4, 21.8));
+    maskIn($('Ftitle'), t, 21.45, .08, .6);
+    const cw = P ? W * .84 : 72 * U, chh = P ? 52 * U : 44 * U, ip = ex(prog(t, 21.6, 22.4));
+    set($('flip'), { width: px(cw), height: px(chh), left: px(W / 2 - cw / 2), top: px(H * (P ? .56 : .59) - chh / 2), opacity: clamp(ip * 2) * (1 - prog(t, 24.8, 25.15)), transform: `translateY(${(1 - ip) * 24 * U}px) rotate(${(1 - ip) * -4}deg)` });
+    const f1 = eio(prog(t, 23.0, 23.6));
+    $('card').style.transform = `rotateY(${f1 * 180}deg) scale(${1 - Math.sin(f1 * Math.PI) * .07})`;
+  }
+  // ---- G  25.1–30.2
+  if (show('G', t, 25.1, 30.2, .04)) {
+    $('Ghead').style.top = P ? '10%' : '7.5%';
+    $('Geye').style.opacity = eo(prog(t, 25.2, 25.6));
+    maskIn($('Gtitle'), t, 25.25, .08, .6);
+    const cy = H * (P ? .5 : .54), rs = (P ? 48 : 46) * U;
+    set($('ringsvg'), { top: px(cy - rs / 2), width: px(rs), height: px(rs), marginLeft: px(-rs / 2) });
+    const ip = ex(prog(t, 25.35, 26.1)); $('ringsvg').style.opacity = ip;
+    $('ringsvg').style.transform = `scale(${.85 + .15 * ip}) rotate(${(1 - ip) * -30}deg)`;
+    const rp = eio(prog(t, 26.0, 28.6));
+    $('arc').setAttribute('stroke-dashoffset', 540.35 * (1 - .87 * rp));
+    $('num').textContent = Math.round(87 * rp);
+    $('num').parentElement.style.fontSize = px(12 * U); $('pct').style.fontSize = px(5.5 * U);
+    set($('readout'), { top: px(cy), opacity: ip });
+    const land = prog(t, 28.6, 29.0);
+    set($('ready'), { opacity: ex(land), transform: `scale(${1 + .22 * Math.sin(land * Math.PI)})` });
+    [['f1', 28.9], ['f2', 29.15], ['f3', 29.4]].forEach(([id, at], i) => {
+      const p = ex(prog(t, at, at + .45)), x = P ? W / 2 : W * (.2 + i * .3), y = P ? H * (.8 + i * .055) : H * .88;
+      set($(id), { left: px(x), top: px(y), opacity: p, transform: `translate(-50%,-50%) translateY(${(1 - p) * 3 * U}px) scale(${P ? .9 : 1})` });
+    });
+    fadeOut($('G'), t, 29.8, 30.2);
+  }
+  // ---- H  30.1–35.75
+  if (show('H', t, 30.1, 35.75, .08)) {
+    const cs = (P ? 80 : 74) * U;
+    set($('clock'), { width: px(cs), height: px(cs), marginLeft: px(-cs / 2), marginTop: px(-cs / 2), opacity: .17 * eo(prog(t, 30.1, 30.9)) });
+    const ticks = Math.max(0, Math.floor((t - 30.4) / .5) + 1);
+    const into = t - 30.4 - (ticks - 1) * .5, kick = ticks > 0 ? Math.exp(-into * 30) * 1.5 : 0;
+    $('hand').setAttribute('transform', `rotate(${ticks * 6 + kick} 100 100)`);
+    maskIn($('H1'), t, 30.85, .3, .6);
+    const p = prog(t, 33.8, 34.25);
+    maskIn($('H2'), t, 33.78, .05, .45);
+    $('H2').style.transform = `scale(${p <= 0 ? 1.12 : 1.12 - .12 * ex(p)})`;
+  }
+  // ---- I  36.0–42
+  if (show('I', t, 36.0, 99, .035)) {
+    const mh = (P ? 13 : 13) * U;
+    set($('Imark'), { width: px(mh * .749), height: px(mh) });
+    const m = prog(t, 36.0, 36.35); set($('Imark'), { opacity: clamp(m * 5), transform: `scale(${1.6 - .6 * ex(m)})` });
+    $('Iword').style.fontSize = px(S.I * U); $('Iline').style.fontSize = px((P ? 4.6 : 4.2) * U);
+    maskIn($('Iword'), t, 36.42, .03, .6);
+    maskIn($('Iline'), t, 37.55, .12, .6);
+    [['Iurl', 38.3], ['Iprice', 38.8]].forEach(([id, at]) => { const p = ex(prog(t, at, at + .6)); set($(id), { opacity: p, transform: `translateY(${(1 - p) * 3 * U}px)` }); });
+    if (P) $('Iprice').style.fontSize = px(1.8 * U);
+  }
+};
+window.render(0);
+</script></body></html>

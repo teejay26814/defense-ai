@@ -25,3 +25,13 @@ ffmpeg -framerate 30 -i frames_L/%05d.jpg -i audio/mix.wav -c:v libx264 -crf 17 
 
 Scene timings in `film.html` and `sound.py` are matched to the voiceover (it starts at 0.8 s).
 If the narration is regenerated, re-measure the sentence starts and move both together.
+
+## Grand cut (film2)
+
+42-second trailer version: letterbox, logo slam with light rays, crisp mask text reveals, trailer score (braams, toms, ticking clock).
+Voice is free and local: Kokoro TTS (`kokoro-onnx`), a 70/30 blend of `am_michael` and `am_onyx`, one line per file in `assets/vo-lines/`.
+
+    python3 sound2.py assets/vo-lines audio2   # score, sfx, voice processing and mix
+    bash build2.sh                              # renders both orientations at 2x, encodes, loudness -14 LUFS
+
+`render2.js` reads `FILM`, `DUR`, `DPR` and `Q` from the environment.
