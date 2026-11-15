@@ -1,0 +1,106 @@
+{
+ "name": "day2",
+ "sources": {
+  "main": "src/day2/b.MOV"
+ },
+ "words": {
+  "main": "work/d2/b.words.json"
+ },
+ "lut": "looks/nurse-studio.cube",
+ "anchor_y": 0.38,
+ "keeps": [
+  [
+   "main",
+   0.94,
+   3.12,
+   1.0
+  ],
+  [
+   "main",
+   3.66,
+   5.52,
+   1.12
+  ],
+  [
+   "main",
+   7.04,
+   10.82,
+   1.0
+  ],
+  [
+   "main",
+   11.24,
+   13.86,
+   1.12
+  ],
+  [
+   "main",
+   17.14,
+   17.78,
+   1.0
+  ],
+  [
+   "main",
+   18.88,
+   24.2,
+   1.12
+  ],
+  [
+   "main",
+   26.92,
+   27.7,
+   1.25
+  ],
+  [
+   "main",
+   28.4,
+   30.5,
+   1.0
+  ]
+ ],
+ "fix": {},
+ "emphasis": [
+  "monday",
+  "ai",
+  "automation",
+  "business",
+  "content"
+ ],
+ "lines": [
+  "hi guys",
+  "hi everyone",
+  "good evening",
+  "this is",
+  "I think this is",
+  "past seven",
+  "I was supposed",
+  "to make content today",
+  "but I was",
+  "really occupied today",
+  "I had a lot",
+  "of things on my desk",
+  "I needed to attend to",
+  "we'll resume",
+  "back Monday",
+  "I posted a few things",
+  "that will help",
+  "business owners",
+  "that will also help",
+  "people trying to get",
+  "into AI automation",
+  "I'm here for you",
+  "see you all",
+  "on Monday",
+  "cheers",
+  "bye"
+ ],
+ "tail": 1.6,
+ "end_card": {
+  "name": "Tolulope Fatoyinbo",
+  "title": "Nurse \u00b7 AI Automation",
+  "cta": "See you Monday"
+ },
+ "broll": [],
+ "sfx": [],
+ "cap_top": 1480
+}

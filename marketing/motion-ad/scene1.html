@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Motion ad — scene 1 (art-directed)</title>
+<link rel="stylesheet" href="./fonts.css" />
+<style>
+/* ============================================================================
+   SCENE 1 — "Someone's calling / nobody's around to pick up."
+   Art direction system:
+   - Camera: gentle push-in on the object layer; text layer stays crisp.
+   - Light: top-left. Every shadow falls down-right, softness scales with depth.
+   - Depth: 3 tiers (back = smaller, blurred, faint; mid; fore = large, sharp,
+     heavy shadow). Objects drift at different rates => parallax.
+   - Composition: asymmetric. Type holds the left; the hero desk phone anchors
+     the right and is partly cropped by the frame. Negative space is deliberate.
+   - Motion hierarchy: hero rings; bell rings; money flies out; the rest drift
+     slightly; the scene settles for the headline emphasis.
+   1920x1080, 8s, deterministic (transform/opacity only).
+   ============================================================================ */
+:root{
+  --paper:#efece6; --ink:#14151a; --muted:#6b6f78; --accent:#2563eb;
+  --sans:"Inter",system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#c9cdd3}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:var(--sans);color:var(--ink);
+  background:
+    radial-gradient(120% 90% at 30% 20%, #f5f2ec 0%, #ece8e1 55%, #e4dfd6 100%);}
+
+/* subtle premium grid, faded toward the edges (not graph paper) */
+.grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgb(20 21 26/.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgb(20 21 26/.045) 1px,transparent 1px);
+  background-size:96px 96px;background-position:center;
+  -webkit-mask-image:radial-gradient(115% 100% at 50% 45%, #000 40%, transparent 92%);
+  mask-image:radial-gradient(115% 100% at 50% 45%, #000 40%, transparent 92%);}
+.vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(130% 110% at 50% 42%, transparent 58%, rgb(20 21 26/.10) 100%);}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ---- object (camera) layer: gentle push-in ---- */
+#objects{position:absolute;inset:0;transform-origin:62% 56%;
+  animation:push 8s cubic-bezier(.22,1,.36,1) both}
+@keyframes push{0%{transform:scale(1.0)}100%{transform:scale(1.055)}}
+
+.o{position:absolute;opacity:0;animation:pop .7s cubic-bezier(.34,1.56,.64,1) both}
+.o .fl{will-change:transform}
+.art{display:block}
+/* depth tiers: shadow direction constant (down-right = light top-left) */
+.back .art{filter:drop-shadow(9px 13px 13px rgb(20 21 26/.16))}
+.back{filter:blur(.7px);opacity:.96}
+.mid  .art{filter:drop-shadow(16px 22px 20px rgb(20 21 26/.20))}
+.fore .art{filter:drop-shadow(30px 42px 36px rgb(20 21 26/.30))}
+
+@keyframes pop{0%{opacity:0;transform:scale(.72) translateY(24px)}100%{opacity:1;transform:none}}
+/* generic drift; amplitude + tilt + rate vary per object => parallax */
+@keyframes drift{0%,100%{transform:translateY(calc(var(--amp)*-1)) rotate(var(--r))}
+                 50%{transform:translateY(var(--amp)) rotate(var(--r))}}
+/* hero ring: quick wiggle burst, then settle */
+@keyframes ring{0%{transform:rotate(0)}
+  4%{transform:rotate(-4deg)}8%{transform:rotate(4deg)}12%{transform:rotate(-3deg)}16%{transform:rotate(3deg)}20%{transform:rotate(0)}
+  30%{transform:rotate(0)}
+  34%{transform:rotate(-4deg)}38%{transform:rotate(4deg)}42%{transform:rotate(-3deg)}46%{transform:rotate(3deg)}50%{transform:rotate(0)}
+  100%{transform:rotate(0)}}
+/* money flies up and out, slowly */
+@keyframes fly{0%{transform:translate(0,0) rotate(-8deg)}100%{transform:translate(90px,-120px) rotate(4deg)}}
+
+/* ================= typography layer (crisp, dominant) ================= */
+.type{position:absolute;left:150px;top:0;height:100%;width:980px;
+  display:flex;flex-direction:column;justify-content:center;z-index:30}
+.line{overflow:hidden}
+.line .in{display:block}
+
+/* phase A: "Someone's calling." */
+.a1{position:absolute;top:462px;left:0}
+.a1 .in{font-size:70px;font-weight:500;letter-spacing:-0.02em;color:var(--ink);
+  transform:translateY(110%);animation:up .8s cubic-bezier(.22,1,.36,1) .35s both, awayUp .55s cubic-bezier(.6,0,.4,1) 2.75s both}
+@keyframes up{to{transform:translateY(0)}}
+@keyframes awayUp{to{transform:translateY(-120%)}}
+
+/* phase B: "But nobody's around / to pick up." */
+.b{opacity:1}
+.b .l1{font-size:96px;font-weight:700;letter-spacing:-0.025em;line-height:1.0;color:var(--ink)}
+.b .l2{font-size:122px;font-weight:800;letter-spacing:-0.03em;line-height:0.98;margin-top:6px}
+.b .l2 .a{color:var(--accent)}
+.b .in{transform:translateY(115%)}
+.b .l1 .in{animation:up .7s cubic-bezier(.22,1,.36,1) 3.05s both}
+.b .l2 .in{animation:up .8s cubic-bezier(.22,1,.36,1) 3.45s both, emph .9s cubic-bezier(.34,1.56,.64,1) 4.35s forwards}
+@keyframes emph{0%{transform:translateY(0) scale(1)}40%{transform:translateY(0) scale(1.04)}100%{transform:translateY(0) scale(1)}}
+</style>
+</head>
+<body>
+<div id="stage" data-fps="30" data-duration="8">
+  <div class="grid"></div>
+
+  <div id="objects">
+    <!-- HERO: desk phone, foreground, right, partly cropped, ringing -->
+    <div class="o fore" style="right:-40px;top:520px;animation-delay:.15s">
+      <div class="fl" style="animation:drift 6s ease-in-out 1.2s infinite;--amp:8px;--r:-4deg">
+        <div style="animation:ring 3.2s ease-in-out .9s both">
+          <img class="art" src="objects/telephone.png" width="360">
+        </div>
+      </div>
+    </div>
+
+    <!-- SECONDARY: bell (incoming call), mid, above the phone, ringing -->
+    <div class="o mid" style="right:360px;top:250px;animation-delay:.4s">
+      <div class="fl" style="animation:drift 5s ease-in-out .6s infinite;--amp:7px;--r:6deg">
+        <div style="animation:ring 3.0s ease-in-out 1.0s both"><img class="art" src="objects/bell.png" width="120"></div>
+      </div>
+    </div>
+
+    <!-- SECONDARY: money flying out (lost revenue), top-right -->
+    <div class="o mid" style="right:150px;top:150px;animation-delay:.7s">
+      <div class="fl" style="animation:fly 7s ease-in-out .8s both;--r:-8deg"><img class="art" src="objects/money_wings.png" width="132"></div>
+    </div>
+
+    <!-- TERTIARY: calendar (appointments), back, top-left small -->
+    <div class="o back" style="left:120px;top:150px;animation-delay:.55s">
+      <div class="fl" style="animation:drift 7.5s ease-in-out .2s infinite;--amp:6px;--r:-5deg"><img class="art" src="objects/calendar.png" width="108"></div>
+    </div>
+
+    <!-- TERTIARY: keyboard (admin work), back, lower-left -->
+    <div class="o back" style="left:170px;top:760px;animation-delay:.75s">
+      <div class="fl" style="animation:drift 8s ease-in-out .9s infinite;--amp:5px;--r:4deg"><img class="art" src="objects/keyboard.png" width="150"></div>
+    </div>
+
+    <!-- ENVIRONMENTAL: coffee, back, near the phone, small -->
+    <div class="o back" style="right:150px;top:820px;animation-delay:.9s">
+      <div class="fl" style="animation:drift 6.5s ease-in-out .5s infinite;--amp:6px;--r:7deg"><img class="art" src="objects/coffee.png" width="82"></div>
+    </div>
+  </div>
+
+  <!-- type -->
+  <div class="type">
+    <div class="line a1"><span class="in">Someone's calling.</span></div>
+    <div class="b">
+      <div class="line l1"><span class="in">But nobody's around</span></div>
+      <div class="line l2"><span class="in">to <span class="a">pick up.</span></span></div>
+    </div>
+  </div>
+
+  <div class="vignette"></div>
+  <div class="grain"></div>
+</div>
+</body>
+</html>

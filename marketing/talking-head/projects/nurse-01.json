@@ -1,0 +1,392 @@
+{
+ "name": "nurse-01",
+ "sources": {
+  "main": "src/nurse-01/IMG_4544.MOV",
+  "close": "src/nurse-01/IMG_4545.MOV",
+  "screen": "src/nurse-01/screen.mov"
+ },
+ "camera": {
+  "screen": false
+ },
+ "words": {
+  "main": "work/n1/IMG_4544.words.json",
+  "close": "work/n1/IMG_4545.words.json"
+ },
+ "lut": "looks/nurse-studio.cube",
+ "anchor_y": 0.38,
+ "keeps": [
+  [
+   "main",
+   2.06,
+   2.46,
+   1.0
+  ],
+  [
+   "main",
+   3.14,
+   4.34,
+   1.12
+  ],
+  [
+   "main",
+   5.96,
+   8.88,
+   1.0
+  ],
+  [
+   "main",
+   13.4,
+   19.52,
+   1.12
+  ],
+  [
+   "main",
+   20.84,
+   23.78,
+   1.0
+  ],
+  [
+   "main",
+   24.8,
+   26.2,
+   1.12
+  ],
+  [
+   "main",
+   32.48,
+   36.18,
+   1.0
+  ],
+  [
+   "main",
+   39.76,
+   44.14,
+   1.12
+  ],
+  [
+   "main",
+   45.22,
+   51.54,
+   1.0
+  ],
+  [
+   "main",
+   53.08,
+   59.26,
+   1.12
+  ],
+  [
+   "main",
+   60.52,
+   61.34,
+   1.28
+  ],
+  [
+   "main",
+   79.56,
+   82.9,
+   1.12
+  ],
+  [
+   "main",
+   97.48,
+   98.52,
+   1.0
+  ],
+  [
+   "main",
+   86.78,
+   91.42,
+   1.12
+  ],
+  [
+   "main",
+   99.46,
+   101.94,
+   1.0
+  ],
+  [
+   "main",
+   102.82,
+   108.1,
+   1.12
+  ],
+  [
+   "main",
+   108.34,
+   108.82,
+   1.25,
+   {
+    "pad_end": 0.14
+   }
+  ],
+  [
+   "close",
+   0.0,
+   1.4,
+   1.0
+  ]
+ ],
+ "fix": {
+  "n18": "n8n",
+  "cloud": "Claude",
+  "air": "AI",
+  "filling": "following"
+ },
+ "lines": [
+  "Hi, I'm Tolu",
+  "I'm an",
+  "AI automation",
+  "specialist",
+  "I'm also a",
+  "registered nurse",
+  "hoping to transition",
+  "fully into AI",
+  "honestly",
+  "this is my",
+  "first content",
+  "and this is",
+  "just me trying",
+  "to put myself",
+  "out there",
+  "and talk about",
+  "some of the",
+  "things I do",
+  "if you're wondering",
+  "okay what is",
+  "AI automation",
+  "all about",
+  "AI automation",
+  "is just",
+  "about how you",
+  "save time",
+  "how you replace",
+  "manual work",
+  "how you stop",
+  "doing the exact",
+  "same things",
+  "that you do",
+  "at work",
+  "that takes your time",
+  "if you keep",
+  "wasting time",
+  "doing the same",
+  "repetitive activities",
+  "boring tasks",
+  "like data entry",
+  "maybe trying to",
+  "create content",
+  "come up with",
+  "content ideas",
+  "or following up leads",
+  "and all of that",
+  "I'm here for you",
+  "I'll be sharing",
+  "a lot of tips",
+  "around how I build",
+  "AI automation",
+  "some of the",
+  "errors I get",
+  "I also make use",
+  "of tools like",
+  "n8n",
+  "Zapier",
+  "Make",
+  "and Claude Code",
+  "obviously",
+  "if you're",
+  "also interested",
+  "in learning",
+  "feel free",
+  "to reach out",
+  "if you run",
+  "a business",
+  "that does a lot",
+  "of manual work",
+  "feel free",
+  "to reach out to me",
+  "thank you",
+  "see you in",
+  "my next video",
+  "cheers"
+ ],
+ "tail": 2.4,
+ "emphasis": [
+  "ai",
+  "automation",
+  "specialist",
+  "nurse",
+  "registered",
+  "time",
+  "manual",
+  "n8n",
+  "zapier",
+  "make",
+  "claude",
+  "code",
+  "errors",
+  "business",
+  "tips",
+  "boring"
+ ],
+ "lower_third": {
+  "at": "Tolu",
+  "name": "Tolulope Fatoyinbo",
+  "title": "Nurse \u00b7 AI automation",
+  "dur": 6.3
+ },
+ "tags": [
+  {
+   "at": "specialist",
+   "text": "AI Automation Specialist",
+   "until": "honestly"
+  },
+  {
+   "at": "registered",
+   "text": "Registered Nurse",
+   "until": "honestly"
+  }
+ ],
+ "chips": [
+  {
+   "at": "n8n",
+   "text": "n8n"
+  },
+  {
+   "at": "Zapier",
+   "text": "Zapier"
+  },
+  {
+   "at": "Make",
+   "text": "Make"
+  },
+  {
+   "at": "Claude",
+   "text": "Claude Code"
+  }
+ ],
+ "broll_source": "screen",
+ "broll": [
+  {
+   "at": "replace",
+   "lead": -0.05,
+   "dur": 4.6,
+   "from": 70,
+   "to": 101,
+   "crop": [
+    470,
+    100,
+    770,
+    380
+   ],
+   "label": "<i></i>Demo <b>\u00b7 WhatsApp booking assistant</b>",
+   "cy": 760
+  },
+  {
+   "at": "data",
+   "lead": -0.05,
+   "dur": 2.8,
+   "from": 228.5,
+   "to": 233.5,
+   "crop": [
+    630,
+    165,
+    650,
+    225
+   ],
+   "label": "Airtable <b>\u00b7 bookings logged automatically</b>",
+   "cy": 760
+  },
+  {
+   "at": "tips",
+   "lead": -0.1,
+   "dur": 3.2,
+   "from": 2,
+   "to": 30,
+   "crop": [
+    200,
+    125,
+    900,
+    435
+   ],
+   "label": "n8n <b>\u00b7 BrightSmile Dental workflow</b>",
+   "cy": 760
+  },
+  {
+   "at": "tools",
+   "lead": -0.1,
+   "dur": 4.4,
+   "from": 176,
+   "to": 190,
+   "crop": [
+    330,
+    250,
+    950,
+    440
+   ],
+   "cy": 760
+  }
+ ],
+ "end_card": {
+  "name": "Tolulope Fatoyinbo",
+  "title": "Nurse \u00b7 AI Automation",
+  "cta": "Follow along"
+ },
+ "music": {
+  "track": "Podcast_Background_Music_While_Talking_Interview_-_Free_Music_to_use__No_Copyright_-_TALK_1",
+  "offset": 0,
+  "level_db": -22
+ },
+ "sfx": [
+  {
+   "event": "cut_in",
+   "file": "Whoosh_2",
+   "level": 0.04,
+   "min_zoom": 1.25
+  },
+  {
+   "event": "lower",
+   "file": "Short_Whoosh",
+   "level": 0.09,
+   "offset": 0.12
+  },
+  {
+   "event": "tags",
+   "file": "Pop_1",
+   "level": 0.06,
+   "offset": 0.1
+  },
+  {
+   "event": "broll",
+   "file": "Swoosh",
+   "level": 0.07,
+   "offset": 0.05,
+   "len": 0.6
+  },
+  {
+   "event": "chips",
+   "file": "rm_click__2_",
+   "level": 0.1,
+   "offset": 0.06
+  },
+  {
+   "word": "errors",
+   "file": "Wrong_Answer",
+   "level": 0.035,
+   "offset": 0.15,
+   "len": 0.6
+  },
+  {
+   "event": "end",
+   "file": "Swoosh",
+   "level": 0.13,
+   "offset": 0.08
+  },
+  {
+   "event": "end",
+   "file": "rm_click__2_",
+   "level": 0.1,
+   "offset": 0.66
+  }
+ ]
+}

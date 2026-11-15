@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>4 things to automate first</title>
+
+    <!--
+      Editorial cheat sheet, 4:5 (1080x1350), rendered by render.mjs:
+        node render.mjs composition-automate-first.html automate-first.png
+      Pure white, deep-navy Inter, one soft-blue accent, no gradients or illustration.
+      Typography and white space carry the design; items are a ruled checklist, not cards.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Inter'; font-style: normal; font-weight: 100 900;
+        src: url(../oppverse-launch/fonts/Inter-VF.ttf) format('truetype');
+      }
+      :root {
+        --white: #ffffff;
+        --navy: #0b1f3a;
+        --muted: #526174;
+        --soft: #dce8f5;
+        --hair: #e4e9f0;
+        --pad: 88px;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { background: #e7e9ee; display: flex; justify-content: center; padding: 40px; }
+
+      .card {
+        width: 1080px; height: 1350px; overflow: hidden; background: var(--white); color: var(--navy);
+        font-family: Inter, 'Helvetica Neue', Arial, sans-serif; font-feature-settings: 'ss01', 'cv11';
+        -webkit-font-smoothing: antialiased; display: flex; flex-direction: column;
+      }
+      .top { padding: 84px var(--pad) 0; }
+
+      .kicker {
+        display: flex; justify-content: space-between; align-items: baseline;
+        font-size: 15px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+      }
+      .kicker b { font-weight: 700; color: var(--navy); }
+
+      h1 {
+        margin-top: 40px; font-size: 64px; font-weight: 800; line-height: 1.0; letter-spacing: -0.025em;
+        text-transform: uppercase;
+      }
+      .sub { margin-top: 20px; font-size: 24px; font-weight: 400; line-height: 1.4; color: var(--muted); }
+
+      .list { margin-top: 54px; border-top: 2px solid var(--navy); }
+      .item {
+        display: grid; grid-template-columns: 72px 1fr; padding: 34px 0 35px; border-bottom: 1px solid var(--hair);
+      }
+      .item:last-child { border-bottom: none; }
+      .num { font-size: 21px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: var(--navy); font-variant-numeric: tabular-nums; }
+      .title { font-size: 21px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.2; }
+
+      .ba { margin-top: 16px; display: grid; grid-template-columns: 92px 1fr; row-gap: 12px; align-items: baseline; }
+      .lab { font-size: 12.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+      .lab.b { color: var(--muted); }
+      .lab.a { justify-self: start; color: var(--navy); background: var(--soft); padding: 4px 8px 3px; border-radius: 3px; margin-left: -8px; }
+      .txt { font-size: 19.5px; line-height: 1.38; letter-spacing: -0.005em; }
+      .txt.b { color: var(--muted); font-weight: 400; }
+      .txt.a { color: var(--navy); font-weight: 600; }
+
+      .foot { margin-top: auto; background: var(--navy); color: var(--white); padding: 44px var(--pad) 42px; }
+      .foot .big { font-size: 30px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
+      .foot .small { margin-top: 10px; font-size: 18.5px; font-weight: 400; line-height: 1.45; color: #b9c6d8; }
+      .foot .row {
+        margin-top: 28px; padding-top: 22px; border-top: 1px solid rgb(255 255 255 / 0.16);
+        display: flex; justify-content: space-between; align-items: baseline;
+      }
+      .foot .cta { font-size: 17px; font-weight: 600; letter-spacing: 0.01em; color: var(--white); }
+      .foot .cta span { color: var(--soft); margin-left: 8px; }
+      .foot .who { font-size: 14px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #9fb0c7; }
+    </style>
+  </head>
+
+  <body>
+    <div class="card" id="card">
+      <div class="top">
+        <div class="kicker"><span>Operations cheat sheet</span><b>Save for later</b></div>
+
+        <h1>4 things to<br />automate first</h1>
+        <div class="sub">Simple tasks that quietly eat up hours every week.</div>
+
+        <div class="list">
+          <div class="item">
+            <div class="num">01</div>
+            <div>
+              <div class="title">Repeat enquiries</div>
+              <div class="ba">
+                <span class="lab b">Before</span><span class="txt b">Someone has to answer the same questions again and again.</span>
+                <span class="lab a">After</span><span class="txt a">Answers are available instantly, even outside business hours.</span>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="num">02</div>
+            <div>
+              <div class="title">Lead follow-ups</div>
+              <div class="ba">
+                <span class="lab b">Before</span><span class="txt b">Leads sit in your inbox until someone remembers to follow up.</span>
+                <span class="lab a">After</span><span class="txt a">Follow-ups go out automatically and stop when the lead replies.</span>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="num">03</div>
+            <div>
+              <div class="title">Appointment reminders</div>
+              <div class="ba">
+                <span class="lab b">Before</span><span class="txt b">Staff manually remind people about upcoming appointments.</span>
+                <span class="lab a">After</span><span class="txt a">Reminders go out automatically, with an easy reschedule option.</span>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="num">04</div>
+            <div>
+              <div class="title">Moving data between tools</div>
+              <div class="ba">
+                <span class="lab b">Before</span><span class="txt b">Someone copies information from forms and emails into spreadsheets.</span>
+                <span class="lab a">After</span><span class="txt a">Information moves between your tools automatically.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div class="big">The best automation is usually the boring stuff.</div>
+        <div class="small">Find the repetitive work. Remove it. Give the time back to your team.</div>
+        <div class="row">
+          <div class="cta">Need help finding yours?<span>&rarr;</span></div>
+          <div class="who">Tolulope Fatoyinbo &middot; AI Automation</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

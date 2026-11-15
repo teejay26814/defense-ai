@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Academia Scribes — launch</title>
+<link rel="stylesheet" href="./fonts.css" />
+<style>
+/* ============================================================================
+   Academia Scribes launch film — landscape 16:9.
+   Real, captured app screens (logged into the live app) framed in a browser
+   window and panned on a single deterministic timeline. Hook + CTA are brand
+   title cards. Only transform / opacity animate; every delay absolute, so
+   Chromium seeks each frame and screenshots it.
+   ============================================================================ */
+:root{
+  --navy-050:#f2f6fb;--navy-100:#dce7f4;--navy-300:#8fb4dc;--navy-500:#1155a8;
+  --navy-600:#0a3a7d;--navy-700:#052659;--navy-800:#02193c;--navy-900:#010f26;
+  --parchment:#fdfbf7;--ink:#141821;--ink-muted:#5a6377;--gold:#c9a227;
+  --sans:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --disp:"Fraunces",ui-serif,Georgia,serif;
+  --overlay:0 0 0 1px rgb(5 38 89/.07),0 4px 8px -4px rgb(5 38 89/.12),0 40px 70px -18px rgb(1 15 38/.45);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#02121f}
+#stage{position:relative;width:1280px;height:720px;overflow:hidden;font-family:var(--sans);color:var(--ink);
+  background:var(--parchment);
+  background-image:radial-gradient(ellipse 70% 60% at 8% 0%,rgb(220 231 244/.8),transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 8%,rgb(143 180 220/.14),transparent 55%),
+    radial-gradient(ellipse 90% 70% at 60% 120%,rgb(220 231 244/.5),transparent 65%);}
+#stage::after{content:"";position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+.scene{position:absolute;inset:0;opacity:0}
+.eyebrow{font-size:12px;line-height:1.4;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--ink-muted)}
+
+/* caption column (left) for product scenes */
+.cap{position:absolute;left:56px;top:0;height:100%;width:330px;display:flex;flex-direction:column;justify-content:center}
+.cap .k{color:var(--navy-500)}
+.cap h3{font-family:var(--disp);font-optical-sizing:auto;font-weight:600;font-size:38px;line-height:1.08;letter-spacing:-.025em;color:var(--navy-800);margin-top:12px}
+.cap p{margin-top:14px;font-size:16px;line-height:1.55;color:var(--ink-muted);max-width:300px}
+
+/* browser frame (right) */
+.frame{position:absolute;left:432px;top:64px;width:792px;height:592px;border-radius:14px;overflow:hidden;
+  background:#fff;box-shadow:var(--overlay);border:1px solid var(--navy-100)}
+.chrome{height:34px;background:#ece7df;border-bottom:1px solid rgb(5 38 89/.08);display:flex;align-items:center;gap:7px;padding:0 13px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#e5675f}.dot.y{background:#e6b34d}.dot.g{background:#5fb87a}
+.omni{margin-left:12px;height:20px;flex:1;max-width:360px;border-radius:10px;background:#fff;border:1px solid rgb(5 38 89/.1);
+  display:flex;align-items:center;padding:0 11px;font-size:10.5px;color:var(--ink-muted);gap:6px}
+.omni svg{width:10px;height:10px;opacity:.55}
+.vp{position:relative;height:calc(100% - 34px);overflow:hidden;background:#0a1a2f}
+.shot{position:absolute;top:0;left:0;width:100%;height:auto;display:block;will-change:transform}
+
+/* ================= brand title cards (hook / cta) ================= */
+.field{position:absolute;inset:0;background:var(--navy-800);
+  background-image:radial-gradient(ellipse 80% 60% at 15% 0%,rgb(17 85 168/.35),transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 15%,rgb(143 180 220/.16),transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 110%,rgb(1 15 38/.85),transparent 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff}
+.field .rules{position:absolute;right:-40px;top:0;height:100%;width:420px;opacity:.2;
+  background-image:repeating-linear-gradient(to bottom,rgb(255 255 255/.85) 0 1px,transparent 1px 13px);
+  -webkit-mask-image:linear-gradient(to left,black 6%,transparent 90%);mask-image:linear-gradient(to left,black 6%,transparent 90%)}
+.hookmark{color:#fff}.hookmark svg{height:60px;width:auto}
+.field h1{font-family:var(--disp);font-optical-sizing:auto;font-weight:600;font-size:60px;line-height:1.05;letter-spacing:-.03em;max-width:920px}
+.field .sub{margin-top:22px;font-size:19px;color:rgb(255 255 255/.72)}
+.field .url{margin-top:26px;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#dce7f4;font-weight:600}
+
+/* ===== reveal + pan keyframes (transform/opacity only) ===== */
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes riseS{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(46px) scale(.99)}to{opacity:1;transform:none}}
+
+/* per-scene vertical pans (px computed from 792-wide frame, 558-tall viewport) */
+@keyframes pan1{from{transform:translateY(0)}to{transform:translateY(-322px)}}
+@keyframes pan2{from{transform:translateY(0)}to{transform:translateY(-192px)}}
+@keyframes pan4{from{transform:translateY(0)}to{transform:translateY(-263px)}}
+@keyframes pan5{from{transform:translateY(0)}to{transform:translateY(-175px)}}
+
+/* ============ SCENE OPACITY TRACKS (total 35s) ============ */
+.scene{animation-duration:35s;animation-timing-function:linear;animation-fill-mode:both}
+.s0{animation-name:sc0}.s1{animation-name:sc1}.s2{animation-name:sc2}.s3{animation-name:sc3}
+.s4{animation-name:sc4}.s5{animation-name:sc5}.s6{animation-name:sc6}.s7{animation-name:sc7}
+@keyframes sc0{0%{opacity:0}1.43%{opacity:1}9.71%{opacity:1}10.86%{opacity:0}100%{opacity:0}}
+@keyframes sc1{0%,10.86%{opacity:0}12.29%{opacity:1}24.57%{opacity:1}25.71%{opacity:0}100%{opacity:0}}
+@keyframes sc2{0%,25.71%{opacity:0}27.14%{opacity:1}38.29%{opacity:1}39.43%{opacity:0}100%{opacity:0}}
+@keyframes sc3{0%,39.43%{opacity:0}40.86%{opacity:1}50.29%{opacity:1}51.43%{opacity:0}100%{opacity:0}}
+@keyframes sc4{0%,51.43%{opacity:0}52.86%{opacity:1}64.57%{opacity:1}65.71%{opacity:0}100%{opacity:0}}
+@keyframes sc5{0%,65.71%{opacity:0}67.14%{opacity:1}78.86%{opacity:1}80%{opacity:0}100%{opacity:0}}
+@keyframes sc6{0%,80%{opacity:0}81.43%{opacity:1}90.86%{opacity:1}91.43%{opacity:0}100%{opacity:0}}
+@keyframes sc7{0%,91.43%{opacity:0}92.86%{opacity:1}100%{opacity:1}}
+
+/* S0 hook inner */
+.s0 .hookmark{animation:pop .9s cubic-bezier(.22,1,.36,1) .2s both}
+.s0 h1{animation:rise 1s cubic-bezier(.22,1,.36,1) .75s both}
+.s0 .sub{animation:rise .9s cubic-bezier(.22,1,.36,1) 1.5s both}
+
+/* product scenes: frame entrance, caption rise, pan */
+.s1 .frame{animation:slideUp .85s cubic-bezier(.22,1,.36,1) 3.95s both}
+.s1 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 4.35s both}
+.s1 .shot{animation:pan1 4.0s ease-in-out 4.5s both}
+
+.s2 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 9.15s both}
+.s2 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 9.5s both}
+.s2 .shot{animation:pan2 3.4s ease-in-out 9.7s both}
+
+.s3 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 13.95s both}
+.s3 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 14.3s both}
+
+.s4 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 18.15s both}
+.s4 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 18.5s both}
+.s4 .shot{animation:pan4 3.6s ease-in-out 19.0s both}
+
+.s5 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 23.15s both}
+.s5 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 23.5s both}
+.s5 .shot{animation:pan5 3.6s ease-in-out 24.0s both}
+
+.s6 .frame{animation:slideUp .8s cubic-bezier(.22,1,.36,1) 28.15s both}
+.s6 .cap{animation:rise .8s cubic-bezier(.22,1,.36,1) 28.5s both}
+
+/* S7 cta */
+.s7 .hookmark{animation:pop .8s cubic-bezier(.22,1,.36,1) 32.1s both}
+.s7 h1{animation:rise .9s cubic-bezier(.22,1,.36,1) 32.5s both}
+.s7 .sub{animation:rise .8s ease 32.9s both}
+.s7 .url{animation:rise .8s ease 33.3s both}
+
+/* reusable chrome markup helper */
+.chrome .omni svg{}
+</style>
+</head>
+<body>
+<div id="stage" data-fps="30" data-duration="35">
+
+  <!-- S0 HOOK -->
+  <section class="scene s0"><div class="field"><div class="rules"></div>
+    <div class="hookmark"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg></div>
+    <h1 style="margin-top:30px">If your defense was tomorrow,<br>would you be ready?</h1>
+    <p class="sub">Academia Scribes — your project, turned into a coach.</p>
+  </div></section>
+
+  <!-- S1 DASHBOARD -->
+  <section class="scene s1">
+    <div class="cap"><p class="eyebrow k">Your defense command centre</p>
+      <h3>Everything in one place.</h3>
+      <p>One dashboard that always answers the only question that matters: what do I do next?</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Academia Scribes  ·  Dashboard</div></div>
+      <div class="vp"><img class="shot" src="captures/01-dashboard.png" alt=""></div></div>
+  </section>
+
+  <!-- S2 PROJECT / KNOWLEDGE BASE -->
+  <section class="scene s2">
+    <div class="cap"><p class="eyebrow k">Upload once</p>
+      <h3>Your chapters become a knowledge base.</h3>
+      <p>Five chapters in, read and indexed — 17,244 words the AI can draw from.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Academia Scribes  ·  My project</div></div>
+      <div class="vp"><img class="shot" src="captures/03-project.png" alt=""></div></div>
+  </section>
+
+  <!-- S3 ASK -->
+  <section class="scene s3">
+    <div class="cap"><p class="eyebrow k">Ask my project</p>
+      <h3>Ask it anything.</h3>
+      <p>Every answer comes from your own chapters, with the section it came from.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Academia Scribes  ·  Ask my project</div></div>
+      <div class="vp"><img class="shot" src="captures/04-ask-typed.png" alt="" style="top:16px"></div></div>
+  </section>
+
+  <!-- S4 FLASHCARDS -->
+  <section class="scene s4">
+    <div class="cap"><p class="eyebrow k">Practice like the panel</p>
+      <h3>Questions a panel would actually ask.</h3>
+      <p>Answer from memory, then reveal what your project says. Rate yourself honestly.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Academia Scribes  ·  Flashcards</div></div>
+      <div class="vp"><img class="shot" src="captures/05-flashcard-revealed.png" alt=""></div></div>
+  </section>
+
+  <!-- S5 QUIZ -->
+  <section class="scene s5">
+    <div class="cap"><p class="eyebrow k">Test what you know</p>
+      <h3>Multiple choice, from your own work.</h3>
+      <p>Every option is something your project could have said — and the answer shows the passage it came from.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Academia Scribes  ·  Quiz</div></div>
+      <div class="vp"><img class="shot" src="captures/06-quiz-answered.png" alt=""></div></div>
+  </section>
+
+  <!-- S6 MOCK DEFENSE -->
+  <section class="scene s6">
+    <div class="cap"><p class="eyebrow k">The north star</p>
+      <h3>Sit a mock defense.</h3>
+      <p>Answer as you would in the room. Each answer is marked against what your project actually says.</p></div>
+    <div class="frame"><div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="omni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Academia Scribes  ·  Mock defense</div></div>
+      <div class="vp"><img class="shot" src="captures/08-defense-sitting.png" alt="" style="top:12px"></div></div>
+  </section>
+
+  <!-- S7 CTA -->
+  <section class="scene s7"><div class="field"><div class="rules"></div>
+    <div class="hookmark"><svg viewBox="0 0 44.748 59.754" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M43.888 11.234L6.884 11.234L6.884 3.489L44.748 3.489L44.748 0.048L5.163 0.048C0.867 0 0.219 1.45 0 4.35L0 52.541C9.552 57.885 32.998 59.754 43.888 52.832ZM27.167 17.616L33.238 36.301C33.531 37.201 33.571 38.096 33.401 38.824L26.573 17.809ZM32.907 39.885C32.709 40.125 32.464 40.303 32.179 40.396C31.839 40.506 31.476 40.486 31.117 40.358L24.056 18.627L25.814 18.055ZM31.642 43.83C30.93 42.869 30.458 42.606 30.26 41.578C31.692 41.103 33.124 40.628 34.556 40.152C34.939 41.085 34.833 41.504 34.809 42.616C34.789 43.549 34.77 44.483 34.736 45.398L33.259 45.857ZM34.894 45.863L34.939 47.129C35.029 49.232 33.953 47.068 33.448 46.341ZM17.58 17.616L11.509 36.301C11.216 37.201 11.176 38.096 11.346 38.824L18.174 17.809ZM11.841 39.885C12.039 40.125 12.283 40.303 12.569 40.396C12.909 40.506 13.272 40.486 13.631 40.358L20.691 18.627L18.933 18.055ZM13.105 43.83C13.818 42.869 14.289 42.606 14.487 41.578C13.055 41.103 11.624 40.628 10.192 40.152C9.808 41.085 9.915 41.504 9.939 42.616C9.959 43.549 9.978 44.483 10.012 45.398L11.488 45.857ZM9.853 45.863L9.809 47.129C9.718 49.232 10.794 47.068 11.299 46.341ZM17.658 32.091L23.684 32.091C23.993 32.091 24.275 32.168 24.484 32.295L17.591 32.295L17.507 32.555L24.763 32.555C24.818 32.641 24.849 32.735 24.849 32.833C24.849 32.95 24.806 33.06 24.729 33.159L17.311 33.159L15.833 37.707C15.58 38.486 15.176 39.151 14.705 39.633L21.45 18.873L21.904 19.021ZM24.396 33.419C24.199 33.517 23.952 33.575 23.684 33.575L17.27 33.575L17.27 33.419ZM25.861 33.346C25.491 33.47 25.361 33.59 25.022 33.548C25.019 33.055 25.016 32.563 25.013 32.07C25.341 32.045 25.461 32.121 25.803 32.24C26.091 32.341 26.379 32.441 26.66 32.544L26.654 33.048ZM26.82 32.541L27.218 32.655L27.279 32.673L22.843 19.021L23.298 18.873L30.042 39.633C29.572 39.151 29.168 38.486 28.914 37.707L27.351 32.893C27.2 32.952 26.954 32.999 26.823 33.038Z"/><path d="M8.605 6.932L43.027 6.932L43.027 5.211L8.605 5.211Z"/><path d="M8.605 9.514L43.032 9.514L43.032 8.653L8.605 8.653Z"/></svg></div>
+    <h1 style="margin-top:28px;font-size:64px">Defense, ready.</h1>
+    <p class="sub">Understand it. Remember it. Practice it. Defend it.</p>
+    <p class="url">Academia Scribes</p>
+  </div></section>
+
+</div>
+</body>
+</html>

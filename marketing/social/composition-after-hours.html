@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Your inbox doesn't close at 6pm</title>
+    <!--
+      Post visual for the 6pm-inbox post, 4:5 (1080x1350):
+        node render.mjs composition-after-hours.html after-hours.png
+      Day (white) above, night (navy) below: the shop closes, the messages keep arriving.
+    -->
+    <style>
+      @font-face { font-family: 'Inter'; font-weight: 100 900; src: url(../oppverse-launch/fonts/Inter-VF.ttf) format('truetype'); }
+      :root { --navy: #0b1f3a; --night: #0a1a31; --muted: #526174; --soft: #dce8f5; --blue: #7fb2ec; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { background: #e7e9ee; display: flex; justify-content: center; padding: 40px; }
+      .card { width: 1080px; height: 1350px; overflow: hidden; display: flex; flex-direction: column;
+        font-family: Inter, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+
+      .day { background: #fff; color: var(--navy); padding: 80px 88px 64px; }
+      .k { font-size: 15px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 14px; }
+      .k i { width: 10px; height: 10px; border-radius: 50%; background: #c2cad6; }
+      .day h1 { margin-top: 26px; font-size: 76px; font-weight: 800; line-height: 1.02; letter-spacing: -.035em; }
+      .day h1 span { color: var(--muted); font-weight: 600; }
+      .sign { margin-top: 34px; display: inline-flex; align-items: center; gap: 14px; padding: 14px 22px 14px 18px; border: 2px solid var(--navy); border-radius: 10px;
+        font-size: 20px; font-weight: 800; letter-spacing: .2em; }
+      .sign b { font-weight: 600; letter-spacing: .02em; color: var(--muted); font-size: 18px; }
+
+      .night { flex: 1; background: var(--night); color: #fff; padding: 60px 88px 48px; display: flex; flex-direction: column; }
+      .night .k { color: #9fb0c7; }
+      .night .k i { background: var(--blue); box-shadow: 0 0 0 6px rgb(127 178 236 / .16); }
+      .night h2 { margin-top: 22px; font-size: 64px; font-weight: 800; line-height: 1.04; letter-spacing: -.03em; }
+      .night h2 span { color: var(--blue); }
+
+      .msgs { margin-top: 44px; display: flex; flex-direction: column; gap: 16px; }
+      .msg { display: grid; grid-template-columns: 52px 1fr auto; gap: 18px; align-items: center; padding: 18px 22px;
+        border-radius: 18px; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .08); }
+      .av { width: 52px; height: 52px; border-radius: 50%; background: #1d3657; color: var(--soft); display: grid; place-items: center; font-size: 19px; font-weight: 700; }
+      .who { font-size: 16px; font-weight: 600; color: #9fb0c7; }
+      .txt { margin-top: 4px; font-size: 24px; font-weight: 600; letter-spacing: -.01em; color: #fff; }
+      .meta { text-align: right; }
+      .time { font-size: 16px; font-weight: 600; color: #9fb0c7; font-variant-numeric: tabular-nums; }
+      .dot { margin: 10px 0 0 auto; width: 12px; height: 12px; border-radius: 50%; background: var(--blue); }
+
+      .foot { margin-top: auto; padding-top: 22px; border-top: 1px solid rgb(255 255 255 / .12); display: flex; justify-content: space-between; align-items: baseline; }
+      .foot .line { font-size: 22px; font-weight: 600; color: #fff; }
+      .foot .line span { color: #9fb0c7; font-weight: 500; }
+      .foot .who2 { font-size: 13.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9fb0c7; }
+    </style>
+  </head>
+  <body>
+    <div class="card" id="card">
+      <div class="day">
+        <div class="k"><i></i>6:00 PM</div>
+        <h1>Your shop closes.<br /><span>The lights go off.</span></h1>
+        <div class="sign">CLOSED <b>Open again 9:00 AM</b></div>
+      </div>
+      <div class="night">
+        <div class="k"><i></i>After 6:00 PM</div>
+        <h2>Your customers<br />are <span>just getting started.</span></h2>
+        <div class="msgs">
+          <div class="msg"><div class="av">AO</div><div><div class="who">New customer</div><div class="txt">How much is this?</div></div><div class="meta"><div class="time">7:42 PM</div><div class="dot"></div></div></div>
+          <div class="msg"><div class="av">CE</div><div><div class="who">New customer</div><div class="txt">Do you deliver to Lekki?</div></div><div class="meta"><div class="time">9:15 PM</div><div class="dot"></div></div></div>
+          <div class="msg"><div class="av">TF</div><div><div class="who">New customer</div><div class="txt">Are you open on Saturday?</div></div><div class="meta"><div class="time">10:38 PM</div><div class="dot"></div></div></div>
+          <div class="msg"><div class="av">BK</div><div><div class="who">New customer</div><div class="txt">Can I book for tomorrow morning?</div></div><div class="meta"><div class="time">11:21 PM</div><div class="dot"></div></div></div>
+        </div>
+        <div class="foot">
+          <div class="line">Your shop closes at 6pm. <span>Your inbox does not have to.</span></div>
+        </div>
+        <div class="foot" style="border-top:none;padding-top:14px;margin-top:0">
+          <div class="who2">Tolulope Fatoyinbo · AI Automation</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Motion ad — POC scene</title>
+<link rel="stylesheet" href="./fonts.css" />
+<style>
+/* POC: grid-paper stage, floating 3D objects (Fluent emoji, MIT), kinetic type.
+   One deterministic timeline; only transform/opacity animate. 1920x1080, 8s. */
+:root{ --paper:#f1efea; --ink:#14151a; --accent:#2563eb; --sans:"Inter",system-ui,sans-serif; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#c9cdd3}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:var(--sans);color:var(--ink);
+  background:var(--paper);
+  background-image:linear-gradient(rgb(20 21 26/.05) 1px,transparent 1px),linear-gradient(90deg,rgb(20 21 26/.05) 1px,transparent 1px);
+  background-size:60px 60px;}
+
+/* floating objects */
+.obj{position:absolute;opacity:0}
+.card{background:#fff;border-radius:12px;box-shadow:0 26px 44px -24px rgb(20 21 26/.28),0 4px 10px -6px rgb(20 21 26/.18);
+  padding:14px;display:flex}
+.card img{display:block}
+.bare img{display:block;filter:drop-shadow(0 22px 26px rgb(20 21 26/.22))}
+.flt{will-change:transform}
+
+@keyframes pop{0%{opacity:0;transform:scale(.82) translateY(14px)}100%{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-12px) rotate(var(--r,0deg))}}
+@keyframes rise{0%{opacity:0;transform:translateY(26px)}100%{opacity:1;transform:none}}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-16px)}}
+
+/* each obj: entrance on .obj (opacity+scale), loop on inner .flt */
+.obj{animation:pop .7s cubic-bezier(.22,1,.36,1) both}
+.obj .flt{animation:floaty 5s ease-in-out infinite}
+
+/* text layer */
+.type{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20}
+.t{position:absolute;text-align:center;letter-spacing:-0.02em}
+.t1{font-size:76px;font-weight:500;color:var(--ink);
+  animation:rise .8s cubic-bezier(.22,1,.36,1) .3s both, fadeOut .6s ease 3.0s both}
+.t2{font-size:104px;font-weight:700;line-height:1.0;max-width:1100px}
+.t2 .w{display:inline-block;opacity:0;animation:rise .6s cubic-bezier(.22,1,.36,1) both}
+.t2 .w:nth-child(1){animation-delay:3.5s}
+.t2 .w:nth-child(2){animation-delay:3.7s}
+.t2 .w:nth-child(3){animation-delay:3.9s}
+.t2 .w:nth-child(4){animation-delay:4.1s}
+.t2 .w:nth-child(5){animation-delay:4.35s}
+.t2 .a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div id="stage" data-fps="30" data-duration="8">
+
+  <!-- floating objects: left/right clusters, clear of centre text -->
+  <div class="obj" style="left:150px;top:150px;--r:-6deg;animation-delay:.15s"><div class="flt"><div class="card"><img src="objects/telephone.png" width="150"></div></div></div>
+  <div class="obj" style="left:360px;top:430px;--r:5deg;animation-delay:.35s"><div class="flt bare"><img src="objects/receiver.png" width="120"></div></div>
+  <div class="obj" style="left:200px;top:690px;--r:4deg;animation-delay:.55s"><div class="flt"><div class="card"><img src="objects/calendar.png" width="130"></div></div></div>
+  <div class="obj" style="left:470px;top:150px;--r:8deg;animation-delay:.75s"><div class="flt bare"><img src="objects/coffee.png" width="104"></div></div>
+  <div class="obj" style="left:120px;top:430px;--r:-4deg;animation-delay:.5s"><div class="flt bare"><img src="objects/bell.png" width="92"></div></div>
+
+  <div class="obj" style="right:170px;top:140px;--r:6deg;animation-delay:.25s"><div class="flt"><div class="card"><img src="objects/keyboard.png" width="170"></div></div></div>
+  <div class="obj" style="right:150px;top:470px;--r:-6deg;animation-delay:.45s"><div class="flt bare"><img src="objects/phone_mobile.png" width="110"></div></div>
+  <div class="obj" style="right:380px;top:720px;--r:5deg;animation-delay:.65s"><div class="flt bare"><img src="objects/money_wings.png" width="126"></div></div>
+  <div class="obj" style="right:430px;top:180px;--r:-8deg;animation-delay:.85s"><div class="flt bare"><img src="objects/chat.png" width="96"></div></div>
+  <div class="obj" style="right:200px;top:760px;--r:7deg;animation-delay:.6s"><div class="flt bare"><img src="objects/clock.png" width="100"></div></div>
+
+  <!-- kinetic type -->
+  <div class="type">
+    <div class="t t1">Someone's calling.</div>
+    <div class="t t2"><span class="w">But</span> <span class="w">nobody's</span> <span class="w">around</span> <span class="w">to</span> <span class="w a">pick&nbsp;up.</span></div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+src/
+work/
+*.mp4
+node_modules
+out/
+__pycache__/
+package-lock.json

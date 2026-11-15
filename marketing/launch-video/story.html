@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Academia Scribes — launch film (story cut)</title>
+<style>
+@font-face { font-family: 'Figtree'; font-weight: 300 900; src: url(fonts/figtree-1.woff2) format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-weight: 300 900; src: url(fonts/fraunces-3.woff2) format('woff2'); }
+:root {
+  --n050:#f2f6fb; --n100:#dce7f4; --n300:#8fb4dc; --n500:#1155a8; --n600:#0a3a7d; --n700:#052659; --n800:#02193c; --n900:#010f26;
+  --paper:#fdfbf7; --ink:#141821; --muted:#5a6377; --ok:#2e7d62; --okbg:#e5f2ec; --line:#e6e2d8;
+  --sh-card: 0 1px 2px rgba(1,15,38,.18), 0 14px 34px -10px rgba(1,15,38,.45), 0 46px 90px -24px rgba(5,38,89,.65);
+  --sh-float: 0 2px 4px rgba(1,15,38,.2), 0 24px 50px -12px rgba(1,15,38,.55), 0 70px 120px -30px rgba(17,85,168,.45);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #000; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Figtree', sans-serif; -webkit-font-smoothing: antialiased; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--n900); color: #fff; }
+.layer, .scene { position: absolute; inset: 0; }
+.scene { opacity: 0; }
+
+/* depth: base gradient field -> elevated cards -> floating chips */
+#bg { position: absolute; inset: -120px; background:
+  radial-gradient(900px 620px at 18% 12%, rgba(17,85,168,.42), transparent 70%),
+  radial-gradient(1100px 760px at 88% 96%, rgba(10,58,125,.55), transparent 70%),
+  radial-gradient(700px 500px at 60% 40%, rgba(143,180,220,.10), transparent 70%),
+  linear-gradient(160deg, var(--n800) 0%, var(--n900) 70%); }
+#glow { position: absolute; left: 50%; top: 50%; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(143,180,220,.30) 0%, rgba(17,85,168,.18) 30%, transparent 62%); opacity: 0; }
+#vignette { background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,5,15,.55) 100%); pointer-events: none; }
+#grain { inset: -60px; opacity: .085; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 1.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+#flash { background: radial-gradient(circle at 50% 50%, #fff 0%, rgba(220,231,244,.9) 30%, rgba(143,180,220,0) 70%); opacity: 0; pointer-events: none; }
+
+.kicker { font: 600 20px/1 'Figtree'; letter-spacing: .26em; text-transform: uppercase; color: var(--n300); display: flex; align-items: center; gap: 18px; }
+.kicker::before { content: ''; width: 56px; height: 2px; background: var(--n300); opacity: .7; }
+.h { font: 700 92px/1.0 'Figtree'; letter-spacing: -.035em; }
+.serif { font-family: 'Fraunces'; font-weight: 500; letter-spacing: -.02em; }
+.mask { display: block; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
+.mask > span { display: inline-block; }
+.sub { font: 400 30px/1.4 'Figtree'; color: rgba(220,231,244,.78); }
+
+/* S1 paper open */
+#paper { background:
+  radial-gradient(900px 600px at 30% 20%, #fff 0%, transparent 70%),
+  radial-gradient(800px 600px at 80% 90%, #f1ece1 0%, transparent 70%), var(--paper); }
+.s1t { position: absolute; left: 0; right: 0; top: 505px; text-align: center; font: 600 34px/1 'Figtree'; letter-spacing: .42em; text-transform: uppercase; padding-left: .42em; }
+#paper .s1t { color: var(--ink); }
+#tick { position: absolute; left: 50%; top: 600px; width: 220px; height: 3px; margin-left: -110px; background: var(--n500); transform-origin: 0 50%; }
+
+/* S2 */
+#s2 .h { position: absolute; left: 0; right: 0; top: 400px; text-align: center; font-size: 150px; }
+#s2 .serif { font-size: 168px; color: var(--n100); }
+
+/* S3 tiles */
+.tile { position: absolute; left: 50%; top: 50%; width: 330px; height: 214px; margin: -107px 0 0 -165px; border-radius: 18px; background: var(--paper); color: var(--ink);
+  box-shadow: var(--sh-card); padding: 26px 28px; }
+.tile .ic { width: 38px; height: 46px; border-radius: 6px; background: var(--n050); border: 2px solid var(--n100); position: relative; }
+.tile .ic::after { content: ''; position: absolute; right: -2px; top: -2px; width: 14px; height: 14px; background: var(--n100); border-bottom-left-radius: 5px; }
+.tile b { display: block; font: 700 25px/1.15 'Figtree'; letter-spacing: -.01em; margin-top: 18px; }
+.tile i { display: block; font: 500 17px/1 'Figtree'; color: var(--muted); font-style: normal; margin-top: 10px; letter-spacing: .02em; }
+.tile .ln { height: 8px; border-radius: 4px; background: #ece8de; margin-top: 12px; }
+#s3h { position: absolute; left: 0; right: 0; bottom: 120px; text-align: center; font-size: 104px; text-shadow: 0 10px 40px rgba(1,15,38,.7); }
+#s3h .serif { color: var(--n100); }
+
+/* S4 logo */
+#lockup { position: absolute; left: 50%; top: 50%; display: flex; align-items: center; gap: 40px; transform: translate(-50%, -50%); }
+#mark { width: 150px; height: 200px; }
+#mark img { width: 100%; height: 100%; display: block; }
+.wm { font: 600 108px/0.92 'Figtree'; letter-spacing: -.03em; }
+.wm span { display: block; font-weight: 300; }
+#ring { position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; border-radius: 50%; border: 2px solid rgba(143,180,220,.6); opacity: 0; }
+#ring2 { position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; border-radius: 50%; border: 1px solid rgba(143,180,220,.35); opacity: 0; }
+#s4tag { position: absolute; left: 0; right: 0; top: 720px; text-align: center; font: 500 34px/1 'Figtree'; color: var(--n100); letter-spacing: .01em; }
+#s4tag .serif { color: #fff; }
+
+/* split layout for UI scenes */
+.col { position: absolute; left: 140px; top: 0; bottom: 0; width: 620px; display: flex; flex-direction: column; justify-content: center; gap: 30px; }
+.col .h { font-size: 84px; }
+.panel { position: absolute; right: 130px; top: 50%; width: 960px; border-radius: 26px; background: var(--paper); color: var(--ink); box-shadow: var(--sh-float); overflow: hidden; }
+.pbar { display: flex; align-items: center; gap: 14px; padding: 24px 34px; border-bottom: 1px solid var(--line); font: 600 22px/1 'Figtree'; color: var(--n700); }
+.pbar .dot { width: 30px; height: 30px; border-radius: 9px; background: var(--n700); display: grid; place-items: center; }
+.pbar .dot img { width: 15px; }
+.pbar em { margin-left: auto; font: 600 17px/1 'Figtree'; font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* S5 chapters */
+#s5p { margin-top: -322px; height: 644px; background: #f3f6fa; }
+.chrome { height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 18px; background: #e9edf3; border-bottom: 1px solid #dde3ec; }
+.chrome i { width: 11px; height: 11px; border-radius: 50%; background: #c9d1dc; }
+.chrome span { margin-left: 18px; flex: 1; max-width: 560px; height: 26px; border-radius: 8px; background: #fff; font: 500 14px/26px 'Figtree'; color: var(--muted); padding: 0 12px; }
+.view { position: absolute; left: 0; right: 0; top: 44px; bottom: 0; overflow: hidden; }
+#shot { position: absolute; left: 0; top: 0; width: 960px; }
+#shot img { width: 960px; display: block; }
+.hl { position: absolute; left: 50px; width: 576px; height: 66px; border-radius: 12px; background: rgba(17,85,168,.07); box-shadow: inset 3px 0 0 var(--n500); opacity: 0; }
+#hlc { position: absolute; left: 18px; top: 360px; width: 924px; height: 108px; border-radius: 22px; box-shadow: 0 0 0 3px rgba(17,85,168,.55), 0 0 40px rgba(17,85,168,.25); opacity: 0; }
+.row { display: grid; grid-template-columns: 54px 1fr 70px; align-items: center; gap: 22px; padding: 22px 34px; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row .num { width: 54px; height: 54px; border-radius: 14px; background: var(--n050); color: var(--n700); display: grid; place-items: center; font: 700 22px/1 'Figtree'; }
+.row b { font: 700 25px/1 'Figtree'; letter-spacing: -.01em; }
+.row small { display: block; font: 500 17px/1 'Figtree'; color: var(--muted); margin-top: 8px; }
+.row .track { height: 6px; border-radius: 3px; background: #ece8de; margin-top: 14px; overflow: hidden; }
+.row .fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--n600), var(--n500)); transform-origin: 0 50%; transform: scaleX(0); }
+.row .chk { width: 40px; height: 40px; border-radius: 50%; background: var(--n700); display: grid; place-items: center; justify-self: end; transform: scale(0); }
+.row .chk svg { width: 20px; }
+#idx { font-variant-numeric: tabular-nums; color: var(--n500); letter-spacing: .04em; }
+
+/* S6 ask */
+#s6p { margin-top: -300px; height: 600px; }
+.chat { position: absolute; left: 0; right: 0; top: 79px; bottom: 112px; padding: 30px 34px; }
+.q { position: absolute; right: 34px; top: 30px; max-width: 640px; background: var(--n700); color: #fff; padding: 20px 26px; border-radius: 22px 22px 6px 22px; font: 500 25px/1.35 'Figtree'; opacity: 0; }
+.think { position: absolute; left: 34px; top: 132px; display: flex; gap: 12px; align-items: center; font: 500 21px/1 'Figtree'; color: var(--muted); opacity: 0; }
+.think i { width: 9px; height: 9px; border-radius: 50%; background: var(--n500); display: inline-block; }
+.ans { position: absolute; left: 34px; top: 126px; width: 860px; background: #fff; border: 1px solid var(--line); border-radius: 6px 22px 22px 22px; padding: 22px 26px; box-shadow: 0 8px 24px -12px rgba(5,38,89,.25); opacity: 0; }
+.ans p { font: 400 22px/1.5 'Figtree'; white-space: nowrap; color: var(--ink); opacity: 0; }
+.ans p b { font-weight: 700; color: var(--n700); }
+.chips { display: flex; gap: 12px; margin-top: 16px; }
+.chip { display: flex; align-items: center; gap: 9px; padding: 9px 15px; border-radius: 999px; background: var(--n050); border: 1px solid var(--n100); color: var(--n700); font: 600 17px/1 'Figtree'; opacity: 0; }
+.chip::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--n500); }
+.inp { position: absolute; left: 34px; right: 34px; bottom: 28px; height: 72px; border-radius: 18px; border: 2px solid var(--n100); background: #fff; display: flex; align-items: center; padding: 0 12px 0 24px; font: 500 25px/1 'Figtree'; color: var(--ink); }
+.inp .ph { color: #9aa1b0; position: absolute; left: 26px; }
+#caret { display: inline-block; width: 2px; height: 30px; background: var(--n500); margin-left: 2px; vertical-align: middle; }
+.send { margin-left: auto; width: 50px; height: 50px; border-radius: 14px; background: var(--n700); display: grid; place-items: center; }
+.send svg { width: 22px; }
+
+/* S7 remember */
+.top { position: absolute; left: 0; right: 0; top: 118px; display: flex; flex-direction: column; align-items: center; gap: 26px; text-align: center; }
+.top .h { font-size: 78px; }
+.card2 { position: absolute; top: 345px; width: 720px; height: 560px; border-radius: 26px; background: var(--paper); color: var(--ink); box-shadow: var(--sh-float); padding: 40px 44px; }
+#fc { left: 190px; } #qz { right: 190px; }
+.lab { font: 700 17px/1 'Figtree'; letter-spacing: .2em; text-transform: uppercase; color: var(--n500); }
+.fcq { font: 600 46px/1.15 'Fraunces'; letter-spacing: -.015em; margin-top: 36px; color: var(--n800); }
+.fcmeta { position: absolute; left: 44px; bottom: 40px; font: 500 19px/1 'Figtree'; color: var(--muted); }
+#fcb { position: absolute; inset: 0; padding: 40px 44px; background: var(--n700); color: #fff; border-radius: 26px; transform: scaleX(0); }
+#fcb .lab { color: var(--n300); }
+#fcb p { font: 500 30px/1.4 'Figtree'; margin-top: 34px; color: var(--n050); }
+#fcb .rate { position: absolute; left: 44px; bottom: 36px; display: flex; gap: 12px; }
+#fcb .rate span { padding: 10px 18px; border-radius: 12px; border: 1px solid rgba(143,180,220,.4); font: 600 18px/1 'Figtree'; color: var(--n100); }
+#fcb .rate span.on { background: #fff; color: var(--n700); border-color: #fff; }
+.qq { font: 700 28px/1.25 'Figtree'; letter-spacing: -.01em; margin: 22px 0 18px; }
+.opt { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 14px; border: 1.5px solid var(--line); margin-bottom: 10px; font: 500 19px/1.25 'Figtree'; position: relative; }
+.opt .l { width: 34px; height: 34px; border-radius: 10px; background: var(--n050); color: var(--n700); display: grid; place-items: center; font: 700 17px/1 'Figtree'; flex: none; }
+.opt .okfill { position: absolute; inset: -1.5px; border-radius: 14px; background: var(--okbg); border: 2px solid var(--ok); opacity: 0; }
+.opt > span, .opt > .l { position: relative; }
+.src { font: 500 18px/1 'Figtree'; color: var(--ok); margin-top: 8px; opacity: 0; display: flex; gap: 10px; align-items: center; }
+
+/* S8 examiner */
+.ex { position: absolute; left: 50%; top: 50%; width: 1180px; margin-left: -590px; margin-top: -150px; height: 300px; border-radius: 28px; padding: 46px 56px;
+  background: linear-gradient(160deg, #0d3470 0%, var(--n700) 55%, #041e47 100%); border: 1px solid rgba(143,180,220,.28); box-shadow: var(--sh-float); opacity: 0; }
+.ex .who { display: flex; align-items: center; gap: 14px; font: 700 18px/1 'Figtree'; letter-spacing: .24em; color: var(--n300); }
+.ex .who i { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg, var(--n300), var(--n500)); }
+.ex .who em { margin-left: auto; font-style: normal; letter-spacing: .14em; color: rgba(220,231,244,.55); font-weight: 600; }
+.ex p { font: 500 54px/1.12 'Fraunces'; letter-spacing: -.02em; margin-top: 34px; color: #fff; }
+#s8k { position: absolute; left: 0; right: 0; top: 150px; display: flex; justify-content: center; }
+#rd { position: absolute; left: 50%; top: 50%; width: 760px; height: 560px; margin: -280px 0 0 -380px; border-radius: 30px; background: var(--paper); color: var(--ink); box-shadow: var(--sh-float); opacity: 0;
+  display: flex; flex-direction: column; align-items: center; padding-top: 50px; }
+#rd svg { width: 300px; height: 300px; margin-top: 26px; }
+#rdn { position: absolute; top: 205px; left: 0; right: 0; text-align: center; font: 700 96px/1 'Figtree'; letter-spacing: -.04em; color: var(--n700); font-variant-numeric: tabular-nums; }
+#rdn small { font-size: 44px; }
+#rd .cap { margin-top: 24px; font: 600 24px/1 'Figtree'; color: var(--muted); }
+#rd .cap b { color: var(--n700); }
+
+/* S9 montage */
+.mw { position: absolute; left: 0; right: 0; top: 50%; margin-top: -120px; text-align: center; font: 700 220px/1 'Figtree'; letter-spacing: -.045em; opacity: 0; }
+.mw sup { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font: 700 24px/1 'Figtree'; letter-spacing: .3em; color: var(--n300); }
+.mw.last { font: 500 250px/1 'Fraunces'; letter-spacing: -.03em; }
+
+/* S10 */
+#s10 #lock2 { position: absolute; left: 50%; top: 380px; display: flex; align-items: center; gap: 34px; transform: translateX(-50%); }
+#lock2 .m { width: 112px; height: 150px; } #lock2 .m img { width: 100%; height: 100%; }
+#lock2 .wm { font-size: 84px; }
+#line { position: absolute; left: 0; right: 0; top: 640px; text-align: center; font: 500 62px/1.1 'Fraunces'; letter-spacing: -.02em; color: #fff; }
+#cta { position: absolute; left: 50%; top: 780px; display: flex; align-items: center; gap: 28px; transform: translateX(-50%); }
+.btn { display: flex; align-items: center; gap: 12px; padding: 22px 34px; border-radius: 16px; background: #fff; color: var(--n700); font: 700 28px/1 'Figtree';
+  box-shadow: 0 10px 30px -8px rgba(143,180,220,.5), 0 30px 60px -20px rgba(17,85,168,.6); }
+.url { font: 500 26px/1 'Figtree'; color: var(--n300); letter-spacing: .02em; }
+#black { background: #000; opacity: 0; }
+/* ---------- 9:16 (story.html?vert) ---------- */
+body.v { width: 1080px; height: 1920px; }
+body.v #stage { width: 1080px; height: 1920px; }
+body.v .s1t { top: 900px; font-size: 30px; letter-spacing: .34em; padding-left: .34em; }
+body.v #tick { top: 990px; }
+body.v #s2 .h { top: 700px; font-size: 140px; }
+body.v #s2 .serif { font-size: 170px; display: block; }
+body.v #s3h { bottom: 250px; font-size: 100px; }
+body.v #s3b { display: block; }
+body.v #lockup { gap: 28px; }
+body.v #mark { width: 120px; height: 160px; }
+body.v .wm { font-size: 92px; }
+body.v #s4tag { top: 1180px; font-size: 32px; padding: 0 80px; line-height: 1.4; }
+body.v .col { left: 90px; right: 90px; width: auto; top: 380px; bottom: auto; justify-content: flex-start; gap: 26px; }
+body.v .col .h { font-size: 88px; }
+body.v .panel { left: 60px; right: 60px; width: 960px; top: 880px; }
+body.v #s5p, body.v #s6p { margin-top: 0; }
+body.v .top { top: 280px; padding: 0 60px; }
+body.v .top .h { font-size: 74px; }
+body.v #fc { left: 180px; top: 510px; }
+body.v #qz { left: 180px; right: auto; top: 1120px; }
+body.v .ex { width: 960px; margin-left: -480px; height: 380px; margin-top: -190px; padding: 44px 50px; }
+body.v .ex p { font-size: 54px; }
+body.v #s8k { top: 520px; }
+body.v .mw { font-size: 160px; margin-top: -90px; }
+body.v .mw.last { font-size: 210px; }
+body.v #s10 #lock2 { top: 640px; }
+body.v #line { top: 960px; font-size: 64px; padding: 0 100px; line-height: 1.15; }
+body.v #cta { top: 1240px; flex-direction: column; gap: 26px; }
+
+</style>
+</head>
+<body>
+<div id="stage" data-fps="30" data-duration="44.5">
+  <div class="layer" id="bgwrap"><div id="bg"></div><div id="glow"></div></div>
+
+  <!-- S1: paper, slowly giving way to navy -->
+  <div class="scene" id="s1" style="opacity:1">
+    <div class="s1t" id="s1w">Your defense is tomorrow</div>
+    <div class="layer" id="paper"><div class="s1t" id="s1i">Your defense is tomorrow</div><div id="tick"></div></div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scene" id="s2">
+    <div class="h"><span class="mask"><span id="s2a">Would you be</span> <span id="s2b" class="serif">ready?</span></span></div>
+  </div>
+
+  <!-- S3/S4: scattered work converges -->
+  <div class="scene" id="s3">
+    <div class="layer" id="tiles"></div>
+    <div class="h" id="s3h"><span class="mask"><span id="s3a">Your work is</span> <span id="s3b" class="serif">everywhere.</span></span></div>
+  </div>
+  <div class="scene" id="s4">
+    <div id="ring"></div><div id="ring2"></div>
+    <div id="lockup"><div id="mark"><img src="brand/logo-mark-white.svg"></div><div class="wm" id="wm1">Academia<span>Scribes</span></div></div>
+    <div id="s4tag">Your research, turned into a <span class="serif">defense partner.</span></div>
+  </div>
+
+  <!-- S5: knowledge base -->
+  <div class="scene" id="s5">
+    <div class="col">
+      <div class="kicker" id="s5k">Your project</div>
+      <div class="h"><span class="mask"><span id="s5a">Five chapters.</span></span><span class="mask"><span id="s5b" class="serif" style="color:var(--n100)">One private</span></span><span class="mask"><span id="s5c" class="serif" style="color:var(--n100)">knowledge base.</span></span></div>
+      <div class="sub" id="s5s">17,244 words, read and ready.</div>
+    </div>
+    <div class="panel" id="s5p">
+      <div class="chrome"><i></i><i></i><i></i><span>academia-scribes.netlify.app/projects</span></div>
+      <div class="view"><div id="shot"><img src="captures/project-real.jpg"><div id="hlc"></div><div id="rows"></div></div></div>
+    </div>
+  </div>
+
+  <!-- S6: ask -->
+  <div class="scene" id="s6">
+    <div class="col">
+      <div class="kicker">01 · Understand</div>
+      <div class="h"><span class="mask"><span id="s6a">Ask anything.</span></span></div>
+      <div class="sub" id="s6s">Answers grounded in your own chapters, with the source.</div>
+    </div>
+    <div class="panel" id="s6p">
+      <div class="pbar"><div class="dot"><img src="brand/logo-mark-white.svg"></div>Ask my project<em>Private · your chapters only</em></div>
+      <div class="chat">
+        <div class="q" id="q">What were the objectives of my study?</div>
+        <div class="think" id="think"><i></i><i></i><i></i>&nbsp;Reading your chapters…</div>
+        <div class="ans" id="ans">
+          <p>The study aimed to assess <b>the knowledge of neonatal jaundice</b></p>
+          <p>among women attending the antenatal clinic at Oluyoro Hospital,</p>
+          <p>and to identify the <b>perceived risk factors</b> and <b>sources of information</b>.</p>
+          <div class="chips"><span class="chip" id="c1">Chapter 5 · From your project</span><span class="chip" id="c2">Grounded in 5 chapters</span></div>
+        </div>
+      </div>
+      <div class="inp"><span class="ph" id="ph">Ask about your project…</span><span id="typed"></span><span id="caret"></span>
+        <div class="send" id="send"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>
+    </div>
+  </div>
+
+  <!-- S7: remember -->
+  <div class="scene" id="s7">
+    <div class="top"><div class="kicker">02 · Remember</div><div class="h"><span class="mask"><span id="s7a">Built from <span class="serif" style="color:var(--n100)">your</span> chapters.</span></span></div></div>
+    <div class="card2" id="fc">
+      <div class="lab">Flashcard · 3 of 6</div>
+      <div class="fcq">Why did you use a cross-sectional design?</div>
+      <div class="fcmeta">Tap to reveal · Chapter 3</div>
+      <div id="fcb"><div class="lab">Answer</div><p>It measured knowledge, perceived risk factors and information sources among antenatal women at a single point in time, which is exactly what the objectives called for.</p>
+        <div class="rate"><span>Again</span><span>Hard</span><span class="on" id="solid">Solid</span></div></div>
+    </div>
+    <div class="card2" id="qz">
+      <div class="lab">Quiz · Question 1 of 6 · Chapter 5</div>
+      <div class="qq">Can you tell us what the research objectives were for your study?</div>
+      <div class="opt"><span class="l">A</span><span>Measure the incidence of neonatal jaundice against national rates</span></div>
+      <div class="opt"><span class="l">B</span><span>Test bilirubinometers and screening apps like SpeCamX</span></div>
+      <div class="opt"><span class="l">C</span><span>Evaluate phototherapy and exchange transfusion outcomes</span></div>
+      <div class="opt" id="optc"><div class="okfill" id="okf"></div><span class="l">D</span><span>Assess mothers' knowledge, perceived risk factors and information sources</span></div>
+      <div class="src" id="src">✓ Correct · From your project</div>
+    </div>
+  </div>
+
+  <!-- S8: practice + defend -->
+  <div class="scene" id="s8">
+    <div id="s8k"><div class="kicker" id="s8k1">03 · Practice</div></div>
+    <div id="exs"></div>
+    <div id="rd">
+      <div class="kicker" style="color:var(--n500)">04 · Defend</div>
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#ece8de" stroke-width="7"/>
+        <circle id="arc" cx="50" cy="50" r="44" fill="none" stroke="url(#gr)" stroke-width="7" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="276.46" stroke-dashoffset="276.46"/>
+        <defs><linearGradient id="gr" x1="0" x2="1"><stop offset="0" stop-color="#0a3a7d"/><stop offset="1" stop-color="#1155a8"/></linearGradient></defs></svg>
+      <div id="rdn">0<small>%</small></div>
+      <div class="cap">Defense readiness · <b>Strong</b></div>
+    </div>
+  </div>
+
+  <!-- S9: montage -->
+  <div class="scene" id="s9">
+    <div class="mw" id="w0"><sup>01</sup>Understand.</div>
+    <div class="mw" id="w1"><sup>02</sup>Remember.</div>
+    <div class="mw" id="w2"><sup>03</sup>Practice.</div>
+    <div class="mw last" id="w3"><sup>04</sup>Defend.</div>
+  </div>
+
+  <!-- S10: brand -->
+  <div class="scene" id="s10">
+    <div id="lock2"><div class="m" id="m2"><img src="brand/logo-mark-white.svg"></div><div class="wm" id="wm2">Academia<span>Scribes</span></div></div>
+    <div id="line"><span class="mask"><span id="lin">Walk into your defense with clarity.</span></span></div>
+    <div id="cta"><div class="btn">Start preparing <svg width="22" viewBox="0 0 24 24" fill="none" stroke="#052659" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div><div class="url">academia-scribes.netlify.app</div></div>
+  </div>
+
+  <div class="layer" id="flash"></div>
+  <div class="layer" id="vignette"></div>
+  <div class="layer" id="grain"></div>
+  <div class="layer" id="black"></div>
+</div>
+
+<script>
+const VERT = new URLSearchParams(location.search).has('vert');
+if (VERT) { document.body.classList.add('v'); document.getElementById('stage').dataset.w = 1080; }
+const $ = s => document.querySelector(s);
+const B = 0.5333, T0 = 11.7, beat = n => T0 + n * B;     // same grid as story.py
+const OUT = 'cubic-bezier(.16,1,.3,1)', IN = 'cubic-bezier(.6,0,.8,.25)', IO = 'cubic-bezier(.7,0,.3,1)', SOFT = 'cubic-bezier(.33,1,.68,1)';
+// first animation on an element fills backwards too (holds its from-state before it starts)
+function A(el, kf, t, d, e = OUT) {
+  if (typeof el === 'string') el = $(el);
+  const fill = el.__n ? 'forwards' : 'both'; el.__n = 1;
+  return el.animate(kf, { delay: t * 1000, duration: d * 1000, easing: e, fill });
+}
+const fade = (el, a, b, t, d, e = 'linear') => A(el, [{ opacity: a }, { opacity: b }], t, d, e);
+const rise = (el, t, d = .9, y = 110) => A(el, [{ transform: `translateY(${y}%)` }, { transform: 'translateY(0)' }], t, d);
+const scene = (id, t0, t1, fi = .01, fo = .01) => { fade(id, 0, 1, t0, fi); fade(id, 1, 0, t1 - fo, fo); };
+
+/* ---------- background life ---------- */
+A('#bg', [{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(-60px,30px) scale(1.08)' }], 0, 44.5, 'linear');
+
+/* ---------- S1 0 – 3.2 ---------- */
+A('#s1i', [{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'scale(1)' }], .25, 1.6);
+A('#s1w', [{ opacity: 1, transform: 'scale(1.06)' }, { opacity: 1, transform: 'scale(1)' }], .25, 1.6);
+A('#tick', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], .4, 2.4, 'linear');
+fade('#paper', 1, 0, 1.3, 1.5, 'cubic-bezier(.45,0,.55,1)');
+A('#s1w', [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.97)' }], 2.75, .45, IN);
+fade('#s1', 1, 0, 3.2, .01);
+
+/* ---------- S2 3.2 – 6.0 ---------- */
+scene('#s2', 3.2, 6.2);
+rise('#s2a', 3.25, 1.0); rise('#s2b', 3.55, 1.0);
+A('#s2b', [{ color: '#dce7f4' }, { color: '#ffffff' }], 4.4, .8);
+A('#s2 .h', [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.035)', opacity: 1 }], 3.2, 2.4, 'linear');
+A('#s2 .h', [{ transform: 'scale(1.035)', opacity: 1 }, { transform: 'scale(.96)', opacity: 0 }], 5.6, .35, IN);
+
+/* ---------- S3 6.2 – 10.7 / S4 converge ---------- */
+const TILES = [
+  ['Chapter One', 'Victorias Project.docx · 1,781 words', -640, -300, -9], ['Chapter Two', 'Victorias Project.docx · 6,403 words', 40, -350, 5],
+  ['Chapter Three', 'Victorias Project.docx · 1,120 words', 600, -270, 8], ['Questionnaire.pdf', 'Appendix', -720, 60, 6],
+  ['Chapter Four', 'Victorias Project.docx · 1,937 words', 640, 80, -7], ['Chapter Five', 'Victorias Project.docx · 6,003 words', -360, -40, -4],
+  ['Supervisor comments', 'Draft 3 · 12 notes', 330, -60, 3], ['Defense notes.docx', 'Last edited 2 weeks ago', 0, 160, -2],
+];
+const tiles = $('#tiles');
+TILES.forEach(([t, m, x, y, r], i) => {
+  if (VERT) { x = Math.round(x * .42); y = Math.round(y * 1.6 - 120); }
+  const el = document.createElement('div'); el.className = 'tile';
+  el.innerHTML = `<div class="ic"></div><b>${t}</b><i>${m}</i><div class="ln" style="width:92%"></div><div class="ln" style="width:64%"></div>`;
+  tiles.appendChild(el);
+  const t0 = 6.35 + i * .17;
+  const dx = (i % 2 ? 1 : -1) * 18, dy = (i % 3 - 1) * 14;
+  A(el, [{ opacity: 0, transform: `translate(${x * 1.1}px,${y * 1.1 + 90}px) rotate(${r * 1.8}deg) scale(.9)` },
+         { opacity: 1, transform: `translate(${x}px,${y}px) rotate(${r}deg) scale(1)` }], t0, .9);
+  A(el, [{ transform: `translate(${x}px,${y}px) rotate(${r}deg) scale(1)` }, { transform: `translate(${x + dx}px,${y + dy}px) rotate(${r * .8}deg) scale(1)` }], t0 + .9, 10.75 - t0 - .9, 'linear');
+  // pulled in: everything converges to a single stack, then collapses into the mark
+  A(el, [{ transform: `translate(${x + dx}px,${y + dy}px) rotate(${r * .8}deg) scale(1)` },
+         { transform: `translate(${(i - 3.5) * 3}px,${(i - 3.5) * -3}px) rotate(${(i - 3.5) * 1.5}deg) scale(.82)` }], 10.75 + i * .03, .72, IO);
+  A(el, [{ opacity: 1 }, { opacity: 0 }], 11.62, .12, 'linear');
+});
+scene('#s3', 6.2, 11.75);
+rise('#s3a', 7.9, 1.0); rise('#s3b', 8.75, 1.0);
+A('#s3h', [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(40px)' }], 10.55, .35, IN);
+A('#tiles', [{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }], 6.2, 4.55, 'linear');
+
+// the hit: flash, rings, the mark lands
+A('#flash', [{ opacity: 0 }, { opacity: .85, offset: .12 }, { opacity: 0 }], 11.62, 1.1, 'cubic-bezier(.2,.6,.3,1)');
+scene('#s4', 11.66, 14.63, .01, .35);
+A('#mark', [{ transform: 'scale(.35)', opacity: 0 }, { transform: 'scale(1.08)', opacity: 1, offset: .45 }, { transform: 'scale(1)', opacity: 1 }], 11.66, .9);
+A('#wm1', [{ opacity: 0, transform: 'translateX(-30px)' }, { opacity: 1, transform: 'translateX(0)' }], 12.0, .9);
+A('#lockup', [{ transform: 'translate(-50%,-50%) scale(1)' }, { transform: 'translate(-50%,-50%) scale(1.04)' }], 11.66, 3.0, 'linear');
+A('#ring', [{ opacity: .9, transform: 'scale(.3)' }, { opacity: 0, transform: 'scale(2.4)' }], 11.66, 1.5, 'cubic-bezier(.1,.7,.3,1)');
+A('#ring2', [{ opacity: .6, transform: 'scale(.3)' }, { opacity: 0, transform: 'scale(3.2)' }], 11.76, 2.0, 'cubic-bezier(.1,.7,.3,1)');
+A('#glow', [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1)' }], 11.66, 1.2);
+A('#glow', [{ opacity: 1, transform: 'scale(1)' }, { opacity: .35, transform: 'scale(1.15)' }], 12.86, 2.0, 'linear');
+A('#s4tag', [{ opacity: 0, transform: 'translateY(24px)' }, { opacity: 1, transform: 'translateY(0)' }], 12.75, .9);
+
+/* ---------- UI scene transitions: push left, arrive from the right ---------- */
+const enter = (id, t) => { A(id, [{ transform: 'translateX(140px)' }, { transform: 'translateX(0)' }], t, .9); };
+const leave = (id, t) => { A(id, [{ transform: 'translateX(0)' }, { transform: 'translateX(-140px)' }], t - .35, .35, IN); };
+const panelIn = (el, t, my) => A(el, [{ opacity: 0, transform: `translateY(60px) scale(.96)` }, { opacity: 1, transform: 'translateY(0) scale(1)' }], t, 1.0);
+
+/* ---------- S5 14.63 – 18.90 ---------- */
+scene('#s5', 14.63, 18.90, .3, .35); enter('#s5', 14.63); leave('#s5', 18.90);
+A('#s5k', [{ opacity: 0 }, { opacity: 1 }], 14.75, .5);
+rise('#s5a', 14.8); rise('#s5b', 15.95); rise('#s5c', 16.1);
+panelIn('#s5p', 14.9);
+A('#s5p', [{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(-10px) scale(1.015)' }], 15.9, 3.0, 'linear');
+A('#s5s', [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], 16.6, .8);
+// real capture, panned from the project title down to the five chapters it has read
+A('#shot', [{ transform: 'translateY(-40px)' }, { transform: 'translateY(-330px)' }], 15.45, 1.1, 'cubic-bezier(.65,0,.35,1)');
+A('#hlc', [{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 0 }], 15.9, 1.0, 'ease-out');
+const ROW_T = [];
+[563, 637, 710, 784, 858].forEach((cy, i) => {
+  const el = document.createElement('div'); el.className = 'hl'; el.style.top = (cy - 33) + 'px'; $('#rows').appendChild(el);
+  const t0 = 16.2 + i * .3; ROW_T.push(t0);
+  A(el, [{ opacity: 0, transform: 'scaleX(.96)' }, { opacity: 1, transform: 'scaleX(1)', offset: .35 }, { opacity: .35, transform: 'scaleX(1)' }], t0, .7);
+});
+
+/* ---------- S6 18.90 – 24.23 ---------- */
+scene('#s6', 18.90, 24.23, .3, .35); enter('#s6', 18.90); leave('#s6', 24.23);
+rise('#s6a', 19.0);
+A('#s6s', [{ opacity: 0, transform: 'translateY(20px)' }, { opacity: 1, transform: 'translateY(0)' }], 19.4, .8);
+panelIn('#s6p', 19.0);
+const TYPE = { t0: 19.55, t1: 21.0, text: 'What were the objectives of my study?' };
+const SEND = 21.15;
+fade('#ph', 1, 0, TYPE.t0, .05);
+A('#send', [{ transform: 'scale(1)' }, { transform: 'scale(.86)' }, { transform: 'scale(1)' }], SEND, .25, 'ease-out');
+A('#q', [{ opacity: 0, transform: 'translateY(380px) scale(.96)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], SEND + .05, .6);
+A('#think', [{ opacity: 0 }, { opacity: 1 }], SEND + .35, .2);
+fade('#think', 1, 0, 22.05, .15);
+A('#ans', [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'translateY(0)' }], 22.1, .6);
+document.querySelectorAll('#ans p').forEach((p, i) => A(p, [{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'translateY(0)' }], 22.25 + i * .32, .55));
+A('#c1', [{ opacity: 0, transform: 'scale(.8)' }, { opacity: 1, transform: 'scale(1)' }], 23.25, .45);
+A('#c2', [{ opacity: 0, transform: 'scale(.8)' }, { opacity: 1, transform: 'scale(1)' }], 23.45, .45);
+document.querySelectorAll('#think i').forEach((d, i) => A(d, [{ opacity: .25 }, { opacity: 1 }, { opacity: .25 }], SEND + .35 + i * .15, .5, 'linear'));
+
+/* ---------- S7 24.23 – 28.50 ---------- */
+scene('#s7', 24.23, 28.50, .3, .35); enter('#s7', 24.23); leave('#s7', 28.50);
+rise('#s7a', 24.35);
+panelIn('#fc', 24.5); panelIn('#qz', 24.75);
+const FLIP = 25.55;
+A('#fc .fcq', [{ opacity: 1 }, { opacity: 0 }], FLIP, .12);
+A('#fc', [{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(0) scale(1.02)' }, { transform: 'translateY(0) scale(1)' }], FLIP - .05, .5, IO);
+A('#fcb', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], FLIP + .05, .38, 'cubic-bezier(.3,1.3,.5,1)');
+A('#solid', [{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], 26.9, .35, 'ease-out');
+const PICK = 26.35;
+A('#optc', [{ transform: 'scale(1)' }, { transform: 'scale(.98)' }, { transform: 'scale(1.02)' }, { transform: 'scale(1)' }], PICK, .45, 'ease-out');
+A('#okf', [{ opacity: 0 }, { opacity: 1 }], PICK + .05, .25);
+A('#src', [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], PICK + .3, .5);
+
+/* ---------- S8 28.50 – 33.03 ---------- */
+scene('#s8', 28.50, 33.03, .25, .3); enter('#s8', 28.50);
+A('#s8k1', [{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'translateY(0)' }], 28.6, .6);
+const QS = ['Can you tell us what the research objectives were for your study?', 'Why did you choose Oluyoro Hospital?', 'How did you measure the mothers’ knowledge?', 'What would you do differently?'];
+const QT = [beat(32), beat(33.5), beat(34.5), beat(35.5)];
+const RD = beat(37);
+QS.forEach((q, i) => {
+  const el = document.createElement('div'); el.className = 'ex';
+  el.innerHTML = `<div class="who"><i></i>EXAMINER<em>Question ${i + 1} of 4</em></div><p>${q}</p>`;
+  $('#exs').appendChild(el);
+  A(el, [{ opacity: 0, transform: 'translateY(240px) scale(1.04)' }, { opacity: 1, offset: .35 }, { opacity: 1, transform: 'translateY(0) scale(1)' }], QT[i], .45, 'cubic-bezier(.2,1.1,.35,1)');
+  // pushed back by each later card
+  let depth = 0;
+  for (let j = i + 1; j < QS.length; j++) {
+    const d0 = depth, d1 = ++depth;
+    A(el, [{ transform: `translateY(${-62 * d0}px) scale(${1 - .06 * d0})`, opacity: Math.max(0, 1 - .4 * d0) },
+           { transform: `translateY(${-62 * d1}px) scale(${1 - .06 * d1})`, opacity: Math.max(0, 1 - .4 * d1) }], QT[j], .4);
+  }
+  A(el, [{ transform: `translateY(${-62 * depth}px) scale(${1 - .06 * depth})`, opacity: Math.max(0, 1 - .4 * depth) },
+         { transform: `translateY(${-62 * depth - 160}px) scale(${.9 - .06 * depth})`, opacity: 0 }], RD - .3 + (3 - i) * .03, .45, IN);
+});
+A('#s8k1', [{ opacity: 1 }, { opacity: 0 }], RD - .35, .25);
+A('#rd', [{ opacity: 0, transform: 'translateY(120px) scale(.92)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], RD, .8);
+A('#rd', [{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(0) scale(1.03)' }], RD + .8, 33.03 - RD - .8, 'linear');
+A('#s8', [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.06)' }], 32.75, .28, IN);
+
+/* ---------- S9 montage, two beats a word ---------- */
+const MW = [beat(40), beat(42), beat(44), beat(46)];
+scene('#s9', MW[0], beat(48));
+MW.forEach((t, i) => {
+  const el = $('#w' + i), last = i === 3;
+  A(el, [{ opacity: 0, transform: `scale(${last ? 1.25 : 1.12})` }, { opacity: 1, transform: 'scale(1)' }], t, last ? .55 : .4, OUT);
+  A(el, [{ opacity: 1, transform: 'scale(1)' }, { opacity: 1, transform: 'scale(.97)' }], t + (last ? .55 : .4), last ? .6 : .55, 'linear');
+  if (!last) A(el, [{ opacity: 1 }, { opacity: 0 }], MW[i + 1] - .02, .04);
+});
+A('#w3', [{ opacity: 1, transform: 'scale(.97)' }, { opacity: 0, transform: 'scale(.9)' }], beat(48) - .3, .3, IN);
+A('#glow', [{ opacity: .35, transform: 'scale(1.15)' }, { opacity: .7, transform: 'scale(1)' }], beat(46), .6);
+
+/* ---------- S10 37.30 – 44.5 ---------- */
+const BR = beat(48);
+scene('#s10', BR, 44.5);
+A('#m2', [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1)' }], BR + .1, 1.2);
+A('#wm2', [{ opacity: 0, transform: 'translateX(-24px)' }, { opacity: 1, transform: 'translateX(0)' }], BR + .45, 1.1);
+A('#lock2', [{ transform: 'translateX(-50%) scale(1)' }, { transform: 'translateX(-50%) scale(1.04)' }], BR, 44.5 - BR, 'linear');
+rise('#lin', 39.25, 1.1);
+A('#cta', [{ opacity: 0, transform: 'translateX(-50%) translateY(24px)' }, { opacity: 1, transform: 'translateX(-50%) translateY(0)' }], 40.6, .9);
+A('#glow', [{ opacity: .7, transform: 'scale(1)' }, { opacity: .9, transform: 'scale(1.1)' }], BR, 6, 'linear');
+fade('#black', 0, 1, 43.7, .8, 'cubic-bezier(.45,0,.55,1)');
+
+/* ---------- JS-driven layers ---------- */
+const typed = $('#typed'), caret = $('#caret'), arc = $('#arc'), rdn = $('#rdn'), grain = $('#grain');
+const ease = x => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+window.__seek = t => {
+  const n = Math.max(0, Math.min(TYPE.text.length, Math.floor((t - TYPE.t0) / (TYPE.t1 - TYPE.t0) * TYPE.text.length)));
+  typed.textContent = t >= SEND ? '' : TYPE.text.slice(0, n);
+  caret.style.opacity = (t > TYPE.t0 && t < TYPE.t1) || Math.floor(t * 2.4) % 2 ? 1 : 0;
+  const r = ease((t - RD - .25) / 1.5);
+  arc.setAttribute('stroke-dashoffset', (276.46 * (1 - .86 * r)).toFixed(2));
+  rdn.innerHTML = Math.round(86 * r) + '<small>%</small>';
+  const f = Math.floor(t * 24);   // grain re-seeds at 24 fps, like film
+  grain.style.transform = `translate(${(f * 37) % 60 - 30}px, ${(f * 53) % 60 - 30}px)`;
+};
+window.__seek(0);
+// cue times the mixer reads (keyboard, ticks, hits) so sound matches picture exactly
+window.__cues = { TYPE, SEND, ROW_T, FLIP, PICK, QT, RD, MW, BR };
+</script>
+</body>
+</html>

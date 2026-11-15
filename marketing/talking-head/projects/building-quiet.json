@@ -1,0 +1,71 @@
+{
+ "name": "building-quiet",
+ "source": "src/IMG_4601.MOV",
+ "source_size": [
+  3840,
+  2160
+ ],
+ "aspect": [
+  4,
+  5
+ ],
+ "out_size": [
+  1440,
+  1800
+ ],
+ "hdr": true,
+ "grade": "hqdn3d=1.2:1.2:3:3,lutyuv=y='clip(64+(val-64)*1.04,64,940)':u='512+(val-512)*0.93':v='512+(val-512)*0.93'",
+ "shots": [
+  {
+   "in": 5.0,
+   "out": 9.0,
+   "speed": 2,
+   "cx": 0.32
+  },
+  {
+   "in": 12.0,
+   "out": 17.0,
+   "speed": 2.5,
+   "cx": 0.58
+  },
+  {
+   "in": 31.0,
+   "out": 36.0,
+   "speed": 2,
+   "cx": 0.58
+  },
+  {
+   "in": 20.0,
+   "out": 26.0,
+   "speed": 3,
+   "cx": 0.32
+  },
+  {
+   "in": 40.0,
+   "out": 43.5,
+   "speed": 1.5,
+   "cx": 0.5
+  },
+  {
+   "in": 43.5,
+   "out": 45.8,
+   "speed": 1,
+   "cx": 0.58
+  }
+ ],
+ "text": {
+  "paragraph": [
+   "Nobody tells you how quiet building is.",
+   "No applause. No overnight results. Just you, a screen and a workflow that broke again tonight.",
+   "Some days I feel ahead. Most days I wonder if I'm doing enough.",
+   "But every node I connect is a skill no one can take from me.",
+   "So I keep building."
+  ],
+  "font": "Inter-600.ttf",
+  "size": 50,
+  "gap": 26,
+  "top": 1010,
+  "white": 204,
+  "scrim": 0.62
+ }
+}
